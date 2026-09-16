@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Logo from "./Logo";
+import { Search } from "lucide-react";
+import SearchInput from "./Search";
 
 type UserRole = "viewer" | "editor" | "admin" | "super_admin";
 
@@ -48,20 +50,24 @@ const Header = ({ name, role }: UserMenuProps) => {
 
   return (
     <>
-      <header className="flex items-center justify-between border-b px-6 py-4">
-        <Logo/>
+      <header className="flex items-center justify-between px-6 py-4">
+        <Logo />
 
-        <div className="flex items-center justify-center gap-4">
-          <div className="text-sm">Вітаю, {name}</div>
+        <div className="flex items-center justify-center gap-5">
+          <SearchInput />
 
           <button
             type="button"
             onClick={() => setIsOpen(true)}
             aria-label="Відкрити меню користувача"
             aria-expanded={isOpen}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-200 text-sm font-semibold hover:bg-gray-300"
+            className="cursor-pointer flex items-center justify-center gap-2"
           >
-            {firstLetter}
+            <div className="text-sm font-semibold">{name}</div>
+
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold hover:bg-gray-300">
+              {firstLetter}
+            </div>
           </button>
         </div>
       </header>

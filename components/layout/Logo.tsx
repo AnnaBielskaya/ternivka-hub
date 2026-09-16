@@ -9,8 +9,8 @@ const Logo = () => {
       <Image
         src="/logo.svg"
         alt="Логотип"
-        width={28}
-        height={28}
+        width={32}
+        height={32}
         priority
         className="h-7 w-auto"
       />
