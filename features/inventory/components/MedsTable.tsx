@@ -64,7 +64,7 @@ const MedsTable = async () => {
               </td> 
 
               <td className="px-5 py-4 font-medium text-gray-900">
-                -
+                {item.category.name}
               </td> 
               
               <td className="px-5 py-4 font-medium text-gray-900">
