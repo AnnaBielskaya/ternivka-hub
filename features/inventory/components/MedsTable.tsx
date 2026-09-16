@@ -20,6 +20,10 @@ const MedsTable = async () => {
             </th>
 
             <th className="px-5 py-4 font-medium text-gray-600">
+              Категорія
+            </th>
+
+            <th className="px-5 py-4 font-medium text-gray-600">
               Діюча речовина
             </th>
 
@@ -58,17 +62,21 @@ const MedsTable = async () => {
               <td className="px-5 py-4 font-medium text-gray-900">
                 {item.name}
               </td> 
+
+              <td className="px-5 py-4 font-medium text-gray-900">
+                -
+              </td> 
               
               <td className="px-5 py-4 font-medium text-gray-900">
-                {item.active_ingredient || "—"}
+                {item.active_ingredient || "-"}
               </td>
 
               <td className="px-5 py-4 text-gray-600">
-                {item.dosage || "—"}
+                {item.dosage || "-"}
               </td>
 
               <td className="px-5 py-4 text-gray-600">
-                {item.volume || "—"}
+                {item.volume || "-"}
               </td>
 
               <td className="px-5 py-4 text-gray-600">
@@ -80,7 +88,7 @@ const MedsTable = async () => {
               </td>
 
               <td className="px-5 py-4 text-gray-600">
-                {item.nearestExpiry || "—"}
+                {item.nearestExpiry || "-"}
               </td>
 
               <td className="px-5 py-4">
