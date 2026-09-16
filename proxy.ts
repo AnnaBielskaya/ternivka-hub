@@ -32,7 +32,26 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims()
+
+  const isAuthenticated = Boolean(data?.claims)
+  const pathname = request.nextUrl.pathname
+
+  const isLoginPage = pathname === '/login'
+
+  if (!isAuthenticated && !isLoginPage) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+
+    return NextResponse.redirect(url)
+  }
+
+  if (isAuthenticated && isLoginPage) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+
+    return NextResponse.redirect(url)
+  }
 
   return response
 }
