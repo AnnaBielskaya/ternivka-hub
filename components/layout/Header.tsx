@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Logo from "./Logo";
-import { Search } from "lucide-react";
 import SearchInput from "./Search";
+import CategoryTabs from "./CategoryTabs";
 
 type UserRole = "viewer" | "editor" | "admin" | "super_admin";
 
@@ -51,7 +51,11 @@ const Header = ({ name, role }: UserMenuProps) => {
   return (
     <>
       <header className="flex items-center justify-between px-6 py-4">
-        <Logo />
+        <div className="flex items-center gap-8">
+          <Logo />
+
+          <CategoryTabs />
+        </div>
 
         <div className="flex items-center justify-center gap-5">
           <SearchInput />
