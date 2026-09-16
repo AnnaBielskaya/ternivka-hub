@@ -20,6 +20,10 @@ const MedsTable = async () => {
             </th>
 
             <th className="px-5 py-4 font-medium text-gray-600">
+              Діюча речовина
+            </th>
+
+            <th className="px-5 py-4 font-medium text-gray-600">
               Дозування
             </th>
 
@@ -53,6 +57,10 @@ const MedsTable = async () => {
             >
               <td className="px-5 py-4 font-medium text-gray-900">
                 {item.name}
+              </td> 
+              
+              <td className="px-5 py-4 font-medium text-gray-900">
+                {item.active_ingredient || "—"}
               </td>
 
               <td className="px-5 py-4 text-gray-600">

@@ -9,6 +9,7 @@ export async function getMedicalItems() {
       id,
       name,
       dosage,
+      active_ingredient,
       volume,
       unit,
       minimum_quantity,

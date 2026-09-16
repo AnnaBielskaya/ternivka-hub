@@ -9,6 +9,7 @@ type StockRow = {
     id: string;
     name: string;
     dosage: string | null;
+    active_ingredient: string | null;
     volume: string | null;
     unit: string;
     minimum_quantity: number;
@@ -19,6 +20,7 @@ type StockRow = {
     id: string;
     name: string;
     dosage: string | null;
+    active_ingredient: string | null;
     volume: string | null;
     unit: string;
     quantity: number;
@@ -67,6 +69,7 @@ type StockRow = {
       dosage: item.dosage,
       volume: item.volume,
       unit: item.unit,
+      active_ingredient: item.active_ingredient || null,
       quantity,
       nearestExpiry,
       isLow: quantity < Number(item.minimum_quantity),
