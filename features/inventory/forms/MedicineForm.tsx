@@ -170,8 +170,8 @@ const MedicineForm = ({
                   Грам
                 </option>
 
-                <option value="kilogram">
-                  Кілограм
+                <option value="other">
+                  Інше
                 </option>
               </select>
             </div>

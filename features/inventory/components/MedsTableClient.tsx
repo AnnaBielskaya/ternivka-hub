@@ -65,7 +65,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                       isRefillRequired ? "bg-red-50" : ""
                     }`}
                   >
-                    {item.category ? (
+                    {item.medicine_form ? (
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
                           isRefillRequired
@@ -73,7 +73,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                             : "bg-gray-100 text-gray-600"
                         }`}
                       >
-                        {item.category.name}
+                        {item.medicine_form.name}
                       </span>
                     ) : (
                       <span className="text-gray-400">-</span>
