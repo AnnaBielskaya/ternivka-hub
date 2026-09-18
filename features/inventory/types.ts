@@ -19,7 +19,7 @@ export type MedicalItemRow = {
   unit: string;
   refill_required: boolean;
   minimum_quantity: number;
-  categories: CategoryRow[];
+  categories: CategoryRow | null;
   stock: StockRow[];
 };
 

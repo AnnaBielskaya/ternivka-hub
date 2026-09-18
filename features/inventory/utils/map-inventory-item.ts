@@ -35,7 +35,7 @@ export function mapInventoryItem(
   return {
     id: item.id,
     name: item.name,
-    category: item.categories[0] ?? null,
+    category: item.categories,
     dosage: item.dosage,
     active_ingredient: item.active_ingredient || null,
     volume: item.volume,
