@@ -1,7 +1,6 @@
 "use client";
 
 import StatusBadge from "@/components/ui/StatusBadge";
-import RequiredAction from "@/components/ui/StatusBadge";
 import type { InventoryItem, StockRow } from "@/features/inventory/types";
 
 type MedicineDetailsModalProps = {
