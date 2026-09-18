@@ -5,6 +5,7 @@ import Logo from "./Logo";
 import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
 import UserMenu from "./UserMenu";
+import InviteUserModal from "@/features/users/components/InviteUserModal";
 
 type UserMenuProps = {
   name: string;
@@ -13,6 +14,7 @@ type UserMenuProps = {
 
 const Header = ({ name, role }: UserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const firstLetter = name.trim().charAt(0).toUpperCase();
 
@@ -72,8 +74,18 @@ const Header = ({ name, role }: UserMenuProps) => {
       </header>
 
       {isOpen && (
-        <UserMenu name={name} role={role} setIsOpen={setIsOpen}/>
+        <UserMenu
+          name={name}
+          role={role}
+          setIsOpen={setIsOpen}
+          onInviteUser={() => setIsInviteModalOpen(true)}
+        />
       )}
+
+      <InviteUserModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+      />
     </>
   );
 };

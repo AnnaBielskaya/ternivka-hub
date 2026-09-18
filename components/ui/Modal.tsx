@@ -3,12 +3,22 @@
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 
+type ModalSize = "sm" | "md" | "lg" | "xl";
+
 type ModalProps = {
   isOpen: boolean;
   title: ReactNode;
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  size?: ModalSize;
+};
+
+const SIZE_CLASSES: Record<ModalSize, string> = {
+  sm: "max-w-md",
+  md: "max-w-2xl",
+  lg: "max-w-4xl",
+  xl: "max-w-5xl",
 };
 
 const Modal = ({
@@ -17,6 +27,7 @@ const Modal = ({
   onClose,
   children,
   footer,
+  size = "lg",
 }: ModalProps) => {
   useEffect(() => {
     if (!isOpen) {
@@ -44,16 +55,12 @@ const Modal = ({
       <div
         role="dialog"
         aria-modal="true"
-        className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
-        onMouseDown={(event) =>
-          event.stopPropagation()
-        }
+        className={`flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-xl ${SIZE_CLASSES[size]}`}
+        onMouseDown={(event) => event.stopPropagation()}
       >
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-6 py-5">
-          <div className="min-w-0">
-            {title}
-          </div>
+          <div className="min-w-0">{title}</div>
 
           <button
             type="button"
@@ -66,9 +73,7 @@ const Modal = ({
         </div>
 
         {/* Content */}
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          {children}
-        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
 
         {/* Footer */}
         {footer && (
