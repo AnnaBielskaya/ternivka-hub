@@ -3,6 +3,7 @@ import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item"
 import type { InventoryItem } from "@/features/inventory/types";
 import { MEDICINE_TABLE_COLUMNS } from "../constants";
 import Header from "@/components/inventory/Header";
+import MedsToolbar from "./MedsToolbar";
 
 const MedsTable = async () => {
   const items = await getMedicalItems();
@@ -10,8 +11,8 @@ const MedsTable = async () => {
   const inventoryItems: InventoryItem[] = items.map(mapInventoryItem);
 
   return (
-    <div className="bg-white rounded-xl p-5 border border-[#EDEEF0]">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
         <Header variant="medicine" />
 
         <button
@@ -23,8 +24,10 @@ const MedsTable = async () => {
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <table className="w-full border-collapse text-sm">
+      <MedsToolbar />
+
+      <div className="overflow-auto rounded-lg border border-gray-200 bg-white">
+        <table className="min-w-max w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-[#EEF2F5] text-left">
               {MEDICINE_TABLE_COLUMNS.map((column) => (
@@ -57,12 +60,6 @@ const MedsTable = async () => {
                     >
                       {item.name}
                     </p>
-
-                    {item.refill_required && (
-                      <p className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
-                        ⚠ Треба поповнити
-                      </p>
-                    )}
                   </div>
                 </td>
 
@@ -85,27 +82,34 @@ const MedsTable = async () => {
                 <td className="px-5 py-4 text-gray-600">{item.unit}</td>
 
                 <td
-                  className={`px-5 py-4 font-medium text-gray-900 ${
+                  className={`px-5 py-4 font-medium text-gray-900 text-xs ${
                     item.refill_required ? "text-red-700 font-semibold" : ""
                   }`}
                 >
                   {item.quantity}
                 </td>
 
-                <td className="px-5 py-4 text-gray-600">
+                <td className="px-5 py-4 text-gray-600 text-xs">
                   {item.nearestExpiry || "-"}
                 </td>
 
                 <td className="px-5 py-4">
-                  <span
-                    className={
-                      item.isLow
-                        ? "inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-600"
-                        : "inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600"
-                    }
-                  >
-                    {item.isLow ? "Мало" : "Достатньо"}
-                  </span>
+                  {item.refill_required ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
+                      <span className="text-[10px] leading-none">⚠️</span>
+                      Треба поповнити
+                    </span>
+                  ) : (
+                    <span
+                      className={
+                        item.isLow
+                          ? "inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-600"
+                          : "inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600"
+                      }
+                    >
+                      {item.isLow ? "Мало" : "Достатньо"}
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

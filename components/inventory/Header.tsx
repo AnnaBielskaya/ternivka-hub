@@ -24,7 +24,7 @@ const Header = ({ variant }: HeaderProps) => {
   const { title, subtitle } = PAGE_HEADERS[variant];
 
   return (
-    <div className="flex flex-col mb-4">
+    <div className="flex flex-col">
       <h2 className="text-2xl font-bold">{title}</h2>
       <p className="text-sm text-gray-500">{subtitle}</p>
     </div>
