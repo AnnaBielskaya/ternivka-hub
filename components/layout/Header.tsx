@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Logo from "./Logo";
 import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
+import StatusBadge from "../ui/StatusBadge";
 
 type UserRole = "viewer" | "editor" | "admin" | "super_admin";
 
@@ -92,11 +93,10 @@ const Header = ({ name, role }: UserMenuProps) => {
             aria-label="Меню користувача"
           >
             {/* Header of side menu */}
-            <div className="flex items-center justify-between border-b px-6 py-5">
-              <div>
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+              <div className="flex items-center gap-1">
                 <div className="text-lg font-semibold">{name}</div>
-
-                <div className="mt-1 text-sm text-gray-500">{role}</div>
+                <StatusBadge variant="success" title={role}/>
               </div>
 
               <button
@@ -131,14 +131,15 @@ const Header = ({ name, role }: UserMenuProps) => {
             </nav>
 
             {/* Bottom */}
-            <div className="mt-auto border-t p-3">
-              <button
-                type="button"
-                disabled
-                className="w-full rounded-xl px-4 py-3 text-left text-sm text-gray-400"
-              >
-                Вийти
-              </button>
+            <div className="mt-auto border-t border-gray-100 p-3">
+              <form action="/signout" method="POST">
+                <button
+                  type="submit"
+                  className="w-full cursor-pointer rounded-xl px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-gray-100"
+                >
+                  Вийти
+                </button>
+              </form>
             </div>
           </aside>
         </>
