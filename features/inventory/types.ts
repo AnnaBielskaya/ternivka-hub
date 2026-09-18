@@ -34,6 +34,7 @@ export type InventoryItem = {
   refill_required: boolean;
   quantity: number;
   nearestExpiry: string | null;
+  nearestExpirySortKey: number | null;
   isLow: boolean;
 };
 

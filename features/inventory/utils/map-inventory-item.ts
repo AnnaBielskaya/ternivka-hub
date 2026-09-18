@@ -1,21 +1,16 @@
-import type {
-  MedicalItemRow,
-  InventoryItem,
-} from "@/features/inventory/types";
+import type { MedicalItemRow, InventoryItem } from "@/features/inventory/types";
 
 function formatExpiry(month: number, year: number) {
   return `${String(month).padStart(2, "0")}/${year}`;
 }
 
-export function mapInventoryItem(
-  item: MedicalItemRow,
-): InventoryItem {
+export function mapInventoryItem(item: MedicalItemRow): InventoryItem {
   const quantity = item.stock.reduce(
     (total, stock) => total + Number(stock.quantity),
-    0,
+    0
   );
 
-  const activeStock = [...item.stock]
+  const activeStock = item.stock
     .filter((stock) => Number(stock.quantity) > 0)
     .sort((a, b) => {
       const dateA = a.expiry_year * 100 + a.expiry_month;
@@ -24,13 +19,15 @@ export function mapInventoryItem(
       return dateA - dateB;
     });
 
-  const nearestExpiry =
-    activeStock.length > 0
-      ? formatExpiry(
-          activeStock[0].expiry_month,
-          activeStock[0].expiry_year,
-        )
-      : null;
+  const nearestStock = activeStock[0] ?? null;
+
+  const nearestExpiry = nearestStock
+    ? formatExpiry(nearestStock.expiry_month, nearestStock.expiry_year)
+    : null;
+
+  const nearestExpirySortKey = nearestStock
+    ? nearestStock.expiry_year * 100 + nearestStock.expiry_month
+    : null;
 
   return {
     id: item.id,
@@ -43,6 +40,7 @@ export function mapInventoryItem(
     refill_required: item.refill_required,
     quantity,
     nearestExpiry,
+    nearestExpirySortKey,
     isLow: quantity < Number(item.minimum_quantity),
   };
 }
