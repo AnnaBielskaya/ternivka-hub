@@ -13,7 +13,19 @@ const INVENTORY_UNITS = [
   { value: "штука", label: "Штука" },
 ] as const;
 
-const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
+const MONTHS = Array.from(
+  { length: 12 },
+  (_, index) => index + 1,
+);
+
+const inputClassName =
+  "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100";
+
+const selectClassName =
+  "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100";
+
+const labelClassName =
+  "mb-1.5 block text-sm font-medium text-gray-700";
 
 type MedicineFormProps = {
   onCancel: () => void;
@@ -28,19 +40,25 @@ const MedicineForm = ({
 }: MedicineFormProps) => {
   return (
     <form>
-      <div className="space-y-8 p-6">
+      <div className="space-y-7 p-6">
         {/* Основна інформація */}
         <section>
-          <h3 className="mb-4 text-sm font-semibold text-gray-900">
-            Основна інформація
-          </h3>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Основна інформація
+            </h3>
 
-          <div className="grid grid-cols-2 gap-4">
+            <p className="mt-1 text-xs text-gray-500">
+              Основні характеристики препарату
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
             {/* Назва */}
-            <div className="col-span-2">
+            <div className="col-span-3">
               <label
                 htmlFor="name"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Назва <span className="text-red-500">*</span>
               </label>
@@ -51,7 +69,7 @@ const MedicineForm = ({
                 type="text"
                 required
                 placeholder="Наприклад, Парацетамол"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={inputClassName}
               />
             </div>
 
@@ -59,7 +77,7 @@ const MedicineForm = ({
             <div>
               <label
                 htmlFor="active_ingredient"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Діюча речовина
               </label>
@@ -68,18 +86,19 @@ const MedicineForm = ({
                 id="active_ingredient"
                 name="active_ingredient"
                 type="text"
-                placeholder="Наприклад, Парацетамол"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                placeholder="Наприклад, парацетамол"
+                className={inputClassName}
               />
             </div>
 
-            {/* Форма випуску */}
+            {/* Форма */}
             <div>
               <label
                 htmlFor="form_id"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
-                Форма випуску <span className="text-red-500">*</span>
+                Форма випуску{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <select
@@ -87,10 +106,10 @@ const MedicineForm = ({
                 name="form_id"
                 required
                 defaultValue=""
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={selectClassName}
               >
                 <option value="" disabled>
-                  Оберіть форму випуску
+                  Оберіть форму
                 </option>
 
                 {medicineForms.map((form) => (
@@ -105,7 +124,7 @@ const MedicineForm = ({
             <div>
               <label
                 htmlFor="purpose_id"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Призначення
               </label>
@@ -114,7 +133,7 @@ const MedicineForm = ({
                 id="purpose_id"
                 name="purpose_id"
                 defaultValue=""
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={selectClassName}
               >
                 <option value="">Не обрано</option>
 
@@ -125,12 +144,29 @@ const MedicineForm = ({
                 ))}
               </select>
             </div>
+          </div>
+        </section>
 
+        <div className="border-t border-gray-100" />
+
+        {/* Характеристики */}
+        <section>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Характеристики
+            </h3>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Дозування та фізичні характеристики препарату
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
             {/* Дозування */}
             <div>
               <label
                 htmlFor="dosage"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Дозування
               </label>
@@ -140,7 +176,7 @@ const MedicineForm = ({
                 name="dosage"
                 type="text"
                 placeholder="Наприклад, 500 мг"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={inputClassName}
               />
             </div>
 
@@ -148,9 +184,9 @@ const MedicineForm = ({
             <div>
               <label
                 htmlFor="volume"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
-                Об'єм
+                Обʼєм
               </label>
 
               <input
@@ -158,52 +194,35 @@ const MedicineForm = ({
                 name="volume"
                 type="text"
                 placeholder="Наприклад, 100 мл"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={inputClassName}
               />
             </div>
 
-            {/* Одиниця */}
-            <div>
-              <label
-                htmlFor="unit"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
-              >
-                Одиниця <span className="text-red-500">*</span>
-              </label>
-
-              <select
-                id="unit"
-                name="unit"
-                required
-                defaultValue=""
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-              >
-                <option value="" disabled>
-                  Оберіть одиницю
-                </option>
-
-                {INVENTORY_UNITS.map((unit) => (
-                  <option key={unit.value} value={unit.value}>
-                    {unit.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Порожня колонка */}
+            <div />
           </div>
         </section>
 
-        {/* Початковий залишок */}
+        <div className="border-t border-gray-100" />
+
+        {/* Залишок */}
         <section>
-          <h3 className="mb-4 text-sm font-semibold text-gray-900">
-            Початковий залишок
-          </h3>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Залишок та термін придатності
+            </h3>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Початкова кількість препарату та строк придатності
+            </p>
+          </div>
 
           <div className="grid grid-cols-3 gap-4">
             {/* Кількість */}
             <div>
               <label
                 htmlFor="quantity"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Кількість
               </label>
@@ -215,15 +234,50 @@ const MedicineForm = ({
                 min="0"
                 step="0.01"
                 defaultValue="0"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={inputClassName}
               />
             </div>
+
+            {/* Одиниця */}
+            <div>
+              <label
+                htmlFor="unit"
+                className={labelClassName}
+              >
+                Одиниця обліку{" "}
+                <span className="text-red-500">*</span>
+              </label>
+
+              <select
+                id="unit"
+                name="unit"
+                required
+                defaultValue=""
+                className={selectClassName}
+              >
+                <option value="" disabled>
+                  Оберіть одиницю
+                </option>
+
+                {INVENTORY_UNITS.map((unit) => (
+                  <option
+                    key={unit.value}
+                    value={unit.value}
+                  >
+                    {unit.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Порожня колонка */}
+            <div />
 
             {/* Місяць */}
             <div>
               <label
                 htmlFor="expiry_month"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Місяць закінчення
               </label>
@@ -232,9 +286,11 @@ const MedicineForm = ({
                 id="expiry_month"
                 name="expiry_month"
                 defaultValue=""
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={selectClassName}
               >
-                <option value="">Оберіть місяць</option>
+                <option value="">
+                  Не вказано
+                </option>
 
                 {MONTHS.map((month) => (
                   <option key={month} value={month}>
@@ -248,7 +304,7 @@ const MedicineForm = ({
             <div>
               <label
                 htmlFor="expiry_year"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Рік закінчення
               </label>
@@ -260,24 +316,32 @@ const MedicineForm = ({
                 min="2020"
                 step="1"
                 placeholder="2027"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={inputClassName}
               />
             </div>
           </div>
         </section>
 
-        {/* Додатково */}
-        <section>
-          <h3 className="mb-4 text-sm font-semibold text-gray-900">
-            Додатково
-          </h3>
+        <div className="border-t border-gray-100" />
 
-          <div className="space-y-4">
+        {/* Поповнення */}
+        <section>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Поповнення запасу
+            </h3>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Контроль мінімального залишку та ручне позначення
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
             {/* Мінімальний залишок */}
             <div>
               <label
                 htmlFor="minimum_quantity"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className={labelClassName}
               >
                 Мінімальний залишок
               </label>
@@ -289,46 +353,54 @@ const MedicineForm = ({
                 min="0"
                 step="0.01"
                 defaultValue="0"
-                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                className={inputClassName}
               />
-
-              <p className="mt-1.5 text-xs text-gray-400">
-                Нижче цього значення препарат матиме статус «Мало».
-              </p>
             </div>
 
             {/* Потребує поповнення */}
-            <label className="flex cursor-pointer items-center gap-2">
-              <input
-                id="refill_required"
-                name="refill_required"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300"
-              />
+            <div className="col-span-2 flex items-end">
+              <label className="flex h-10 cursor-pointer items-center gap-2">
+                <input
+                  id="refill_required"
+                  name="refill_required"
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300"
+                />
 
-              <span className="text-sm font-medium text-gray-700">
-                Потребує поповнення
-              </span>
-            </label>
-
-            {/* Опис */}
-            <div>
-              <label
-                htmlFor="description"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
-              >
-                Опис
+                <span className="text-sm font-medium text-gray-700">
+                  Потребує поповнення
+                </span>
               </label>
-
-              <textarea
-                id="description"
-                name="description"
-                rows={3}
-                placeholder="Додаткова інформація про препарат..."
-                className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-              />
             </div>
           </div>
+
+          <p className="mt-2 text-xs text-gray-400">
+            Статус «Мало» визначається автоматично, коли
+            кількість менша за мінімальний залишок.
+          </p>
+        </section>
+
+        <div className="border-t border-gray-100" />
+
+        {/* Опис */}
+        <section>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Опис
+            </h3>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Додаткова інформація про препарат
+            </p>
+          </div>
+
+          <textarea
+            id="description"
+            name="description"
+            rows={4}
+            placeholder="Особливості зберігання, примітки або інша важлива інформація..."
+            className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+          />
         </section>
       </div>
 
@@ -344,7 +416,7 @@ const MedicineForm = ({
 
         <button
           type="submit"
-          className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800 active:scale-[0.98]"
+          className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
         >
           Додати препарат
         </button>
