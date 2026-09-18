@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 
-import type { MedicineFormRow } from "@/features/inventory/types";
+import type {
+  MedicineFormRow,
+  MedicinePurposeRow,
+} from "@/features/inventory/types";
 
 import AddItemModal from "./AddItemModal";
 
@@ -21,11 +24,13 @@ const ADD_ITEM_CONFIG = {
 type AddItemButtonProps = {
   variant: keyof typeof ADD_ITEM_CONFIG;
   medicineForms?: MedicineFormRow[];
+  medicinePurposes?: MedicinePurposeRow[];
 };
 
 const AddItemButton = ({
   variant,
   medicineForms = [],
+  medicinePurposes = [],
 }: AddItemButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -47,6 +52,7 @@ const AddItemButton = ({
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         medicineForms={medicineForms}
+        medicinePurposes={medicinePurposes}
       />
     </>
   );

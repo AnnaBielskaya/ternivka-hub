@@ -1,25 +1,42 @@
 "use client";
 
-import type { MedicineFormRow } from "@/features/inventory/types";
+import type {
+  MedicineFormRow,
+  MedicinePurposeRow,
+} from "@/features/inventory/types";
+
+const INVENTORY_UNITS = [
+  { value: "блістер", label: "Блістер" },
+  { value: "упаковка", label: "Упаковка" },
+  { value: "ампули", label: "Ампули" },
+  { value: "грам", label: "Грам" },
+  { value: "штука", label: "Штука" },
+] as const;
+
+const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
 
 type MedicineFormProps = {
   onCancel: () => void;
   medicineForms: MedicineFormRow[];
+  medicinePurposes: MedicinePurposeRow[];
 };
 
 const MedicineForm = ({
   onCancel,
   medicineForms,
+  medicinePurposes,
 }: MedicineFormProps) => {
   return (
     <form>
       <div className="space-y-8 p-6">
+        {/* Основна інформація */}
         <section>
           <h3 className="mb-4 text-sm font-semibold text-gray-900">
             Основна інформація
           </h3>
 
           <div className="grid grid-cols-2 gap-4">
+            {/* Назва */}
             <div className="col-span-2">
               <label
                 htmlFor="name"
@@ -32,11 +49,13 @@ const MedicineForm = ({
                 id="name"
                 name="name"
                 type="text"
+                required
                 placeholder="Наприклад, Парацетамол"
                 className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               />
             </div>
 
+            {/* Діюча речовина */}
             <div>
               <label
                 htmlFor="active_ingredient"
@@ -49,23 +68,24 @@ const MedicineForm = ({
                 id="active_ingredient"
                 name="active_ingredient"
                 type="text"
-                placeholder="Парацетамол"
+                placeholder="Наприклад, Парацетамол"
                 className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               />
             </div>
 
+            {/* Форма випуску */}
             <div>
               <label
                 htmlFor="form_id"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                Форма випуску{" "}
-                <span className="text-red-500">*</span>
+                Форма випуску <span className="text-red-500">*</span>
               </label>
 
               <select
                 id="form_id"
                 name="form_id"
+                required
                 defaultValue=""
                 className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               >
@@ -81,6 +101,7 @@ const MedicineForm = ({
               </select>
             </div>
 
+            {/* Призначення */}
             <div>
               <label
                 htmlFor="purpose_id"
@@ -95,12 +116,17 @@ const MedicineForm = ({
                 defaultValue=""
                 className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               >
-                <option value="">
-                  Не обрано
-                </option>
+                <option value="">Не обрано</option>
+
+                {medicinePurposes.map((purpose) => (
+                  <option key={purpose.id} value={purpose.id}>
+                    {purpose.name}
+                  </option>
+                ))}
               </select>
             </div>
 
+            {/* Дозування */}
             <div>
               <label
                 htmlFor="dosage"
@@ -113,11 +139,12 @@ const MedicineForm = ({
                 id="dosage"
                 name="dosage"
                 type="text"
-                placeholder="500 мг"
+                placeholder="Наприклад, 500 мг"
                 className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               />
             </div>
 
+            {/* Об'єм */}
             <div>
               <label
                 htmlFor="volume"
@@ -130,23 +157,24 @@ const MedicineForm = ({
                 id="volume"
                 name="volume"
                 type="text"
-                placeholder="100 мл"
+                placeholder="Наприклад, 100 мл"
                 className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               />
             </div>
 
+            {/* Одиниця */}
             <div>
               <label
                 htmlFor="unit"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                Одиниця{" "}
-                <span className="text-red-500">*</span>
+                Одиниця <span className="text-red-500">*</span>
               </label>
 
               <select
                 id="unit"
                 name="unit"
+                required
                 defaultValue=""
                 className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               >
@@ -154,46 +182,172 @@ const MedicineForm = ({
                   Оберіть одиницю
                 </option>
 
-                <option value="blister">
-                  Блістер
-                </option>
-
-                <option value="package">
-                  Упаковка
-                </option>
-
-                <option value="ampule">
-                  Ампула
-                </option>
-
-                <option value="gram">
-                  Грам
-                </option>
-
-                <option value="other">
-                  Інше
-                </option>
+                {INVENTORY_UNITS.map((unit) => (
+                  <option key={unit.value} value={unit.value}>
+                    {unit.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </section>
 
-        <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-          >
-            Скасувати
-          </button>
+        {/* Початковий залишок */}
+        <section>
+          <h3 className="mb-4 text-sm font-semibold text-gray-900">
+            Початковий залишок
+          </h3>
 
-          <button
-            type="submit"
-            className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800 active:scale-[0.98]"
-          >
-            Додати препарат
-          </button>
-        </div>
+          <div className="grid grid-cols-3 gap-4">
+            {/* Кількість */}
+            <div>
+              <label
+                htmlFor="quantity"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Кількість
+              </label>
+
+              <input
+                id="quantity"
+                name="quantity"
+                type="number"
+                min="0"
+                step="0.01"
+                defaultValue="0"
+                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              />
+            </div>
+
+            {/* Місяць */}
+            <div>
+              <label
+                htmlFor="expiry_month"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Місяць закінчення
+              </label>
+
+              <select
+                id="expiry_month"
+                name="expiry_month"
+                defaultValue=""
+                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              >
+                <option value="">Оберіть місяць</option>
+
+                {MONTHS.map((month) => (
+                  <option key={month} value={month}>
+                    {String(month).padStart(2, "0")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Рік */}
+            <div>
+              <label
+                htmlFor="expiry_year"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Рік закінчення
+              </label>
+
+              <input
+                id="expiry_year"
+                name="expiry_year"
+                type="number"
+                min="2020"
+                step="1"
+                placeholder="2027"
+                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Додатково */}
+        <section>
+          <h3 className="mb-4 text-sm font-semibold text-gray-900">
+            Додатково
+          </h3>
+
+          <div className="space-y-4">
+            {/* Мінімальний залишок */}
+            <div>
+              <label
+                htmlFor="minimum_quantity"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Мінімальний залишок
+              </label>
+
+              <input
+                id="minimum_quantity"
+                name="minimum_quantity"
+                type="number"
+                min="0"
+                step="0.01"
+                defaultValue="0"
+                className="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              />
+
+              <p className="mt-1.5 text-xs text-gray-400">
+                Нижче цього значення препарат матиме статус «Мало».
+              </p>
+            </div>
+
+            {/* Потребує поповнення */}
+            <label className="flex cursor-pointer items-center gap-2">
+              <input
+                id="refill_required"
+                name="refill_required"
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300"
+              />
+
+              <span className="text-sm font-medium text-gray-700">
+                Потребує поповнення
+              </span>
+            </label>
+
+            {/* Опис */}
+            <div>
+              <label
+                htmlFor="description"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Опис
+              </label>
+
+              <textarea
+                id="description"
+                name="description"
+                rows={3}
+                placeholder="Додаткова інформація про препарат..."
+                className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+        >
+          Скасувати
+        </button>
+
+        <button
+          type="submit"
+          className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800 active:scale-[0.98]"
+        >
+          Додати препарат
+        </button>
       </div>
     </form>
   );

@@ -1,5 +1,6 @@
 import { getMedicalItems } from "@/features/inventory/queries/item.queries";
 import { getMedicineForms } from "@/features/inventory/queries/medicine-form.queries";
+import { getMedicinePurposes } from "@/features/inventory/queries/medicine-purpose.queries";
 import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item";
 
 import Header from "@/components/inventory/Header";
@@ -8,10 +9,12 @@ import AddItemButton from "./AddItemButton";
 import MedsTableClient from "./MedsTableClient";
 
 const MedsTable = async () => {
-  const [items, medicineForms] = await Promise.all([
-    getMedicalItems(),
-    getMedicineForms(),
-  ]);
+  const [items, medicineForms, medicinePurposes] =
+    await Promise.all([
+      getMedicalItems(),
+      getMedicineForms(),
+      getMedicinePurposes(),
+    ]);
 
   const inventoryItems = items.map(mapInventoryItem);
 
@@ -23,6 +26,7 @@ const MedsTable = async () => {
         <AddItemButton
           variant="medicine"
           medicineForms={medicineForms}
+          medicinePurposes={medicinePurposes}
         />
       </div>
 
