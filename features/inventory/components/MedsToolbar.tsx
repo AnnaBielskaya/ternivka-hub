@@ -1,5 +1,6 @@
 "use client";
 
+import SortingBox from "@/components/ui/SortingBox";
 import type {
   MedicineSortKey,
   SortDirection,
@@ -50,30 +51,15 @@ const MedsToolbar = ({
           Сортувати:
         </span>
 
-        {SORT_OPTIONS.map((option) => {
-          const isActive = sortKey === option.key;
-
-          return (
-            <button
-              key={option.key}
-              type="button"
-              onClick={() => onSortChange(option.key)}
-              className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-sm font-medium transition ${
-                isActive
-                  ? "border-gray-300 bg-gray-100 text-gray-900"
-                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <span>{option.label}</span>
-
-              {isActive && (
-                <span className="text-xs text-gray-500">
-                  {sortDirection === "asc" ? "↑" : "↓"}
-                </span>
-              )}
-            </button>
-          );
-        })}
+        {SORT_OPTIONS.map((option) => (
+          <SortingBox
+            key={option.key}
+            option={option}
+            isActive={sortKey === option.key}
+            sortDirection={sortDirection}
+            onSortChange={onSortChange}
+          />
+        ))}
       </div>
 
       {/* Filters */}
