@@ -28,18 +28,16 @@ const labelClassName =
   "mb-1.5 block text-sm font-medium text-gray-700";
 
 type MedicineFormProps = {
-  onCancel: () => void;
   medicineForms: MedicineFormRow[];
   medicinePurposes: MedicinePurposeRow[];
 };
 
 const MedicineForm = ({
-  onCancel,
   medicineForms,
   medicinePurposes,
 }: MedicineFormProps) => {
   return (
-    <form>
+    <form id="medicine-form">
       <div className="space-y-7 p-6">
         {/* Основна інформація */}
         <section>
@@ -138,7 +136,10 @@ const MedicineForm = ({
                 <option value="">Не обрано</option>
 
                 {medicinePurposes.map((purpose) => (
-                  <option key={purpose.id} value={purpose.id}>
+                  <option
+                    key={purpose.id}
+                    value={purpose.id}
+                  >
                     {purpose.name}
                   </option>
                 ))}
@@ -157,7 +158,7 @@ const MedicineForm = ({
             </h3>
 
             <p className="mt-1 text-xs text-gray-500">
-              Дозування та фізичні характеристики препарату
+              Дозування та фізичні характеристики
             </p>
           </div>
 
@@ -180,7 +181,7 @@ const MedicineForm = ({
               />
             </div>
 
-            {/* Об'єм */}
+            {/* Обʼєм */}
             <div>
               <label
                 htmlFor="volume"
@@ -197,9 +198,6 @@ const MedicineForm = ({
                 className={inputClassName}
               />
             </div>
-
-            {/* Порожня колонка */}
-            <div />
           </div>
         </section>
 
@@ -209,11 +207,11 @@ const MedicineForm = ({
         <section>
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-gray-900">
-              Залишок та термін придатності
+              Залишок
             </h3>
 
             <p className="mt-1 text-xs text-gray-500">
-              Початкова кількість препарату та строк придатності
+              Кількість, одиниця обліку, строк придатності та поповнення
             </p>
           </div>
 
@@ -270,8 +268,25 @@ const MedicineForm = ({
               </select>
             </div>
 
-            {/* Порожня колонка */}
-            <div />
+            {/* Мінімальний залишок */}
+            <div>
+              <label
+                htmlFor="minimum_quantity"
+                className={labelClassName}
+              >
+                Мінімальний залишок
+              </label>
+
+              <input
+                id="minimum_quantity"
+                name="minimum_quantity"
+                type="number"
+                min="0"
+                step="0.01"
+                defaultValue="0"
+                className={inputClassName}
+              />
+            </div>
 
             {/* Місяць */}
             <div>
@@ -288,9 +303,7 @@ const MedicineForm = ({
                 defaultValue=""
                 className={selectClassName}
               >
-                <option value="">
-                  Не вказано
-                </option>
+                <option value="">Не вказано</option>
 
                 {MONTHS.map((month) => (
                   <option key={month} value={month}>
@@ -319,46 +332,9 @@ const MedicineForm = ({
                 className={inputClassName}
               />
             </div>
-          </div>
-        </section>
-
-        <div className="border-t border-gray-100" />
-
-        {/* Поповнення */}
-        <section>
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-900">
-              Поповнення запасу
-            </h3>
-
-            <p className="mt-1 text-xs text-gray-500">
-              Контроль мінімального залишку та ручне позначення
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            {/* Мінімальний залишок */}
-            <div>
-              <label
-                htmlFor="minimum_quantity"
-                className={labelClassName}
-              >
-                Мінімальний залишок
-              </label>
-
-              <input
-                id="minimum_quantity"
-                name="minimum_quantity"
-                type="number"
-                min="0"
-                step="0.01"
-                defaultValue="0"
-                className={inputClassName}
-              />
-            </div>
 
             {/* Потребує поповнення */}
-            <div className="col-span-2 flex items-end">
+            <div className="flex items-end">
               <label className="flex h-10 cursor-pointer items-center gap-2">
                 <input
                   id="refill_required"
@@ -397,29 +373,11 @@ const MedicineForm = ({
           <textarea
             id="description"
             name="description"
-            rows={4}
+            rows={3}
             placeholder="Особливості зберігання, примітки або інша важлива інформація..."
             className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
           />
         </section>
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-        >
-          Скасувати
-        </button>
-
-        <button
-          type="submit"
-          className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
-        >
-          Додати препарат
-        </button>
       </div>
     </form>
   );

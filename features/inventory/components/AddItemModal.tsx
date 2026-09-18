@@ -6,6 +6,7 @@ import type {
 } from "@/features/inventory/types";
 
 import MedicineForm from "@/features/inventory/forms/MedicineForm";
+import Modal from "@/components/ui/Modal";
 
 const MODAL_CONFIG = {
   medicine: {
@@ -34,45 +35,43 @@ const AddItemModal = ({
   medicineForms = [],
   medicinePurposes = [],
 }: AddItemModalProps) => {
-  if (!isOpen) {
-    return null;
-  }
-
   const { title } = MODAL_CONFIG[variant];
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onMouseDown={onClose}
-    >
-      <div
-        className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white shadow-xl"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
-          <h2 className="text-xl font-semibold text-gray-900">
-            {title}
-          </h2>
+  const footer =
+    variant === "medicine" ? (
+      <div className="flex justify-end gap-3">
+        <button
+          type="button"
+          onClick={onClose}
+          className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+        >
+          Скасувати
+        </button>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-xl text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-            aria-label="Закрити"
-          >
-            ×
-          </button>
-        </div>
-
-        {variant === "medicine" && (
-          <MedicineForm
-            onCancel={onClose}
-            medicineForms={medicineForms}
-            medicinePurposes={medicinePurposes}
-          />
-        )}
+        <button
+          type="submit"
+          form="medicine-form"
+          className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800"
+        >
+          Додати препарат
+        </button>
       </div>
-    </div>
+    ) : null;
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      title={title}
+      onClose={onClose}
+      footer={footer}
+    >
+      {variant === "medicine" && (
+        <MedicineForm
+          medicineForms={medicineForms}
+          medicinePurposes={medicinePurposes}
+        />
+      )}
+    </Modal>
   );
 };
 
