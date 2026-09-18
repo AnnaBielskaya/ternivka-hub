@@ -8,29 +8,33 @@ export async function getMedicalItems() {
     .select(`
       id,
       name,
+      category_id,
       dosage,
       active_ingredient,
       volume,
       unit,
+      refill_required,
       minimum_quantity,
-      category_id,
+
+      categories (
+        id,
+        name
+      ),
+
       stock (
         id,
         expiry_month,
         expiry_year,
         quantity
-      ),
-      categories (
-        id,
-        name
       )
-    `);
+    `)
+    .order("name", { ascending: true });
 
   if (error) {
     throw new Error(
-      `Failed to load inventory: ${error.message}`,
+      `Failed to load medical inventory: ${error.message}`,
     );
   }
 
-  return data;
+  return data ?? [];
 }

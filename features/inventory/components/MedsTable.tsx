@@ -1,55 +1,38 @@
 import { getMedicalItems } from "@/features/inventory/queries/item.queries";
-import {
-  mapInventoryItem,
-  type InventoryItem,
-} from "@/features/inventory/utils/map-inventory-item";
+import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item";
+import type { InventoryItem } from "@/features/inventory/types";
 
 const MedsTable = async () => {
   const items = await getMedicalItems();
 
-  const inventoryItems: InventoryItem[] =
-    items.map(mapInventoryItem);
+  const inventoryItems: InventoryItem[] = items.map(mapInventoryItem);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50 text-left">
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Назва
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Назва</th>
 
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Категорія
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Категорія</th>
 
             <th className="px-5 py-4 font-medium text-gray-600">
               Діюча речовина
             </th>
 
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Дозування
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Дозування</th>
 
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Об'єм
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Об'єм</th>
 
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Одиниця
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Одиниця</th>
 
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Залишок
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Залишок</th>
 
             <th className="px-5 py-4 font-medium text-gray-600">
               Найближчий строк
             </th>
 
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Статус
-            </th>
+            <th className="px-5 py-4 font-medium text-gray-600">Статус</th>
           </tr>
         </thead>
 
@@ -57,33 +40,49 @@ const MedsTable = async () => {
           {inventoryItems.map((item) => (
             <tr
               key={item.id}
-              className="border-b border-gray-100 last:border-0 hover:bg-gray-50"
+              className={`cursor-pointer border-b border-gray-100 last:border-0 transition ${
+                item.refill_required
+                  ? "bg-red-50 hover:bg-red-100"
+                  : "hover:bg-gray-50"
+              }`}
             >
               <td className="px-5 py-4 font-medium text-gray-900">
-                {item.name}
-              </td> 
+                <div className="flex flex-row items-center gap-2">
+                  <p
+                    className={`${
+                      item.refill_required ? "text-red-700 font-semibold" : ""
+                    }`}
+                  >
+                    {item.name}
+                  </p>
+
+                  {item.refill_required && (
+                    <p className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
+                      ⚠ Треба поповнити
+                    </p>
+                  )}
+                </div>
+              </td>
 
               <td className="px-5 py-4 font-medium text-gray-900">
-                {item.category.name}
-              </td> 
-              
+                {item.category?.name || "-"}
+              </td>
+
               <td className="px-5 py-4 font-medium text-gray-900">
                 {item.active_ingredient || "-"}
               </td>
 
-              <td className="px-5 py-4 text-gray-600">
-                {item.dosage || "-"}
-              </td>
+              <td className="px-5 py-4 text-gray-600">{item.dosage || "-"}</td>
 
-              <td className="px-5 py-4 text-gray-600">
-                {item.volume || "-"}
-              </td>
+              <td className="px-5 py-4 text-gray-600">{item.volume || "-"}</td>
 
-              <td className="px-5 py-4 text-gray-600">
-                {item.unit}
-              </td>
+              <td className="px-5 py-4 text-gray-600">{item.unit}</td>
 
-              <td className="px-5 py-4 font-medium text-gray-900">
+              <td
+                className={`"px-5 py-4 font-medium text-gray-900" ${
+                  item.refill_required ? "text-red-700 font-semibold" : ""
+                }`}
+              >
                 {item.quantity}
               </td>
 
@@ -99,9 +98,7 @@ const MedsTable = async () => {
                       : "inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600"
                   }
                 >
-                  {item.isLow
-                    ? "Мало"
-                    : "Достатньо"}
+                  {item.isLow ? "Мало" : "Достатньо"}
                 </span>
               </td>
             </tr>
