@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 const tabs = [
-  { name: "Медицина", link: "/" },
+  { name: "Препарати", link: "/" },
   { name: "Медичні розхідники", link: "/category/medicalsupplies" },
   { name: "Мед. обладнання", link: "/category/equipment" },
 ];
 
 const CategoryTabs = () => {
-  const [activeTab, setActiveTab] = useState("Медицина");
+  const [activeTab, setActiveTab] = useState("Препарати");
 
   return (
     <nav className="flex items-end gap-6 mt-1">

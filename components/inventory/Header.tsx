@@ -2,7 +2,7 @@ import MedicineIcon from "./MedicineIcon";
 
 const PAGE_HEADERS = {
   medicine: {
-    title: "Медицина",
+    title: "Препарати",
     subtitle:
       "Перелік медикаментів у наявності. Зверніть увагу на медикаменти, які потребують поповнення.",
   },
