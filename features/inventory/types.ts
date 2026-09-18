@@ -47,6 +47,7 @@ export type MedicalItemRow = {
  * Medicine item used by the UI
  */
 export type InventoryItem = {
+  description: string
   id: string;
   name: string;
   dosage: string | null;
