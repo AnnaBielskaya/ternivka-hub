@@ -4,7 +4,7 @@ import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item"
 import Header from "@/components/inventory/Header";
 
 import AddItemButton from "./AddItemButton";
-import MedsTableClient from "./MedsTableClient.tsx";
+import MedsTableClient from "./MedsTableClient";
 
 const MedsTable = async () => {
   const items = await getMedicalItems();

@@ -2,12 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type {
-  InventoryItem,
-  MedicineSortKey,
-  SortDirection,
-} from "@/features/inventory/types";
-
+import type { InventoryItem } from "@/features/inventory/types";
 import { MEDICINE_TABLE_COLUMNS } from "../constants";
 import MedsToolbar from "./MedsToolbar";
 
@@ -15,65 +10,20 @@ type MedsTableClientProps = {
   items: InventoryItem[];
 };
 
-const getStatusSortValue = (item: InventoryItem) => {
-  if (item.refill_required) {
-    return 0;
-  }
-
-  if (item.isLow) {
-    return 1;
-  }
-
-  return 2;
-};
-
 const MedsTableClient = ({ items }: MedsTableClientProps) => {
-  const [sortKey, setSortKey] = useState<MedicineSortKey>("name");
+  const [refillOnly, setRefillOnly] = useState(false);
 
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const filteredItems = useMemo(() => {
+    if (!refillOnly) {
+      return items;
+    }
 
-  const sortedItems = useMemo(() => {
-    return [...items].sort((a, b) => {
-      let result = 0;
-
-      switch (sortKey) {
-        case "name":
-          result = a.name.localeCompare(b.name, "uk", { sensitivity: "base" });
-          break;
-
-        case "active_ingredient":
-          result = (a.active_ingredient ?? "").localeCompare(
-            b.active_ingredient ?? "",
-            "uk",
-            { sensitivity: "base" }
-          );
-          break;
-
-        case "nearestExpiry":
-          result =
-            (a.nearestExpirySortKey ?? Infinity) -
-            (b.nearestExpirySortKey ?? Infinity);
-          break;
-
-        case "status":
-          result = getStatusSortValue(a) - getStatusSortValue(b);
-          break;
-      }
-
-      return sortDirection === "asc" ? result : -result;
-    });
-  }, [items, sortKey, sortDirection]);
+    return items.filter((item) => item.refill_required);
+  }, [items, refillOnly]);
 
   return (
     <>
-      <MedsToolbar
-        sortKey={sortKey}
-        sortDirection={sortDirection}
-        onSortChange={(key, direction) => {
-          setSortKey(key);
-          setSortDirection(direction);
-        }}
-      />
+      <MedsToolbar refillOnly={refillOnly} onRefillChange={setRefillOnly} />
 
       <div className="overflow-auto rounded-lg border border-gray-200 bg-white">
         <table className="inventory-table">
@@ -88,7 +38,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
           </thead>
 
           <tbody>
-            {sortedItems.map((item) => {
+            {filteredItems.map((item) => {
               const isRefillRequired = item.refill_required;
 
               return (
@@ -111,13 +61,23 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                   </td>
 
                   <td
-                    className={`inventory-table-cell-bordered font-medium ${
-                      isRefillRequired
-                        ? "bg-red-50 text-red-700"
-                        : "text-gray-900"
+                    className={`inventory-table-cell-bordered ${
+                      isRefillRequired ? "bg-red-50" : ""
                     }`}
                   >
-                    {item.category?.name ?? "-"}
+                    {item.category ? (
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                          isRefillRequired
+                            ? "bg-red-100 text-red-700"
+                            : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {item.category.name}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
                   </td>
 
                   <td
@@ -205,6 +165,17 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                 </tr>
               );
             })}
+
+            {filteredItems.length === 0 && (
+              <tr>
+                <td
+                  colSpan={MEDICINE_TABLE_COLUMNS.length}
+                  className="px-5 py-10 text-center text-sm text-gray-500"
+                >
+                  Препаратів, які потребують поповнення, немає
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
