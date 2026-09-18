@@ -1,6 +1,7 @@
 import { getMedicalItems } from "@/features/inventory/queries/item.queries";
 import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item";
 import type { InventoryItem } from "@/features/inventory/types";
+import { MEDICINE_TABLE_COLUMNS } from "../constants";
 
 const MedsTable = async () => {
   const items = await getMedicalItems();
@@ -12,27 +13,14 @@ const MedsTable = async () => {
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50 text-left">
-            <th className="px-5 py-4 font-medium text-gray-600">Назва</th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">Категорія</th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Діюча речовина
-            </th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">Дозування</th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">Об'єм</th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">Одиниця</th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">Залишок</th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">
-              Найближчий строк
-            </th>
-
-            <th className="px-5 py-4 font-medium text-gray-600">Статус</th>
+            {MEDICINE_TABLE_COLUMNS.map((column) => (
+              <th
+                key={column.key}
+                className="px-5 py-4 font-medium text-gray-600"
+              >
+                {column.label}
+              </th>
+            ))}
           </tr>
         </thead>
 

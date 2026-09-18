@@ -36,3 +36,11 @@ export type InventoryItem = {
   nearestExpiry: string | null;
   isLow: boolean;
 };
+
+export type MedicineSortKey =
+  | "name"
+  | "active_ingredient"
+  | "nearestExpiry"
+  | "status";
+
+export type SortDirection = "asc" | "desc";
