@@ -10,7 +10,7 @@ const MedsTable = async () => {
   const inventoryItems = items.map(mapInventoryItem);
 
   return (
-    <div className="flex flex-col gap-6">
+    <>
       <div className="flex items-center justify-between">
         <Header variant="medicine" />
         <AddItemButton variant="medicine" />
@@ -156,7 +156,7 @@ const MedsTable = async () => {
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 };
 
