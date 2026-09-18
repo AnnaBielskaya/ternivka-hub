@@ -1,6 +1,6 @@
 "use client";
 
-import MedicineForm from "@/features/inventory/components/MedicineForm";
+import MedicineForm from "@/features/inventory/forms/MedicineForm";
 
 const MODAL_CONFIG = {
   medicine: {
