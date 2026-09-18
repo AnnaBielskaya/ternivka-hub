@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+
+import type { MedicineFormRow } from "@/features/inventory/types";
+
 import AddItemModal from "./AddItemModal";
 
 const ADD_ITEM_CONFIG = {
@@ -17,9 +20,13 @@ const ADD_ITEM_CONFIG = {
 
 type AddItemButtonProps = {
   variant: keyof typeof ADD_ITEM_CONFIG;
+  medicineForms?: MedicineFormRow[];
 };
 
-const AddItemButton = ({ variant }: AddItemButtonProps) => {
+const AddItemButton = ({
+  variant,
+  medicineForms = [],
+}: AddItemButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { title } = ADD_ITEM_CONFIG[variant];
@@ -39,6 +46,7 @@ const AddItemButton = ({ variant }: AddItemButtonProps) => {
         variant={variant}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        medicineForms={medicineForms}
       />
     </>
   );

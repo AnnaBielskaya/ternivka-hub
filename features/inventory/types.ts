@@ -1,3 +1,22 @@
+/**
+ * Medicine form row
+ */
+export type MedicineFormRow = {
+  id: string;
+  name: string;
+};
+
+/**
+ * Medicine purpose row
+ */
+export type MedicinePurposeRow = {
+  id: string;
+  name: string;
+};
+
+/**
+ * Stock row
+ */
 export type StockRow = {
   id: string;
   expiry_month: number;
@@ -5,11 +24,9 @@ export type StockRow = {
   quantity: number;
 };
 
-export type CategoryRow = {
-  id: string;
-  name: string;
-};
-
+/**
+ * Raw medicine item returned from Supabase
+ */
 export type MedicalItemRow = {
   id: string;
   name: string;
@@ -19,25 +36,37 @@ export type MedicalItemRow = {
   unit: string;
   refill_required: boolean;
   minimum_quantity: number;
-  categories: CategoryRow | null;
+
+  medicine_form: MedicineFormRow | null;
+  medicine_purpose: MedicinePurposeRow | null;
+
   stock: StockRow[];
 };
 
+/**
+ * Medicine item used by the UI
+ */
 export type InventoryItem = {
   id: string;
   name: string;
-  category: CategoryRow | null;
   dosage: string | null;
   active_ingredient: string | null;
   volume: string | null;
   unit: string;
   refill_required: boolean;
   quantity: number;
+
+  medicine_form: MedicineFormRow | null;
+  medicine_purpose: MedicinePurposeRow | null;
+
   nearestExpiry: string | null;
   nearestExpirySortKey: number | null;
   isLow: boolean;
 };
 
+/**
+ * Medicine table sorting
+ */
 export type MedicineSortKey =
   | "name"
   | "active_ingredient"

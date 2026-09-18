@@ -1,5 +1,6 @@
 "use client";
 
+import type { MedicineFormRow } from "@/features/inventory/types";
 import MedicineForm from "@/features/inventory/forms/MedicineForm";
 
 const MODAL_CONFIG = {
@@ -18,12 +19,14 @@ type AddItemModalProps = {
   variant: keyof typeof MODAL_CONFIG;
   isOpen: boolean;
   onClose: () => void;
+  medicineForms?: MedicineFormRow[];
 };
 
 const AddItemModal = ({
   variant,
   isOpen,
   onClose,
+  medicineForms = [],
 }: AddItemModalProps) => {
   if (!isOpen) {
     return null;
@@ -56,7 +59,10 @@ const AddItemModal = ({
         </div>
 
         {variant === "medicine" && (
-          <MedicineForm onCancel={onClose} />
+          <MedicineForm
+            onCancel={onClose}
+            medicineForms={medicineForms}
+          />
         )}
       </div>
     </div>

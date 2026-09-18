@@ -1,10 +1,16 @@
 "use client";
 
+import type { MedicineFormRow } from "@/features/inventory/types";
+
 type MedicineFormProps = {
   onCancel: () => void;
+  medicineForms: MedicineFormRow[];
 };
 
-const MedicineForm = ({ onCancel }: MedicineFormProps) => {
+const MedicineForm = ({
+  onCancel,
+  medicineForms,
+}: MedicineFormProps) => {
   return (
     <form>
       <div className="space-y-8 p-6">
@@ -50,41 +56,48 @@ const MedicineForm = ({ onCancel }: MedicineFormProps) => {
 
             <div>
               <label
-                htmlFor="category_id"
+                htmlFor="form_id"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                Категорія <span className="text-red-500">*</span>
+                Форма випуску{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <select
-                id="category_id"
-                name="category_id"
+                id="form_id"
+                name="form_id"
                 defaultValue=""
                 className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               >
                 <option value="" disabled>
-                  Оберіть категорію
+                  Оберіть форму випуску
                 </option>
-                <option value="example">Знеболювальні</option>
+
+                {medicineForms.map((form) => (
+                  <option key={form.id} value={form.id}>
+                    {form.name}
+                  </option>
+                ))}
               </select>
             </div>
 
             <div>
               <label
-                htmlFor="prescription_id"
+                htmlFor="purpose_id"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
                 Призначення
               </label>
 
               <select
-                id="prescription_id"
-                name="prescription_id"
+                id="purpose_id"
+                name="purpose_id"
                 defaultValue=""
                 className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               >
-                <option value="">Не обрано</option>
-                <option value="example">Анальгетики/антипіретики</option>
+                <option value="">
+                  Не обрано
+                </option>
               </select>
             </div>
 
@@ -127,7 +140,8 @@ const MedicineForm = ({ onCancel }: MedicineFormProps) => {
                 htmlFor="unit"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                Одиниця <span className="text-red-500">*</span>
+                Одиниця{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <select
@@ -139,14 +153,31 @@ const MedicineForm = ({ onCancel }: MedicineFormProps) => {
                 <option value="" disabled>
                   Оберіть одиницю
                 </option>
-                <option value="blister">Блістер</option>
-                <option value="package">Упаковка</option>
-                <option value="ampule">Ампула</option>
+
+                <option value="blister">
+                  Блістер
+                </option>
+
+                <option value="package">
+                  Упаковка
+                </option>
+
+                <option value="ampule">
+                  Ампула
+                </option>
+
+                <option value="gram">
+                  Грам
+                </option>
+
+                <option value="kilogram">
+                  Кілограм
+                </option>
               </select>
             </div>
           </div>
         </section>
-        
+
         <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
           <button
             type="button"
