@@ -18,7 +18,7 @@ const MedsToolbar = ({
 
         <button
           type="button"
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          className="cursor-pointer inline-flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
           Назва
           <span className="text-xs text-gray-400">↑</span>
@@ -26,21 +26,21 @@ const MedsToolbar = ({
 
         <button
           type="button"
-          className="inline-flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          className="cursor-pointer inline-flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
           Діюча речовина
         </button>
 
         <button
           type="button"
-          className="inline-flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          className="cursor-pointer inline-flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
           Строк придатності
         </button>
 
         <button
           type="button"
-          className="inline-flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          className="cursor-pointer inline-flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
           Статус
         </button>
