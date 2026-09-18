@@ -172,7 +172,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                   colSpan={MEDICINE_TABLE_COLUMNS.length}
                   className="px-5 py-10 text-center text-sm text-gray-500"
                 >
-                  Препаратів, які потребують поповнення, немає
+                  Препаратів немає
                 </td>
               </tr>
             )}

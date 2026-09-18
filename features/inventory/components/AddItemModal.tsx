@@ -1,5 +1,7 @@
 "use client";
 
+import MedicineForm from "@/features/inventory/components/MedicineForm";
+
 const MODAL_CONFIG = {
   medicine: {
     title: "Додати препарат",
@@ -18,7 +20,11 @@ type AddItemModalProps = {
   onClose: () => void;
 };
 
-const AddItemModal = ({ variant, isOpen, onClose }: AddItemModalProps) => {
+const AddItemModal = ({
+  variant,
+  isOpen,
+  onClose,
+}: AddItemModalProps) => {
   if (!isOpen) {
     return null;
   }
@@ -31,11 +37,13 @@ const AddItemModal = ({ variant, isOpen, onClose }: AddItemModalProps) => {
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {title}
+          </h2>
 
           <button
             type="button"
@@ -47,24 +55,9 @@ const AddItemModal = ({ variant, isOpen, onClose }: AddItemModalProps) => {
           </button>
         </div>
 
-        <div className="text-sm text-gray-500">Тут буде форма додавання.</div>
-
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-10 rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-          >
-            Скасувати
-          </button>
-
-          <button
-            type="button"
-            className="h-10 rounded-xl bg-gray-900 px-4 text-sm font-semibold text-white transition hover:bg-gray-800"
-          >
-            Додати
-          </button>
-        </div>
+        {variant === "medicine" && (
+          <MedicineForm onCancel={onClose} />
+        )}
       </div>
     </div>
   );

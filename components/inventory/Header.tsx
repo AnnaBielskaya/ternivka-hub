@@ -1,3 +1,5 @@
+import MedicineIcon from "./MedicineIcon";
+
 const PAGE_HEADERS = {
   medicine: {
     title: "Медицина",
@@ -25,7 +27,10 @@ const Header = ({ variant }: HeaderProps) => {
 
   return (
     <div className="flex flex-col">
-      <h2 className="text-2xl font-bold">{title}</h2>
+      <div className="flex flex-row items-center gap-2 mb-1">
+        <MedicineIcon />
+        <h2 className="text-2xl font-bold">{title}</h2>
+      </div>
       <p className="text-sm text-gray-500">{subtitle}</p>
     </div>
   );
