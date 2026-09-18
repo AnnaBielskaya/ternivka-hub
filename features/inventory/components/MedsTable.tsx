@@ -5,9 +5,6 @@ import Header from "@/components/inventory/Header";
 import MedsToolbar from "./MedsToolbar";
 import AddItemButton from "./AddItemButton";
 
-const CELL_CLASS = "px-5 py-4";
-const BORDER_CELL_CLASS = `${CELL_CLASS} border-r border-gray-100`;
-
 const MedsTable = async () => {
   const items = await getMedicalItems();
   const inventoryItems = items.map(mapInventoryItem);
@@ -22,13 +19,13 @@ const MedsTable = async () => {
       <MedsToolbar />
 
       <div className="overflow-auto rounded-lg border border-gray-200 bg-white">
-        <table className="w-full min-w-max border-collapse text-sm">
+        <table className="inventory-table">
           <thead>
-            <tr className="border-b border-gray-200 bg-[#EEF2F5] text-left">
+            <tr className="inventory-table-head">
               {MEDICINE_TABLE_COLUMNS.map((column) => (
                 <th
                   key={column.key}
-                  className="px-5 py-4 font-medium text-gray-600"
+                  className="inventory-table-head-cell"
                 >
                   {column.label}
                 </th>
@@ -40,10 +37,6 @@ const MedsTable = async () => {
             {inventoryItems.map((item) => {
               const isRefillRequired = item.refill_required;
 
-              const cellTextClass = isRefillRequired
-                ? "text-red-700"
-                : "text-gray-900";
-
               return (
                 <tr
                   key={item.id}
@@ -54,31 +47,37 @@ const MedsTable = async () => {
                   }`}
                 >
                   <td
-                    className={`${BORDER_CELL_CLASS} font-medium ${cellTextClass} ${
-                      isRefillRequired ? "bg-red-50" : ""
+                    className={`inventory-table-cell-bordered font-medium ${
+                      isRefillRequired
+                        ? "bg-red-50 text-red-700"
+                        : "text-gray-900"
                     }`}
                   >
                     {item.name}
                   </td>
 
                   <td
-                    className={`${BORDER_CELL_CLASS} font-medium ${cellTextClass} ${
-                      isRefillRequired ? "bg-red-50" : ""
+                    className={`inventory-table-cell-bordered font-medium ${
+                      isRefillRequired
+                        ? "bg-red-50 text-red-700"
+                        : "text-gray-900"
                     }`}
                   >
                     {item.category?.name ?? "-"}
                   </td>
 
                   <td
-                    className={`${BORDER_CELL_CLASS} font-medium ${cellTextClass} ${
-                      isRefillRequired ? "bg-red-50" : ""
+                    className={`inventory-table-cell-bordered font-medium ${
+                      isRefillRequired
+                        ? "bg-red-50 text-red-700"
+                        : "text-gray-900"
                     }`}
                   >
                     {item.active_ingredient ?? "-"}
                   </td>
 
                   <td
-                    className={`${BORDER_CELL_CLASS} ${
+                    className={`inventory-table-cell-bordered ${
                       isRefillRequired
                         ? "bg-red-50 text-red-700"
                         : "text-gray-600"
@@ -88,7 +87,7 @@ const MedsTable = async () => {
                   </td>
 
                   <td
-                    className={`${BORDER_CELL_CLASS} ${
+                    className={`inventory-table-cell-bordered ${
                       isRefillRequired
                         ? "bg-red-50 text-red-700"
                         : "text-gray-600"
@@ -98,7 +97,7 @@ const MedsTable = async () => {
                   </td>
 
                   <td
-                    className={`${BORDER_CELL_CLASS} ${
+                    className={`inventory-table-cell-bordered ${
                       isRefillRequired
                         ? "bg-red-50 text-red-700"
                         : "text-gray-600"
@@ -108,7 +107,7 @@ const MedsTable = async () => {
                   </td>
 
                   <td
-                    className={`${CELL_CLASS} text-xs font-medium ${
+                    className={`inventory-table-cell text-xs font-medium ${
                       isRefillRequired
                         ? "bg-red-50 text-red-700"
                         : "text-gray-900"
@@ -118,7 +117,7 @@ const MedsTable = async () => {
                   </td>
 
                   <td
-                    className={`${CELL_CLASS} text-xs ${
+                    className={`inventory-table-cell text-xs ${
                       isRefillRequired
                         ? "bg-red-50 text-red-700"
                         : "text-gray-600"
@@ -128,13 +127,15 @@ const MedsTable = async () => {
                   </td>
 
                   <td
-                    className={`${CELL_CLASS} ${
+                    className={`inventory-table-cell ${
                       isRefillRequired ? "bg-red-50" : ""
                     }`}
                   >
                     {isRefillRequired ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
-                        <span className="text-[10px] leading-none">⚠️</span>
+                        <span className="text-[10px] leading-none">
+                          ⚠️
+                        </span>
                         Треба поповнити
                       </span>
                     ) : (
