@@ -3,6 +3,7 @@ import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item"
 import { MEDICINE_TABLE_COLUMNS } from "../constants";
 import Header from "@/components/inventory/Header";
 import MedsToolbar from "./MedsToolbar";
+import AddItemButton from "./AddItemButton";
 
 const CELL_CLASS = "px-5 py-4";
 const BORDER_CELL_CLASS = `${CELL_CLASS} border-r border-gray-100`;
@@ -15,14 +16,7 @@ const MedsTable = async () => {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <Header variant="medicine" />
-
-        <button
-          type="button"
-          className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl bg-gray-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
-        >
-          <span className="text-lg leading-none">+</span>
-          <span>Додати препарат</span>
-        </button>
+        <AddItemButton variant="medicine" />
       </div>
 
       <MedsToolbar />
