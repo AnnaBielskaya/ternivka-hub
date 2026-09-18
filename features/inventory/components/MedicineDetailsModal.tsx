@@ -1,5 +1,7 @@
 "use client";
 
+import StatusBadge from "@/components/ui/StatusBadge";
+import RequiredAction from "@/components/ui/StatusBadge";
 import type { InventoryItem, StockRow } from "@/features/inventory/types";
 
 type MedicineDetailsModalProps = {
@@ -43,10 +45,7 @@ const MedicineDetailsModal = ({
               </h2>
 
               {isRefillRequired && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
-                  <span className="text-[10px] leading-none">⚠️</span>
-                  Треба поповнити
-                </span>
+                <StatusBadge variant="warning" title="Треба поповнити" />
               )}
             </div>
 
