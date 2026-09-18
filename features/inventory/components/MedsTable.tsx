@@ -10,7 +10,7 @@ const MedsTable = async () => {
   const inventoryItems: InventoryItem[] = items.map(mapInventoryItem);
 
   return (
-    <div className="bg-white rounded-xl p-5">
+    <div className="bg-white rounded-xl p-5 border border-[#EDEEF0]">
       <div className="mb-4 flex items-center justify-between">
         <Header variant="medicine" />
 
@@ -26,7 +26,7 @@ const MedsTable = async () => {
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50 text-left">
+            <tr className="border-b border-gray-200 bg-[#EEF2F5] text-left">
               {MEDICINE_TABLE_COLUMNS.map((column) => (
                 <th
                   key={column.key}

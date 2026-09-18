@@ -22,10 +22,10 @@ type HeaderProps = {
 
 const Header = ({ variant }: HeaderProps) => {
   const { title, subtitle } = PAGE_HEADERS[variant];
-  
+
   return (
-    <div className="flex flex-col gap-1 mb-4">
-      <h2 className="text-lg font-semibold">{title}</h2>
+    <div className="flex flex-col mb-4">
+      <h2 className="text-2xl font-bold">{title}</h2>
       <p className="text-sm text-gray-500">{subtitle}</p>
     </div>
   );
