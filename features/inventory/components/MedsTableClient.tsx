@@ -205,19 +205,13 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                   </td>
 
                   <td
-                    className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
+                    className={`inventory-table-cell-bordered text-xs font-medium ${primaryTextClassName}`}
                   >
-                    {item.unit}
+                    {item.quantity} ({item.unit})
                   </td>
 
                   <td
-                    className={`inventory-table-cell text-xs font-medium ${primaryTextClassName}`}
-                  >
-                    {item.quantity}
-                  </td>
-
-                  <td
-                    className={`inventory-table-cell text-xs ${secondaryTextClassName}`}
+                    className={`inventory-table-cell-bordered text-xs ${secondaryTextClassName}`}
                   >
                     {item.nearestExpiry ?? "-"}
                   </td>
