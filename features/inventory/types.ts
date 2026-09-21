@@ -41,13 +41,12 @@ export type InventoryItem = {
   unit: string;
   quantity: number;
   minimum_quantity: number;
-
   medicine_form: MedicineFormRow | null;
   medicine_purpose: MedicinePurposeRow | null;
-
   nearestExpiry: string | null;
   nearestExpirySortKey: number | null;
   needsRefill: boolean;
+  stock: StockRow[];
 };
 
 export type MedicineSortKey =

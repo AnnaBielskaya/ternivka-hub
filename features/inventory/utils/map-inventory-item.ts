@@ -35,20 +35,18 @@ export function mapInventoryItem(item: MedicalItemRow): InventoryItem {
   return {
     id: item.id,
     name: item.name,
-    description: item.description,
+    description: item.description ?? null,
     dosage: item.dosage,
-    active_ingredient: item.active_ingredient,
+    active_ingredient: item.active_ingredient || null,
     volume: item.volume,
     unit: item.unit,
     quantity,
     minimum_quantity: minimumQuantity,
-
     medicine_form: item.medicine_form,
     medicine_purpose: item.medicine_purpose,
-
     nearestExpiry,
     nearestExpirySortKey,
-
     needsRefill: quantity < minimumQuantity,
+    stock: item.stock,
   };
 }

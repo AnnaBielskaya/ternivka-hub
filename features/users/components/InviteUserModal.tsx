@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
+
+import { inviteUser } from "../actions/invite-user";
 import { UserRole } from "../types";
 
 type InviteUserModalProps = {
@@ -32,32 +34,71 @@ const ROLE_OPTIONS: {
 const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<UserRole>("viewer");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState("");
 
   const handleClose = () => {
+    if (isLoading) {
+      return;
+    }
+
     setEmail("");
     setRole("viewer");
+    setError("");
+    setSuccess("");
     onClose();
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    const result = await inviteUser(email, role);
+
+    setIsLoading(false);
+
+    if (result.status === "error") {
+      setError(result.message);
+      return;
+    }
+
+    setSuccess("Запрошення надіслано на вказаний email.");
+
+    setTimeout(() => {
+      handleClose();
+    }, 1200);
   };
 
   return (
     <Modal
       isOpen={isOpen}
       title="Запросити користувача"
-      size="sm"
       onClose={handleClose}
       footer={
         <div className="flex justify-end gap-3">
-          <CustomButton variant="secondary" onClick={handleClose}>
+          <CustomButton
+            variant="secondary"
+            onClick={handleClose}
+            disabled={isLoading}
+          >
             Скасувати
           </CustomButton>
 
-          <CustomButton type="submit" form="invite-user-form">
-            Запросити
+          <CustomButton
+            type="submit"
+            form="invite-user-form"
+            disabled={isLoading}
+          >
+            {isLoading ? "Надсилання..." : "Запросити"}
           </CustomButton>
         </div>
       }
     >
-      <form id="invite-user-form">
+      <form id="invite-user-form" onSubmit={handleSubmit}>
         <div className="space-y-5 p-6">
           <div>
             <label
@@ -101,6 +142,10 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
               ))}
             </select>
           </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          {success && <p className="text-sm text-green-600">{success}</p>}
         </div>
       </form>
     </Modal>

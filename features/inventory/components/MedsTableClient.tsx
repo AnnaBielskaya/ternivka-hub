@@ -120,19 +120,6 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
       : sortedItems;
   }, [items, needsRefillOnly, sortKey, sortDirection]);
 
-  const mockStock: StockRow[] = selectedItem
-    ? selectedItem.nearestExpiry
-      ? [
-          {
-            id: `${selectedItem.id}-stock`,
-            expiry_month: Number(selectedItem.nearestExpiry.split("/")[0]),
-            expiry_year: Number(selectedItem.nearestExpiry.split("/")[1]),
-            quantity: selectedItem.quantity,
-          },
-        ]
-      : []
-    : [];
-
   return (
     <>
       <MedsToolbar
@@ -277,7 +264,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
       {selectedItem && (
         <MedicineDetailsModal
           item={selectedItem}
-          stock={mockStock}
+          stock={selectedItem.stock}
           onClose={handleCloseModal}
           onDelete={handleDelete}
         />
