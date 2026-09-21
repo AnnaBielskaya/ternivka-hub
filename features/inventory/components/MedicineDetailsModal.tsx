@@ -65,7 +65,7 @@ const MedicineDetailsModal = ({
       title={
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <h2 className="min-w-0 text-xl font-semibold leading-tight text-gray-900">
+            <h2 className="min-w-0 text-lg font-semibold leading-tight text-slate-900">
               {item.name}
             </h2>
 
@@ -76,7 +76,7 @@ const MedicineDetailsModal = ({
           </div>
 
           {medicineSubtitle && (
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs text-slate-500">
               {medicineSubtitle}
             </p>
           )}
@@ -89,7 +89,7 @@ const MedicineDetailsModal = ({
             <button
               type="button"
               onClick={onDelete}
-              className="h-10 cursor-pointer rounded-xl px-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
+              className="h-9 cursor-pointer rounded-lg px-3 text-xs font-medium text-red-600 transition hover:bg-red-50"
             >
               Видалити
             </button>
@@ -97,11 +97,11 @@ const MedicineDetailsModal = ({
             <div />
           )}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              className="h-9 cursor-pointer rounded-lg border border-gray-200 px-3.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
             >
               Закрити
             </button>
@@ -110,7 +110,7 @@ const MedicineDetailsModal = ({
               <button
                 type="button"
                 onClick={onEdit}
-                className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                className="h-9 cursor-pointer rounded-lg bg-gray-800 px-4 text-xs font-semibold text-white transition hover:bg-gray-700"
               >
                 Редагувати
               </button>
@@ -120,11 +120,9 @@ const MedicineDetailsModal = ({
       }
       size="lg"
     >
-      <div className="space-y-7 p-6">
+      <div className="space-y-6 p-5">
         <section>
-          <SectionTitle title="Залишок" />
-
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <SummaryItem
               label="Загальна кількість"
               value={`${item.quantity} (${item.unit})`}
@@ -143,12 +141,10 @@ const MedicineDetailsModal = ({
           </div>
         </section>
 
-        <SectionDivider />
-
         <section>
           <SectionTitle title="Характеристики" />
 
-          <div className="grid grid-cols-3 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-3 gap-x-6 gap-y-4">
             <InfoItem
               label="Діюча речовина"
               value={item.active_ingredient}
@@ -184,14 +180,14 @@ const MedicineDetailsModal = ({
         <SectionDivider />
 
         <section>
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-3 flex items-center justify-between">
             <SectionTitle
               title="Партії"
               className="mb-0"
             />
 
             {sortedStock.length > 0 && (
-              <span className="text-xs text-gray-400">
+              <span className="text-[12px] text-slate-400">
                 {sortedStock.length}{" "}
                 {sortedStock.length === 1
                   ? "партія"
@@ -201,20 +197,20 @@ const MedicineDetailsModal = ({
           </div>
 
           {sortedStock.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               {sortedStock.map(
                 (stockItem) => (
                   <div
                     key={stockItem.id}
-                    className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-4"
+                    className="rounded-lg bg-slate-50 px-3.5 py-3"
                   >
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center justify-between gap-4">
                       <div>
-                        <span className="block text-xs text-gray-400">
+                        <span className="block text-[12px] text-slate-400">
                           Термін придатності
                         </span>
 
-                        <span className="mt-1 block text-base font-semibold text-gray-900">
+                        <span className="mt-0.5 block text-sm font-semibold text-slate-900">
                           {formatExpiry(
                             stockItem.expiry_month,
                             stockItem.expiry_year,
@@ -223,11 +219,11 @@ const MedicineDetailsModal = ({
                       </div>
 
                       <div className="text-right">
-                        <span className="block text-xs text-gray-400">
+                        <span className="block text-[12px] text-slate-400">
                           Кількість
                         </span>
 
-                        <span className="mt-1 block text-base font-semibold text-gray-900">
+                        <span className="mt-0.5 block text-sm font-semibold text-slate-900">
                           {stockItem.quantity}{" "}
                           {item.unit}
                         </span>
@@ -238,7 +234,7 @@ const MedicineDetailsModal = ({
               )}
             </div>
           ) : (
-            <div className="rounded-xl bg-gray-50 px-4 py-4 text-sm text-gray-500">
+            <div className="rounded-lg bg-slate-50 px-3.5 py-3 text-xs text-slate-500">
               Інформація про партії відсутня
             </div>
           )}
@@ -251,8 +247,8 @@ const MedicineDetailsModal = ({
             <section>
               <SectionTitle title="Опис" />
 
-              <div className="rounded-xl bg-gray-50 px-4 py-4">
-                <p className="whitespace-pre-wrap text-sm leading-6 text-gray-600">
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3">
+                <p className="whitespace-pre-wrap text-xs leading-5 text-slate-600">
                   {item.description}
                 </p>
               </div>
@@ -271,11 +267,11 @@ type SectionTitleProps = {
 
 const SectionTitle = ({
   title,
-  className = "mb-4",
+  className = "mb-3",
 }: SectionTitleProps) => {
   return (
     <h3
-      className={`text-sm font-semibold text-gray-900 ${className}`}
+      className={`text-xs font-semibold text-slate-900 ${className}`}
     >
       {title}
     </h3>
@@ -293,11 +289,11 @@ const InfoItem = ({
 }: InfoItemProps) => {
   return (
     <div className="min-w-0">
-      <span className="block text-xs text-gray-400">
+      <span className="block text-[12px] text-slate-400">
         {label}
       </span>
 
-      <span className="mt-1.5 block truncate text-sm font-medium text-gray-900">
+      <span className="mt-1 block truncate text-[13px] font-medium text-slate-800">
         {value || "—"}
       </span>
     </div>
@@ -317,27 +313,27 @@ const SummaryItem = ({
 }: SummaryItemProps) => {
   return (
     <div
-      className={`rounded-xl border px-4 py-3 ${
+      className={`rounded-lg px-3.5 py-3 ${
         highlight
-          ? "border-red-100 bg-red-50"
-          : "border-gray-100 bg-gray-50"
+          ? "bg-red-50"
+          : "bg-slate-50"
       }`}
     >
       <span
-        className={`block text-xs ${
+        className={`block text-[12px] ${
           highlight
             ? "text-red-500"
-            : "text-gray-500"
+            : "text-slate-400"
         }`}
       >
         {label}
       </span>
 
       <span
-        className={`mt-1.5 block text-lg font-semibold ${
+        className={`mt-1 block text-sm font-semibold ${
           highlight
             ? "text-red-700"
-            : "text-gray-900"
+            : "text-slate-900"
         }`}
       >
         {value}
@@ -348,7 +344,7 @@ const SummaryItem = ({
 
 const SectionDivider = () => {
   return (
-    <div className="border-t border-gray-100" />
+    <div className="border-t border-slate-100" />
   );
 };
 
