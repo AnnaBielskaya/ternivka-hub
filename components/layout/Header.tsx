@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import Logo from "./Logo";
 import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
@@ -54,7 +55,7 @@ const Header = ({ name, role }: UserMenuProps) => {
           <CategoryTabs />
         </div>
 
-        <div className="flex items-center justify-center gap-5">
+        <div className="flex items-center gap-4">
           <SearchInput />
 
           <button
@@ -62,11 +63,11 @@ const Header = ({ name, role }: UserMenuProps) => {
             onClick={() => setIsOpen(true)}
             aria-label="Відкрити меню користувача"
             aria-expanded={isOpen}
-            className="cursor-pointer flex items-center justify-center gap-2"
+            className="flex cursor-pointer items-center gap-2 rounded-lg transition hover:bg-slate-50"
           >
-            <div className="text-sm font-semibold">{name}</div>
+            <div className="text-[13px] font-medium text-slate-700">{name}</div>
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold hover:bg-gray-300">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600 transition hover:bg-slate-200">
               {firstLetter}
             </div>
           </button>

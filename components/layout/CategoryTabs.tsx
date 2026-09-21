@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 const tabs = [
   { name: "Препарати", link: "/" },
@@ -10,29 +10,29 @@ const tabs = [
 ];
 
 const CategoryTabs = () => {
-  const [activeTab, setActiveTab] = useState("Препарати");
+  const pathname = usePathname();
 
   return (
-    <nav className="flex items-end gap-6 mt-1">
-      {tabs.map((tab) => (
-        <Link key={tab.name} href={tab.link}>
-          <button
-            type="button"
-            onClick={() => setActiveTab(tab.name)}
-            className={`relative cursor-pointer pb-1 text-sm font-medium transition ${
-              activeTab === tab.name
-                ? "text-gray-900"
-                : "text-gray-500 hover:text-gray-800"
+    <nav className="mt-1 flex items-end gap-6">
+      {tabs.map((tab) => {
+        const isActive = pathname === tab.link;
+
+        return (
+          <Link
+            key={tab.name}
+            href={tab.link}
+            className={`relative pb-1 text-sm font-medium transition ${
+              isActive ? "text-gray-900" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             {tab.name}
 
-            {activeTab === tab.name && (
+            {isActive && (
               <span className="absolute bottom-0 left-0 h-0.5 w-full rounded-full bg-gray-900" />
             )}
-          </button>
-        </Link>
-      ))}
+          </Link>
+        );
+      })}
     </nav>
   );
 };
