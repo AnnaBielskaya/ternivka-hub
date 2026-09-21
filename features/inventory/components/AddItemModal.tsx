@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useState } from "react";
+
 import type {
   MedicineFormRow,
   MedicinePurposeRow,
@@ -11,6 +13,7 @@ import Modal from "@/components/ui/Modal";
 const MODAL_CONFIG = {
   medicine: {
     title: "Додати препарат",
+    submitLabel: "Додати препарат",
   },
   medicalsupplies: {
     title: "Додати медичний розхідник",
@@ -35,14 +38,33 @@ const AddItemModal = ({
   medicineForms = [],
   medicinePurposes = [],
 }: AddItemModalProps) => {
-  const { title } = MODAL_CONFIG[variant];
+  const [formVersion, setFormVersion] =
+    useState(0);
+
+  const handleClose = useCallback(() => {
+    setFormVersion(
+      (current) => current + 1,
+    );
+
+    onClose();
+  }, [onClose]);
+
+  const handleSaved = useCallback(() => {
+    setFormVersion(
+      (current) => current + 1,
+    );
+
+    onClose();
+  }, [onClose]);
+
+  const config = MODAL_CONFIG[variant];
 
   const footer =
     variant === "medicine" ? (
       <div className="flex justify-end gap-3">
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
           Скасувати
@@ -53,7 +75,7 @@ const AddItemModal = ({
           form="medicine-form"
           className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800"
         >
-          Додати препарат
+          {MODAL_CONFIG.medicine.submitLabel}
         </button>
       </div>
     ) : null;
@@ -61,14 +83,16 @@ const AddItemModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      title={title}
-      onClose={onClose}
+      title={config.title}
+      onClose={handleClose}
       footer={footer}
     >
       {variant === "medicine" && (
         <MedicineForm
+          key={formVersion}
           medicineForms={medicineForms}
           medicinePurposes={medicinePurposes}
+          onSaved={handleSaved}
         />
       )}
     </Modal>

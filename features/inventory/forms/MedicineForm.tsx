@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import type {
+  MedicineCreateState,
   MedicineFormRow,
   MedicinePurposeRow,
 } from "@/features/inventory/types";
 
 import MedicineNameAutocomplete from "@/features/inventory/components/MedicineNameAutocomplete";
+import { createMedicine } from "@/features/inventory/actions/create-medicine";
 
 const INVENTORY_UNITS = [
   {
@@ -42,19 +45,42 @@ const selectClassName =
 
 const labelClassName = "mb-1.5 block text-sm font-medium text-gray-700";
 
+const initialMedicineCreateState: MedicineCreateState = {
+  status: "idle",
+  message: "",
+};
+
 type MedicineFormProps = {
   medicineForms: MedicineFormRow[];
   medicinePurposes: MedicinePurposeRow[];
+  onSaved: () => void;
 };
 
 const MedicineForm = ({
   medicineForms,
   medicinePurposes,
+  onSaved,
 }: MedicineFormProps) => {
+  const router = useRouter();
+
   const [name, setName] = useState("");
 
+  const [state, formAction, isPending] = useActionState(
+    createMedicine,
+    initialMedicineCreateState
+  );
+
+  useEffect(() => {
+    if (state.status !== "success") {
+      return;
+    }
+
+    router.refresh();
+    onSaved();
+  }, [state.status, router, onSaved]);
+
   return (
-    <form id="medicine-form">
+    <form id="medicine-form" action={formAction}>
       <div className="space-y-7 p-6">
         <section>
           <div className="mb-4">
@@ -73,7 +99,11 @@ const MedicineForm = ({
                 Назва <span className="text-red-500">*</span>
               </label>
 
-              <MedicineNameAutocomplete value={name} onChange={setName} />
+              <MedicineNameAutocomplete
+                value={name}
+                onChange={setName}
+                disabled={isPending}
+              />
             </div>
 
             <div>
@@ -85,6 +115,7 @@ const MedicineForm = ({
                 id="active_ingredient"
                 name="active_ingredient"
                 type="text"
+                disabled={isPending}
                 placeholder="Наприклад, парацетамол"
                 className={inputClassName}
               />
@@ -100,6 +131,7 @@ const MedicineForm = ({
                 name="form_id"
                 required
                 defaultValue=""
+                disabled={isPending}
                 className={selectClassName}
               >
                 <option value="" disabled>
@@ -123,6 +155,7 @@ const MedicineForm = ({
                 id="purpose_id"
                 name="purpose_id"
                 defaultValue=""
+                disabled={isPending}
                 className={selectClassName}
               >
                 <option value="">Не обрано</option>
@@ -160,6 +193,7 @@ const MedicineForm = ({
                 id="dosage"
                 name="dosage"
                 type="text"
+                disabled={isPending}
                 placeholder="Наприклад, 500 мг"
                 className={inputClassName}
               />
@@ -174,6 +208,7 @@ const MedicineForm = ({
                 id="volume"
                 name="volume"
                 type="text"
+                disabled={isPending}
                 placeholder="Наприклад, 100 мл"
                 className={inputClassName}
               />
@@ -205,6 +240,7 @@ const MedicineForm = ({
                 min="0"
                 step="0.01"
                 defaultValue="0"
+                disabled={isPending}
                 className={inputClassName}
               />
             </div>
@@ -219,6 +255,7 @@ const MedicineForm = ({
                 name="unit"
                 required
                 defaultValue=""
+                disabled={isPending}
                 className={selectClassName}
               >
                 <option value="" disabled>
@@ -245,6 +282,7 @@ const MedicineForm = ({
                 min="0"
                 step="0.01"
                 defaultValue="0"
+                disabled={isPending}
                 className={inputClassName}
               />
             </div>
@@ -257,6 +295,7 @@ const MedicineForm = ({
                   id="expiry_month"
                   name="expiry_month"
                   defaultValue=""
+                  disabled={isPending}
                   className={selectClassName}
                 >
                   <option value="">Місяць</option>
@@ -275,6 +314,7 @@ const MedicineForm = ({
                   min="2020"
                   step="1"
                   placeholder="Рік"
+                  disabled={isPending}
                   className={inputClassName}
                 />
               </div>
@@ -302,10 +342,23 @@ const MedicineForm = ({
             id="description"
             name="description"
             rows={3}
+            disabled={isPending}
             placeholder="Особливості зберігання, примітки або інша важлива інформація..."
-            className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+            className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-gray-50"
           />
         </section>
+
+        {state.message && (
+          <div
+            className={`rounded-lg px-4 py-3 text-sm ${
+              state.status === "success"
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-700"
+            }`}
+          >
+            {state.message}
+          </div>
+        )}
       </div>
     </form>
   );

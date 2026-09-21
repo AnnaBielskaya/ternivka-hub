@@ -57,3 +57,8 @@ export type MedicineSortKey =
   | "status";
 
 export type SortDirection = "asc" | "desc";
+
+export type MedicineCreateState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
