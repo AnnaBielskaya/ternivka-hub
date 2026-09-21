@@ -9,6 +9,7 @@ import type {
 
 import MedicineForm from "@/features/inventory/forms/MedicineForm";
 import Modal from "@/components/ui/Modal";
+import CustomButton from "@/components/ui/CustomButton";
 
 const MODAL_CONFIG = {
   medicine: {
@@ -38,22 +39,15 @@ const AddItemModal = ({
   medicineForms = [],
   medicinePurposes = [],
 }: AddItemModalProps) => {
-  const [formVersion, setFormVersion] =
-    useState(0);
+  const [formVersion, setFormVersion] = useState(0);
 
   const handleClose = useCallback(() => {
-    setFormVersion(
-      (current) => current + 1,
-    );
-
+    setFormVersion((current) => current + 1);
     onClose();
   }, [onClose]);
 
   const handleSaved = useCallback(() => {
-    setFormVersion(
-      (current) => current + 1,
-    );
-
+    setFormVersion((current) => current + 1);
     onClose();
   }, [onClose]);
 
@@ -62,21 +56,13 @@ const AddItemModal = ({
   const footer =
     variant === "medicine" ? (
       <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-        >
+        <CustomButton variant="secondary" onClick={handleClose}>
           Скасувати
-        </button>
+        </CustomButton>
 
-        <button
-          type="submit"
-          form="medicine-form"
-          className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800"
-        >
+        <CustomButton type="submit" form="medicine-form">
           {MODAL_CONFIG.medicine.submitLabel}
-        </button>
+        </CustomButton>
       </div>
     ) : null;
 

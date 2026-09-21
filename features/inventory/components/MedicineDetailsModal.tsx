@@ -10,6 +10,7 @@ import SectionDivider from "@/components/ui/SectionDivider";
 import BoxesIcon from "@/components/inventory/icons/BoxesIcon";
 import MinusCircleIcon from "@/components/inventory/icons/MinusCircleIcon";
 import SectionTitle from "@/components/ui/SectionTitle";
+import CustomButton from "@/components/ui/CustomButton";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
@@ -38,7 +39,6 @@ const MedicineDetailsModal = ({
 
   const sortedStock = [...stock].sort((a, b) => {
     const dateA = a.expiry_year * 100 + a.expiry_month;
-
     const dateB = b.expiry_year * 100 + b.expiry_month;
 
     return dateA - dateB;
@@ -74,36 +74,22 @@ const MedicineDetailsModal = ({
         }
         onClose={onClose}
         footer={
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             {onDelete ? (
-              <button
-                type="button"
-                onClick={handleDeleteClick}
-                className="h-9 cursor-pointer rounded-lg px-3 text-xs font-medium text-red-600 transition hover:bg-red-50"
-              >
+              <CustomButton variant="dangerOutline" onClick={handleDeleteClick}>
                 Видалити
-              </button>
+              </CustomButton>
             ) : (
               <div />
             )}
 
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="h-9 cursor-pointer rounded-lg border border-gray-200 px-3.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-              >
+              <CustomButton variant="secondary" onClick={onClose}>
                 Закрити
-              </button>
+              </CustomButton>
 
               {onEdit && (
-                <button
-                  type="button"
-                  onClick={onEdit}
-                  className="h-9 cursor-pointer rounded-lg bg-gray-800 px-4 text-xs font-semibold text-white transition hover:bg-gray-700"
-                >
-                  Редагувати
-                </button>
+                <CustomButton onClick={onEdit}>Редагувати</CustomButton>
               )}
             </div>
           </div>
@@ -286,21 +272,13 @@ const MedicineDetailsModal = ({
           size="sm"
           footer={
             <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={handleCancelDelete}
-                className="h-9 cursor-pointer rounded-lg border border-gray-200 px-3.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-              >
+              <CustomButton variant="secondary" onClick={handleCancelDelete}>
                 Скасувати
-              </button>
+              </CustomButton>
 
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="h-9 cursor-pointer rounded-lg bg-red-600 px-4 text-xs font-semibold text-white transition hover:bg-red-700"
-              >
+              <CustomButton variant="danger" onClick={handleConfirmDelete}>
                 Видалити
-              </button>
+              </CustomButton>
             </div>
           }
         >

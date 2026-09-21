@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import CustomButton from "./CustomButton";
 
 type ModalSize = "sm" | "md" | "lg" | "xl";
 
@@ -62,14 +63,9 @@ const Modal = ({
         <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-6 py-5">
           <div className="min-w-0">{title}</div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="ml-4 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-xl text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-            aria-label="Закрити"
-          >
+          <CustomButton variant="close" onClick={onClose} aria-label="Закрити">
             ×
-          </button>
+          </CustomButton>
         </div>
 
         {/* Content */}

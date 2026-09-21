@@ -7,6 +7,7 @@ import type {
   MedicinePurposeRow,
 } from "@/features/inventory/types";
 
+import CustomButton from "@/components/ui/CustomButton";
 import AddItemModal from "./AddItemModal";
 
 const ADD_ITEM_CONFIG = {
@@ -38,14 +39,14 @@ const AddItemButton = ({
 
   return (
     <>
-      <button
+      <CustomButton
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
+        className="h-10 gap-2 rounded-lg bg-gray-900 px-4 text-sm font-semibold shadow-sm hover:bg-gray-800 active:scale-[0.98]"
       >
         <span className="text-lg leading-none">+</span>
         <span>{title}</span>
-      </button>
+      </CustomButton>
 
       <AddItemModal
         variant={variant}

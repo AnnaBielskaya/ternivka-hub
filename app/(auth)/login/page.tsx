@@ -1,54 +1,48 @@
-'use client'
+"use client";
 
-import { FormEvent, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+
+import CustomButton from "@/components/ui/CustomButton";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const supabase = createClient()
+  const router = useRouter();
+  const supabase = createClient();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
-    setError('')
-    setLoading(true)
+    setError("");
+    setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
     if (error) {
-      setError('Невірний email або пароль')
-      setLoading(false)
-      return
+      setError("Невірний email або пароль");
+      setLoading(false);
+      return;
     }
 
-    router.push('/')
-    router.refresh()
+    router.push("/");
+    router.refresh();
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm space-y-4"
-      >
-        <h1 className="text-2xl font-semibold">
-          Тернівські склади
-        </h1>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
+        <h1 className="text-2xl font-semibold">Тернівські склади</h1>
 
         <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium"
-          >
+          <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
 
@@ -64,10 +58,7 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-2">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium"
-          >
+          <label htmlFor="password" className="block text-sm font-medium">
             Пароль
           </label>
 
@@ -82,20 +73,16 @@ export default function LoginPage() {
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <button
+        <CustomButton
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-black px-4 py-3 text-white disabled:opacity-50"
+          className="h-auto w-full rounded-lg bg-black px-4 py-3 text-sm text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? 'Вхід...' : 'Увійти'}
-        </button>
+          {loading ? "Вхід..." : "Увійти"}
+        </CustomButton>
       </form>
     </main>
-  )
+  );
 }

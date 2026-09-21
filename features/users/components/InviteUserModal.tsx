@@ -1,6 +1,7 @@
 "use client";
 
 import Modal from "@/components/ui/Modal";
+import CustomButton from "@/components/ui/CustomButton";
 
 type InviteUserModalProps = {
   isOpen: boolean;
@@ -15,21 +16,13 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
       onClose={onClose}
       footer={
         <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-10 cursor-pointer rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-          >
+          <CustomButton variant="secondary" onClick={onClose}>
             Скасувати
-          </button>
+          </CustomButton>
 
-          <button
-            type="submit"
-            form="invite-user-form"
-            className="h-10 cursor-pointer rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-800"
-          >
+          <CustomButton type="submit" form="invite-user-form">
             Запросити
-          </button>
+          </CustomButton>
         </div>
       }
     >
