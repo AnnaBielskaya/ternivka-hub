@@ -23,7 +23,7 @@ const collator = new Intl.Collator("uk-UA", {
 });
 
 const MedsTableClient = ({ items }: MedsTableClientProps) => {
-  const [refillOnly, setRefillOnly] = useState(false);
+  const [needsRefillOnly, setNeedsRefillOnly] = useState(false);
 
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
@@ -72,41 +72,21 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
             (b.nearestExpirySortKey ?? Infinity);
           break;
 
-        case "status": {
-          const getStatusPriority = (item: InventoryItem) => {
-            if (item.refill_required) {
-              return 0;
-            }
-
-            if (item.isLow) {
-              return 1;
-            }
-
-            return 2;
-          };
-
-          comparison = getStatusPriority(a) - getStatusPriority(b);
-
+        case "status":
+          comparison = Number(a.needsRefill) - Number(b.needsRefill);
           break;
-        }
       }
 
       return sortDirection === "asc" ? comparison : -comparison;
     });
 
-    if (!refillOnly) {
+    if (!needsRefillOnly) {
       return sortedItems;
     }
 
-    return sortedItems.filter((item) => item.refill_required);
-  }, [items, refillOnly, sortKey, sortDirection]);
+    return sortedItems.filter((item) => item.needsRefill);
+  }, [items, needsRefillOnly, sortKey, sortDirection]);
 
-  /*
-   * Тимчасовий stock.
-   *
-   * Пізніше він прийде з БД разом
-   * із конкретним препаратом.
-   */
   const mockStock: StockRow[] = selectedItem
     ? selectedItem.nearestExpiry
       ? [
@@ -126,8 +106,8 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
         sortKey={sortKey}
         sortDirection={sortDirection}
         onSortChange={handleSortChange}
-        refillOnly={refillOnly}
-        onRefillChange={setRefillOnly}
+        refillOnly={needsRefillOnly}
+        onRefillChange={setNeedsRefillOnly}
       />
 
       <div className="overflow-auto rounded-lg border border-gray-200 bg-white">
@@ -144,17 +124,17 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
 
           <tbody>
             {filteredItems.map((item) => {
-              const isRefillRequired = item.refill_required;
+              const needsRefill = item.needsRefill;
 
-              const rowClassName = isRefillRequired
+              const rowClassName = needsRefill
                 ? "bg-red-50 hover:bg-red-100"
                 : "hover:bg-gray-50";
 
-              const primaryTextClassName = isRefillRequired
+              const primaryTextClassName = needsRefill
                 ? "text-red-700"
                 : "text-gray-900";
 
-              const secondaryTextClassName = isRefillRequired
+              const secondaryTextClassName = needsRefill
                 ? "text-red-700"
                 : "text-gray-600";
 
@@ -165,16 +145,28 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                   className={`cursor-pointer border-b border-gray-100 last:border-0 transition ${rowClassName}`}
                 >
                   <td
-                    className={`inventory-table-cell-bordered font-medium ${primaryTextClassName}`}
+                    className={`inventory-table-cell-bordered ${primaryTextClassName}`}
                   >
-                    {item.name}
+                    <div className="min-w-0 max-w-[240px]">
+                      <p className="font-medium leading-5">{item.name}</p>
+
+                      {item.description && (
+                        <p
+                          className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
+                            needsRefill ? "text-red-400" : "text-gray-400"
+                          }`}
+                        >
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
                   </td>
 
                   <td className="inventory-table-cell-bordered">
                     {item.medicine_form ? (
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-                          isRefillRequired
+                          needsRefill
                             ? "bg-red-100 text-red-700"
                             : "bg-gray-100 text-gray-600"
                         }`}
@@ -217,17 +209,10 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                   </td>
 
                   <td className="inventory-table-cell">
-                    {isRefillRequired && (
-                      <StatusBadge variant="warning" title="Треба поповнити" />
-                    )}
-
-                    {!isRefillRequired && item.isLow && (
-                      <StatusBadge variant="danger" title="Мало" />
-                    )}
-
-                    {!isRefillRequired && !item.isLow && (
-                      <StatusBadge variant="success" title="Достатньо" />
-                    )}
+                    <StatusBadge
+                      variant={needsRefill ? "warning" : "success"}
+                      title={needsRefill ? "Потребує поповнення" : "Достатньо"}
+                    />
                   </td>
                 </tr>
               );
@@ -239,7 +224,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                   colSpan={MEDICINE_TABLE_COLUMNS.length}
                   className="px-5 py-10 text-center text-sm text-gray-500"
                 >
-                  {refillOnly
+                  {needsRefillOnly
                     ? "Препаратів, що потребують поповнення, немає"
                     : "Препаратів немає"}
                 </td>

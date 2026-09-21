@@ -8,11 +8,11 @@ export async function getMedicalItems() {
     .select(`
       id,
       name,
+      description,
       dosage,
       active_ingredient,
       volume,
       unit,
-      refill_required,
       minimum_quantity,
 
       medicine_form:medicine_forms (
@@ -22,6 +22,7 @@ export async function getMedicalItems() {
 
       medicine_purpose:medicine_purposes (
         id,
+        code,
         name
       ),
 

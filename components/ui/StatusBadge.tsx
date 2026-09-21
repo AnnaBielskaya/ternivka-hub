@@ -1,6 +1,5 @@
 type StatusBadgeVariant =
   | "warning"
-  | "danger"
   | "success"
   | "info";
 
@@ -15,8 +14,6 @@ const VARIANT_STYLES: Record<
 > = {
   warning:
     "bg-red-100 text-red-700",
-  danger:
-    "bg-orange-50 text-orange-600",
   success:
     "bg-green-50 text-green-600",
   info:

@@ -332,22 +332,6 @@ const MedicineForm = ({
                 className={inputClassName}
               />
             </div>
-
-            {/* Потребує поповнення */}
-            <div className="flex items-end">
-              <label className="flex h-10 cursor-pointer items-center gap-2">
-                <input
-                  id="refill_required"
-                  name="refill_required"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-
-                <span className="text-sm font-medium text-gray-700">
-                  Потребує поповнення
-                </span>
-              </label>
-            </div>
           </div>
 
           <p className="mt-2 text-xs text-gray-400">
