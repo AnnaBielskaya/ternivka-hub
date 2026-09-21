@@ -13,10 +13,7 @@ const INVENTORY_UNITS = [
   { value: "штука", label: "Штука" },
 ] as const;
 
-const MONTHS = Array.from(
-  { length: 12 },
-  (_, index) => index + 1,
-);
+const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
 
 const inputClassName =
   "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100";
@@ -24,8 +21,7 @@ const inputClassName =
 const selectClassName =
   "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100";
 
-const labelClassName =
-  "mb-1.5 block text-sm font-medium text-gray-700";
+const labelClassName = "mb-1.5 block text-sm font-medium text-gray-700";
 
 type MedicineFormProps = {
   medicineForms: MedicineFormRow[];
@@ -39,7 +35,6 @@ const MedicineForm = ({
   return (
     <form id="medicine-form">
       <div className="space-y-7 p-6">
-        {/* Основна інформація */}
         <section>
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-gray-900">
@@ -52,12 +47,8 @@ const MedicineForm = ({
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {/* Назва */}
             <div className="col-span-3">
-              <label
-                htmlFor="name"
-                className={labelClassName}
-              >
+              <label htmlFor="name" className={labelClassName}>
                 Назва <span className="text-red-500">*</span>
               </label>
 
@@ -71,12 +62,8 @@ const MedicineForm = ({
               />
             </div>
 
-            {/* Діюча речовина */}
             <div>
-              <label
-                htmlFor="active_ingredient"
-                className={labelClassName}
-              >
+              <label htmlFor="active_ingredient" className={labelClassName}>
                 Діюча речовина
               </label>
 
@@ -89,14 +76,9 @@ const MedicineForm = ({
               />
             </div>
 
-            {/* Форма */}
             <div>
-              <label
-                htmlFor="form_id"
-                className={labelClassName}
-              >
-                Форма випуску{" "}
-                <span className="text-red-500">*</span>
+              <label htmlFor="form_id" className={labelClassName}>
+                Форма випуску <span className="text-red-500">*</span>
               </label>
 
               <select
@@ -118,12 +100,8 @@ const MedicineForm = ({
               </select>
             </div>
 
-            {/* Призначення */}
             <div>
-              <label
-                htmlFor="purpose_id"
-                className={labelClassName}
-              >
+              <label htmlFor="purpose_id" className={labelClassName}>
                 Призначення
               </label>
 
@@ -136,10 +114,7 @@ const MedicineForm = ({
                 <option value="">Не обрано</option>
 
                 {medicinePurposes.map((purpose) => (
-                  <option
-                    key={purpose.id}
-                    value={purpose.id}
-                  >
+                  <option key={purpose.id} value={purpose.id}>
                     {purpose.name}
                   </option>
                 ))}
@@ -150,7 +125,6 @@ const MedicineForm = ({
 
         <div className="border-t border-gray-100" />
 
-        {/* Характеристики */}
         <section>
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-gray-900">
@@ -163,12 +137,8 @@ const MedicineForm = ({
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {/* Дозування */}
             <div>
-              <label
-                htmlFor="dosage"
-                className={labelClassName}
-              >
+              <label htmlFor="dosage" className={labelClassName}>
                 Дозування
               </label>
 
@@ -181,12 +151,8 @@ const MedicineForm = ({
               />
             </div>
 
-            {/* Обʼєм */}
             <div>
-              <label
-                htmlFor="volume"
-                className={labelClassName}
-              >
+              <label htmlFor="volume" className={labelClassName}>
                 Обʼєм
               </label>
 
@@ -203,25 +169,18 @@ const MedicineForm = ({
 
         <div className="border-t border-gray-100" />
 
-        {/* Залишок */}
         <section>
           <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-900">
-              Залишок
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-900">Залишок</h3>
 
             <p className="mt-1 text-xs text-gray-500">
-              Кількість, одиниця обліку, строк придатності та поповнення
+              Фактична кількість, мінімальний залишок та термін придатності
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {/* Кількість */}
             <div>
-              <label
-                htmlFor="quantity"
-                className={labelClassName}
-              >
+              <label htmlFor="quantity" className={labelClassName}>
                 Кількість
               </label>
 
@@ -236,14 +195,9 @@ const MedicineForm = ({
               />
             </div>
 
-            {/* Одиниця */}
             <div>
-              <label
-                htmlFor="unit"
-                className={labelClassName}
-              >
-                Одиниця обліку{" "}
-                <span className="text-red-500">*</span>
+              <label htmlFor="unit" className={labelClassName}>
+                Одиниця обліку <span className="text-red-500">*</span>
               </label>
 
               <select
@@ -258,22 +212,15 @@ const MedicineForm = ({
                 </option>
 
                 {INVENTORY_UNITS.map((unit) => (
-                  <option
-                    key={unit.value}
-                    value={unit.value}
-                  >
+                  <option key={unit.value} value={unit.value}>
                     {unit.label}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Мінімальний залишок */}
             <div>
-              <label
-                htmlFor="minimum_quantity"
-                className={labelClassName}
-              >
+              <label htmlFor="minimum_quantity" className={labelClassName}>
                 Мінімальний залишок
               </label>
 
@@ -288,66 +235,53 @@ const MedicineForm = ({
               />
             </div>
 
-            {/* Місяць */}
-            <div>
-              <label
-                htmlFor="expiry_month"
-                className={labelClassName}
-              >
-                Місяць закінчення
-              </label>
+            <div className="col-span-3">
+              <label className={labelClassName}>Термін придатності</label>
 
-              <select
-                id="expiry_month"
-                name="expiry_month"
-                defaultValue=""
-                className={selectClassName}
-              >
-                <option value="">Не вказано</option>
+              <div className="grid grid-cols-[1fr_1fr_1fr] gap-4">
+                <div>
+                  <select
+                    id="expiry_month"
+                    name="expiry_month"
+                    defaultValue=""
+                    className={selectClassName}
+                  >
+                    <option value="">Місяць</option>
 
-                {MONTHS.map((month) => (
-                  <option key={month} value={month}>
-                    {String(month).padStart(2, "0")}
-                  </option>
-                ))}
-              </select>
-            </div>
+                    {MONTHS.map((month) => (
+                      <option key={month} value={month}>
+                        {String(month).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* Рік */}
-            <div>
-              <label
-                htmlFor="expiry_year"
-                className={labelClassName}
-              >
-                Рік закінчення
-              </label>
+                <div>
+                  <input
+                    id="expiry_year"
+                    name="expiry_year"
+                    type="number"
+                    min="2020"
+                    step="1"
+                    placeholder="Рік"
+                    className={inputClassName}
+                  />
+                </div>
+              </div>
 
-              <input
-                id="expiry_year"
-                name="expiry_year"
-                type="number"
-                min="2020"
-                step="1"
-                placeholder="2027"
-                className={inputClassName}
-              />
+              <p className="mt-2 text-xs text-gray-400">
+                Статус визначається автоматично за фактичною та мінімальною
+                кількістю.
+              </p>
             </div>
           </div>
-
-          <p className="mt-2 text-xs text-gray-400">
-            Статус «Мало» визначається автоматично, коли
-            кількість менша за мінімальний залишок.
-          </p>
         </section>
 
         <div className="border-t border-gray-100" />
 
-        {/* Опис */}
         <section>
           <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-900">
-              Опис
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-900">Опис</h3>
 
             <p className="mt-1 text-xs text-gray-500">
               Додаткова інформація про препарат
