@@ -7,6 +7,7 @@ import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
 import UserMenu from "./UserMenu";
 import InviteUserModal from "@/features/users/components/InviteUserModal";
+import { UserRole } from "@/features/users/types";
 
 type UserMenuProps = {
   name: string;

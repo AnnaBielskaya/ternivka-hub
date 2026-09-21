@@ -1,1 +1,1 @@
-type UserRole = "viewer" | "editor" | "admin" | "super_admin";
+export type UserRole = "viewer" | "editor" | "admin" | "super_admin";

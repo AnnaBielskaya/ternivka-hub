@@ -1,8 +1,7 @@
 "use client";
 
+import { UserRole } from "@/features/users/types";
 import StatusBadge from "../ui/StatusBadge";
-
-type UserRole = "viewer" | "editor" | "admin" | "super_admin";
 
 type UserMenuProps = {
   name: string;
