@@ -1,16 +1,35 @@
 "use client";
 
+import { useState } from "react";
+
 import type {
   MedicineFormRow,
   MedicinePurposeRow,
 } from "@/features/inventory/types";
 
+import MedicineNameAutocomplete from "@/features/inventory/components/MedicineNameAutocomplete";
+
 const INVENTORY_UNITS = [
-  { value: "блістер", label: "Блістер" },
-  { value: "упаковка", label: "Упаковка" },
-  { value: "ампули", label: "Ампули" },
-  { value: "грам", label: "Грам" },
-  { value: "штука", label: "Штука" },
+  {
+    value: "блістер",
+    label: "Блістер",
+  },
+  {
+    value: "упаковка",
+    label: "Упаковка",
+  },
+  {
+    value: "ампули",
+    label: "Ампули",
+  },
+  {
+    value: "грам",
+    label: "Грам",
+  },
+  {
+    value: "штука",
+    label: "Штука",
+  },
 ] as const;
 
 const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
@@ -32,6 +51,8 @@ const MedicineForm = ({
   medicineForms,
   medicinePurposes,
 }: MedicineFormProps) => {
+  const [name, setName] = useState("");
+
   return (
     <form id="medicine-form">
       <div className="space-y-7 p-6">
@@ -52,14 +73,7 @@ const MedicineForm = ({
                 Назва <span className="text-red-500">*</span>
               </label>
 
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                placeholder="Наприклад, Парацетамол"
-                className={inputClassName}
-              />
+              <MedicineNameAutocomplete value={name} onChange={setName} />
             </div>
 
             <div>
@@ -239,34 +253,30 @@ const MedicineForm = ({
               <label className={labelClassName}>Термін придатності</label>
 
               <div className="grid grid-cols-[1fr_1fr_1fr] gap-4">
-                <div>
-                  <select
-                    id="expiry_month"
-                    name="expiry_month"
-                    defaultValue=""
-                    className={selectClassName}
-                  >
-                    <option value="">Місяць</option>
+                <select
+                  id="expiry_month"
+                  name="expiry_month"
+                  defaultValue=""
+                  className={selectClassName}
+                >
+                  <option value="">Місяць</option>
 
-                    {MONTHS.map((month) => (
-                      <option key={month} value={month}>
-                        {String(month).padStart(2, "0")}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  {MONTHS.map((month) => (
+                    <option key={month} value={month}>
+                      {String(month).padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
 
-                <div>
-                  <input
-                    id="expiry_year"
-                    name="expiry_year"
-                    type="number"
-                    min="2020"
-                    step="1"
-                    placeholder="Рік"
-                    className={inputClassName}
-                  />
-                </div>
+                <input
+                  id="expiry_year"
+                  name="expiry_year"
+                  type="number"
+                  min="2020"
+                  step="1"
+                  placeholder="Рік"
+                  className={inputClassName}
+                />
               </div>
 
               <p className="mt-2 text-xs text-gray-400">
