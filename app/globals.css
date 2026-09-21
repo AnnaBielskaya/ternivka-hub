@@ -23,6 +23,7 @@ body {
   min-width: max-content;
   border-collapse: collapse;
   font-size: 0.875rem;
+  font-size: 12px;
 }
 
 .inventory-table-head {

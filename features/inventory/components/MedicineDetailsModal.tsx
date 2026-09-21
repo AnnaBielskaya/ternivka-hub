@@ -2,7 +2,10 @@
 
 import Modal from "@/components/ui/Modal";
 import StatusBadge from "@/components/ui/StatusBadge";
-import type { InventoryItem, StockRow } from "@/features/inventory/types";
+import type {
+  InventoryItem,
+  StockRow,
+} from "@/features/inventory/types";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
@@ -12,7 +15,10 @@ type MedicineDetailsModalProps = {
   onDelete?: () => void;
 };
 
-const formatExpiry = (month: number, year: number) => {
+const formatExpiry = (
+  month: number,
+  year: number,
+) => {
   return `${String(month).padStart(2, "0")}/${year}`;
 };
 
@@ -23,21 +29,35 @@ const MedicineDetailsModal = ({
   onEdit,
   onDelete,
 }: MedicineDetailsModalProps) => {
-  const statusVariant = item.needsRefill ? "warning" : "success";
+  const statusVariant = item.needsRefill
+    ? "warning"
+    : "success";
 
-  const statusTitle = item.needsRefill ? "Потребує поповнення" : "Достатньо";
+  const statusTitle = item.needsRefill
+    ? "Потребує поповнення"
+    : "Достатньо";
 
-  const medicineSubtitle = [item.medicine_form?.name, item.dosage, item.volume]
+  const medicineSubtitle = [
+    item.medicine_form?.name,
+    item.dosage,
+    item.volume,
+  ]
     .filter(Boolean)
     .join(" · ");
 
-  const sortedStock = [...stock].sort((a, b) => {
-    const dateA = a.expiry_year * 100 + a.expiry_month;
+  const sortedStock = [...stock].sort(
+    (a, b) => {
+      const dateA =
+        a.expiry_year * 100 +
+        a.expiry_month;
 
-    const dateB = b.expiry_year * 100 + b.expiry_month;
+      const dateB =
+        b.expiry_year * 100 +
+        b.expiry_month;
 
-    return dateA - dateB;
-  });
+      return dateA - dateB;
+    },
+  );
 
   return (
     <Modal
@@ -49,11 +69,16 @@ const MedicineDetailsModal = ({
               {item.name}
             </h2>
 
-            <StatusBadge variant={statusVariant} title={statusTitle} />
+            <StatusBadge
+              variant={statusVariant}
+              title={statusTitle}
+            />
           </div>
 
           {medicineSubtitle && (
-            <p className="mt-1 text-sm text-gray-500">{medicineSubtitle}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              {medicineSubtitle}
+            </p>
           )}
         </div>
       }
@@ -124,17 +149,35 @@ const MedicineDetailsModal = ({
           <SectionTitle title="Характеристики" />
 
           <div className="grid grid-cols-3 gap-x-8 gap-y-5">
-            <InfoItem label="Діюча речовина" value={item.active_ingredient} />
+            <InfoItem
+              label="Діюча речовина"
+              value={item.active_ingredient}
+            />
 
-            <InfoItem label="Форма випуску" value={item.medicine_form?.name} />
+            <InfoItem
+              label="Форма випуску"
+              value={item.medicine_form?.name}
+            />
 
-            <InfoItem label="Призначення" value={item.medicine_purpose?.name} />
+            <InfoItem
+              label="Призначення"
+              value={item.medicine_purpose?.name}
+            />
 
-            <InfoItem label="Дозування" value={item.dosage} />
+            <InfoItem
+              label="Дозування"
+              value={item.dosage}
+            />
 
-            <InfoItem label="Обʼєм" value={item.volume} />
+            <InfoItem
+              label="Обʼєм"
+              value={item.volume}
+            />
 
-            <InfoItem label="Одиниця обліку" value={item.unit} />
+            <InfoItem
+              label="Одиниця обліку"
+              value={item.unit}
+            />
           </div>
         </section>
 
@@ -142,49 +185,57 @@ const MedicineDetailsModal = ({
 
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <SectionTitle title="Партії" className="mb-0" />
+            <SectionTitle
+              title="Партії"
+              className="mb-0"
+            />
 
             {sortedStock.length > 0 && (
               <span className="text-xs text-gray-400">
                 {sortedStock.length}{" "}
-                {sortedStock.length === 1 ? "партія" : "партії"}
+                {sortedStock.length === 1
+                  ? "партія"
+                  : "партії"}
               </span>
             )}
           </div>
 
           {sortedStock.length > 0 ? (
             <div className="grid grid-cols-2 gap-3">
-              {sortedStock.map((stockItem) => (
-                <div
-                  key={stockItem.id}
-                  className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-4"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <span className="block text-xs text-gray-400">
-                        Термін придатності
-                      </span>
+              {sortedStock.map(
+                (stockItem) => (
+                  <div
+                    key={stockItem.id}
+                    className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-4"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <span className="block text-xs text-gray-400">
+                          Термін придатності
+                        </span>
 
-                      <span className="mt-1 block text-base font-semibold text-gray-900">
-                        {formatExpiry(
-                          stockItem.expiry_month,
-                          stockItem.expiry_year
-                        )}
-                      </span>
-                    </div>
+                        <span className="mt-1 block text-base font-semibold text-gray-900">
+                          {formatExpiry(
+                            stockItem.expiry_month,
+                            stockItem.expiry_year,
+                          )}
+                        </span>
+                      </div>
 
-                    <div className="text-right">
-                      <span className="block text-xs text-gray-400">
-                        Кількість
-                      </span>
+                      <div className="text-right">
+                        <span className="block text-xs text-gray-400">
+                          Кількість
+                        </span>
 
-                      <span className="mt-1 block text-base font-semibold text-gray-900">
-                        {stockItem.quantity} {item.unit}
-                      </span>
+                        <span className="mt-1 block text-base font-semibold text-gray-900">
+                          {stockItem.quantity}{" "}
+                          {item.unit}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           ) : (
             <div className="rounded-xl bg-gray-50 px-4 py-4 text-sm text-gray-500">
@@ -218,9 +269,14 @@ type SectionTitleProps = {
   className?: string;
 };
 
-const SectionTitle = ({ title, className = "mb-4" }: SectionTitleProps) => {
+const SectionTitle = ({
+  title,
+  className = "mb-4",
+}: SectionTitleProps) => {
   return (
-    <h3 className={`text-sm font-semibold text-gray-900 ${className}`}>
+    <h3
+      className={`text-sm font-semibold text-gray-900 ${className}`}
+    >
       {title}
     </h3>
   );
@@ -231,10 +287,15 @@ type InfoItemProps = {
   value: string | null | undefined;
 };
 
-const InfoItem = ({ label, value }: InfoItemProps) => {
+const InfoItem = ({
+  label,
+  value,
+}: InfoItemProps) => {
   return (
     <div className="min-w-0">
-      <span className="block text-xs text-gray-400">{label}</span>
+      <span className="block text-xs text-gray-400">
+        {label}
+      </span>
 
       <span className="mt-1.5 block truncate text-sm font-medium text-gray-900">
         {value || "—"}
@@ -249,16 +310,24 @@ type SummaryItemProps = {
   highlight?: boolean;
 };
 
-const SummaryItem = ({ label, value, highlight = false }: SummaryItemProps) => {
+const SummaryItem = ({
+  label,
+  value,
+  highlight = false,
+}: SummaryItemProps) => {
   return (
     <div
       className={`rounded-xl border px-4 py-3 ${
-        highlight ? "border-red-100 bg-red-50" : "border-gray-100 bg-gray-50"
+        highlight
+          ? "border-red-100 bg-red-50"
+          : "border-gray-100 bg-gray-50"
       }`}
     >
       <span
         className={`block text-xs ${
-          highlight ? "text-red-500" : "text-gray-500"
+          highlight
+            ? "text-red-500"
+            : "text-gray-500"
         }`}
       >
         {label}
@@ -266,7 +335,9 @@ const SummaryItem = ({ label, value, highlight = false }: SummaryItemProps) => {
 
       <span
         className={`mt-1.5 block text-lg font-semibold ${
-          highlight ? "text-red-700" : "text-gray-900"
+          highlight
+            ? "text-red-700"
+            : "text-gray-900"
         }`}
       >
         {value}
@@ -276,7 +347,9 @@ const SummaryItem = ({ label, value, highlight = false }: SummaryItemProps) => {
 };
 
 const SectionDivider = () => {
-  return <div className="border-t border-gray-100" />;
+  return (
+    <div className="border-t border-gray-100" />
+  );
 };
 
 export default MedicineDetailsModal;

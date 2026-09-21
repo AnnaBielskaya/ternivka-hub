@@ -110,128 +110,132 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
         onRefillChange={setNeedsRefillOnly}
       />
 
-      <div className="overflow-auto rounded-lg border border-gray-200 bg-white">
-        <table className="inventory-table">
-          <thead>
-            <tr className="inventory-table-head">
-              {MEDICINE_TABLE_COLUMNS.map((column) => (
-                <th key={column.key} className="inventory-table-head-cell">
-                  {column.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
+      <div className="overflow-x-auto rounded-lg bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="max-h-[calc(100vh-260px)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="inventory-table">
+            <thead className="sticky top-0 z-10">
+              <tr className="inventory-table-head">
+                {MEDICINE_TABLE_COLUMNS.map((column) => (
+                  <th key={column.key} className="inventory-table-head-cell">
+                    {column.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-          <tbody>
-            {filteredItems.map((item) => {
-              const needsRefill = item.needsRefill;
+            <tbody>
+              {filteredItems.map((item) => {
+                const needsRefill = item.needsRefill;
 
-              const rowClassName = needsRefill
-                ? "bg-red-50 hover:bg-red-100"
-                : "hover:bg-gray-50";
+                const rowClassName = needsRefill
+                  ? "bg-red-50 hover:bg-red-100"
+                  : "hover:bg-gray-50";
 
-              const primaryTextClassName = needsRefill
-                ? "text-red-700"
-                : "text-gray-900";
+                const primaryTextClassName = needsRefill
+                  ? "text-red-700"
+                  : "text-gray-900";
 
-              const secondaryTextClassName = needsRefill
-                ? "text-red-700"
-                : "text-gray-600";
+                const secondaryTextClassName = needsRefill
+                  ? "text-red-700"
+                  : "text-gray-600";
 
-              return (
-                <tr
-                  key={item.id}
-                  onClick={() => handleRowClick(item)}
-                  className={`cursor-pointer border-b border-gray-100 last:border-0 transition ${rowClassName}`}
-                >
-                  <td
-                    className={`inventory-table-cell-bordered ${primaryTextClassName}`}
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={() => handleRowClick(item)}
+                    className={`cursor-pointer border-b border-gray-100 last:border-0 transition ${rowClassName}`}
                   >
-                    <div className="min-w-0 max-w-[240px]">
-                      <p className="font-medium leading-5">{item.name}</p>
+                    <td
+                      className={`inventory-table-cell-bordered ${primaryTextClassName}`}
+                    >
+                      <div className="min-w-0 max-w-[240px]">
+                        <p className="font-medium leading-5">{item.name}</p>
 
-                      {item.description && (
-                        <p
-                          className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
-                            needsRefill ? "text-red-400" : "text-gray-400"
+                        {item.description && (
+                          <p
+                            className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
+                              needsRefill ? "text-red-400" : "text-gray-400"
+                            }`}
+                          >
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="inventory-table-cell-bordered">
+                      {item.medicine_form ? (
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                            needsRefill
+                              ? "bg-red-100 text-red-700"
+                              : "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {item.description}
-                        </p>
+                          {item.medicine_form.name}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
                       )}
-                    </div>
-                  </td>
+                    </td>
 
-                  <td className="inventory-table-cell-bordered">
-                    {item.medicine_form ? (
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-                          needsRefill
-                            ? "bg-red-100 text-red-700"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {item.medicine_form.name}
-                      </span>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </td>
+                    <td
+                      className={`inventory-table-cell-bordered font-medium ${primaryTextClassName}`}
+                    >
+                      {item.active_ingredient ?? "-"}
+                    </td>
 
+                    <td
+                      className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
+                    >
+                      {item.dosage ?? "-"}
+                    </td>
+
+                    <td
+                      className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
+                    >
+                      {item.volume ?? "-"}
+                    </td>
+
+                    <td
+                      className={`inventory-table-cell-bordered text-xs font-medium ${primaryTextClassName}`}
+                    >
+                      {item.quantity} ({item.unit})
+                    </td>
+
+                    <td
+                      className={`inventory-table-cell-bordered text-xs ${secondaryTextClassName}`}
+                    >
+                      {item.nearestExpiry ?? "-"}
+                    </td>
+
+                    <td className="inventory-table-cell">
+                      <StatusBadge
+                        variant={needsRefill ? "warning" : "success"}
+                        title={
+                          needsRefill ? "Потребує поповнення" : "Достатньо"
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {filteredItems.length === 0 && (
+                <tr>
                   <td
-                    className={`inventory-table-cell-bordered font-medium ${primaryTextClassName}`}
+                    colSpan={MEDICINE_TABLE_COLUMNS.length}
+                    className="px-5 py-10 text-center text-xs text-gray-500"
                   >
-                    {item.active_ingredient ?? "-"}
-                  </td>
-
-                  <td
-                    className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
-                  >
-                    {item.dosage ?? "-"}
-                  </td>
-
-                  <td
-                    className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
-                  >
-                    {item.volume ?? "-"}
-                  </td>
-
-                  <td
-                    className={`inventory-table-cell-bordered text-xs font-medium ${primaryTextClassName}`}
-                  >
-                    {item.quantity} ({item.unit})
-                  </td>
-
-                  <td
-                    className={`inventory-table-cell-bordered text-xs ${secondaryTextClassName}`}
-                  >
-                    {item.nearestExpiry ?? "-"}
-                  </td>
-
-                  <td className="inventory-table-cell">
-                    <StatusBadge
-                      variant={needsRefill ? "warning" : "success"}
-                      title={needsRefill ? "Потребує поповнення" : "Достатньо"}
-                    />
+                    {needsRefillOnly
+                      ? "Препаратів, що потребують поповнення, немає"
+                      : "Препаратів немає"}
                   </td>
                 </tr>
-              );
-            })}
-
-            {filteredItems.length === 0 && (
-              <tr>
-                <td
-                  colSpan={MEDICINE_TABLE_COLUMNS.length}
-                  className="px-5 py-10 text-center text-sm text-gray-500"
-                >
-                  {needsRefillOnly
-                    ? "Препаратів, що потребують поповнення, немає"
-                    : "Препаратів немає"}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {selectedItem && (
