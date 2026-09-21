@@ -13,6 +13,7 @@ import {
   INPUT_CLASS_NAME,
   INVENTORY_UNITS,
   LABEL_CLASS_NAME,
+  MEDICINE_UNITS_BY_FORM,
   MONTHS,
   SELECT_CLASS_NAME,
 } from "@/features/inventory/constants";
@@ -80,11 +81,41 @@ const MedicineForm = ({
   const router = useRouter();
 
   const [name, setName] = useState("");
+  const [formId, setFormId] = useState("");
+  const [unit, setUnit] = useState("");
 
   const [state, formAction, isPending] = useActionState(
     createMedicine,
     initialMedicineCreateState
   );
+
+  const selectedForm = medicineForms.find((form) => form.id === formId);
+
+  const availableUnitValues = selectedForm
+    ? MEDICINE_UNITS_BY_FORM[
+        selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
+      ] ?? []
+    : [];
+
+  const availableUnits = INVENTORY_UNITS.filter((inventoryUnit) =>
+    availableUnitValues.includes(inventoryUnit.value as never)
+  );
+
+  useEffect(() => {
+    if (!selectedForm) {
+      setUnit("");
+      return;
+    }
+
+    const allowedUnits =
+      MEDICINE_UNITS_BY_FORM[
+        selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
+      ] ?? [];
+
+    if (!allowedUnits.includes(unit as never)) {
+      setUnit(allowedUnits[0] ?? "");
+    }
+  }, [selectedForm, unit]);
 
   useEffect(() => {
     if (state.status !== "success") {
@@ -129,9 +160,10 @@ const MedicineForm = ({
                 id="form_id"
                 name="form_id"
                 required
-                defaultValue=""
+                value={formId}
                 disabled={isPending}
                 className={SELECT_CLASS_NAME}
+                onChange={(event) => setFormId(event.target.value)}
               >
                 <option value="" disabled>
                   Оберіть форму
@@ -221,17 +253,18 @@ const MedicineForm = ({
                 id="unit"
                 name="unit"
                 required
-                defaultValue=""
-                disabled={isPending}
+                value={unit}
+                disabled={isPending || !selectedForm}
                 className={SELECT_CLASS_NAME}
+                onChange={(event) => setUnit(event.target.value)}
               >
                 <option value="" disabled>
-                  Оберіть одиницю
+                  {!selectedForm ? "Спочатку оберіть форму" : "Оберіть одиницю"}
                 </option>
 
-                {INVENTORY_UNITS.map((unit) => (
-                  <option key={unit.value} value={unit.value}>
-                    {unit.label}
+                {availableUnits.map((inventoryUnit) => (
+                  <option key={inventoryUnit.value} value={inventoryUnit.value}>
+                    {inventoryUnit.label}
                   </option>
                 ))}
               </select>

@@ -32,6 +32,15 @@ export const INVENTORY_UNITS = [
   },
 ] as const;
 
+export const MEDICINE_UNITS_BY_FORM = {
+  Таблетки: ["блістер", "упаковка"],
+  Мазь: ["штука"],
+  Краплі: ["штука"],
+  Розчин: ["ампули"],
+  Саше: ["штука", "упаковка"],
+  Інше: ["штука", "упаковка"],
+} as const;
+
 export const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
 
 export const INPUT_CLASS_NAME =
