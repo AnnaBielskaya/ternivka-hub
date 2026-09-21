@@ -156,20 +156,15 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
 
                     <td className="border-b border-slate-100 px-4 py-4">
                       {item.medicine_form ? (
-                        <span
-                          className={`inline-flex items-center rounded-md px-2.5 py-1 text-[13px] font-medium ${
-                            needsRefill
-                              ? "bg-red-100 text-red-700"
-                              : "bg-slate-100 text-slate-600"
-                          }`}
-                        >
-                          {item.medicine_form.name}
-                        </span>
+                        <StatusBadge
+                          kind="form"
+                          variant={needsRefill ? "warning" : "info"}
+                          title={item.medicine_form.name}
+                        />
                       ) : (
                         <span className="text-slate-400">-</span>
                       )}
                     </td>
-
                     <td
                       className={`border-b border-slate-100 px-4 py-4 text-[13px] font-medium ${
                         needsRefill ? "text-red-700" : "text-slate-800"
