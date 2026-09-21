@@ -1,10 +1,13 @@
 "use client";
 
-import type { ReactNode } from "react";
-
 import Modal from "@/components/ui/Modal";
 import type { InventoryItem, StockRow } from "@/features/inventory/types";
 import AvailabilityItem from "./AvailabilityItem";
+import CalendarIcon from "@/components/inventory/icons/CalendarIcon";
+import SectionDivider from "@/components/ui/SectionDivider";
+import BoxesIcon from "@/components/inventory/icons/BoxesIcon";
+import MinusCircleIcon from "@/components/inventory/icons/MinusCircleIcon";
+import SectionTitle from "@/components/ui/SectionTitle";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
@@ -159,7 +162,7 @@ const MedicineDetailsModal = ({
             <SectionTitle title="Партії" className="mb-0" />
 
             {sortedStock.length > 0 && (
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[12px] text-slate-400">
                 {sortedStock.length}{" "}
                 {sortedStock.length === 1 ? "партія" : "партії"}
               </span>
@@ -191,7 +194,7 @@ const MedicineDetailsModal = ({
                         </div>
 
                         <div className="min-w-0">
-                          <span className="block text-[11px] text-slate-400">
+                          <span className="block text-[12px] text-slate-400">
                             Термін придатності
                           </span>
 
@@ -210,7 +213,7 @@ const MedicineDetailsModal = ({
 
                       <div className="flex shrink-0 items-center gap-2.5">
                         <div className="text-right">
-                          <span className="block text-[11px] text-slate-400">
+                          <span className="block text-[12px] text-slate-400">
                             Кількість
                           </span>
 
@@ -253,19 +256,6 @@ const MedicineDetailsModal = ({
   );
 };
 
-type SectionTitleProps = {
-  title: string;
-  className?: string;
-};
-
-const SectionTitle = ({ title, className = "mb-3" }: SectionTitleProps) => {
-  return (
-    <h3 className={`text-xs font-semibold text-slate-900 ${className}`}>
-      {title}
-    </h3>
-  );
-};
-
 type InfoItemProps = {
   label: string;
   value: string | null | undefined;
@@ -274,74 +264,13 @@ type InfoItemProps = {
 const InfoItem = ({ label, value }: InfoItemProps) => {
   return (
     <div className="min-w-0">
-      <span className="block text-[11px] text-slate-400">{label}</span>
+      <span className="block text-[12px] text-slate-400">{label}</span>
 
       <span className="mt-1 block truncate text-[13px] font-medium text-slate-800">
         {value || "—"}
       </span>
     </div>
   );
-};
-
-const CalendarIcon = () => {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-      <path
-        d="M5 2.75V5M15 2.75V5M3.75 7.25H16.25M5 4H15C16.1 4 17 4.9 17 6V15C17 16.1 16.1 17 15 17H5C3.9 17 3 16.1 3 15V6C3 4.9 3.9 4 5 4Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
-
-const BoxesIcon = () => {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-      <path
-        d="M10 3L16 6.25L10 9.5L4 6.25L10 3Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      <path
-        d="M4 6.25V13.75L10 17L16 13.75V6.25M10 9.5V17"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
-
-const MinusCircleIcon = () => {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-      <circle
-        cx="10"
-        cy="10"
-        r="6.75"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-
-      <path
-        d="M7 10H13"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-};
-
-const SectionDivider = () => {
-  return <div className="border-t border-slate-100" />;
 };
 
 export default MedicineDetailsModal;
