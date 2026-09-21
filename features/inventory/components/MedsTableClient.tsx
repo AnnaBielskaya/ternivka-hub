@@ -24,11 +24,8 @@ const collator = new Intl.Collator("uk-UA", {
 
 const MedsTableClient = ({ items }: MedsTableClientProps) => {
   const [needsRefillOnly, setNeedsRefillOnly] = useState(false);
-
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-
   const [sortKey, setSortKey] = useState<MedicineSortKey>("name");
-
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
   const handleRowClick = (item: InventoryItem) => {
@@ -42,7 +39,6 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
   const handleSortChange = (key: MedicineSortKey) => {
     if (key === sortKey) {
       setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
-
       return;
     }
 
@@ -80,11 +76,9 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
       return sortDirection === "asc" ? comparison : -comparison;
     });
 
-    if (!needsRefillOnly) {
-      return sortedItems;
-    }
-
-    return sortedItems.filter((item) => item.needsRefill);
+    return needsRefillOnly
+      ? sortedItems.filter((item) => item.needsRefill)
+      : sortedItems;
   }, [items, needsRefillOnly, sortKey, sortDirection]);
 
   const mockStock: StockRow[] = selectedItem
@@ -112,11 +106,14 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
 
       <div className="overflow-x-auto rounded-lg bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="max-h-[calc(100vh-260px)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <table className="inventory-table">
+          <table className="inventory-table w-full border-separate border-spacing-0">
             <thead className="sticky top-0 z-10">
-              <tr className="inventory-table-head">
+              <tr className="bg-slate-50">
                 {MEDICINE_TABLE_COLUMNS.map((column) => (
-                  <th key={column.key} className="inventory-table-head-cell">
+                  <th
+                    key={column.key}
+                    className="border-b border-slate-200 px-4 py-3 text-left text-[13px] font-semibold text-slate-500 first:pl-5 last:pr-5"
+                  >
                     {column.label}
                   </th>
                 ))}
@@ -127,34 +124,28 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
               {filteredItems.map((item) => {
                 const needsRefill = item.needsRefill;
 
-                const rowClassName = needsRefill
-                  ? "bg-red-50 hover:bg-red-100"
-                  : "hover:bg-gray-50";
-
-                const primaryTextClassName = needsRefill
-                  ? "text-red-700"
-                  : "text-gray-900";
-
-                const secondaryTextClassName = needsRefill
-                  ? "text-red-700"
-                  : "text-gray-600";
-
                 return (
                   <tr
                     key={item.id}
                     onClick={() => handleRowClick(item)}
-                    className={`cursor-pointer border-b border-gray-100 last:border-0 transition ${rowClassName}`}
+                    className={`cursor-pointer transition ${
+                      needsRefill
+                        ? "bg-red-50 hover:bg-red-100/70"
+                        : "bg-white hover:bg-slate-50"
+                    }`}
                   >
                     <td
-                      className={`inventory-table-cell-bordered ${primaryTextClassName}`}
+                      className={`border-b border-slate-100 px-4 py-4 first:pl-5 ${
+                        needsRefill ? "text-red-700" : "text-slate-900"
+                      }`}
                     >
-                      <div className="min-w-0 max-w-[240px]">
+                      <div className="max-w-[240px] min-w-0">
                         <p className="font-medium leading-5">{item.name}</p>
 
                         {item.description && (
                           <p
                             className={`mt-1 line-clamp-2 max-w-[220px] text-[13px] italic leading-4 ${
-                              needsRefill ? "text-red-400" : "text-gray-400"
+                              needsRefill ? "text-red-400" : "text-slate-400"
                             }`}
                           >
                             {item.description}
@@ -163,53 +154,63 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                       </div>
                     </td>
 
-                    <td className="inventory-table-cell-bordered">
+                    <td className="border-b border-slate-100 px-4 py-4">
                       {item.medicine_form ? (
                         <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-1 text-[13px] font-medium ${
+                          className={`inline-flex items-center rounded-md px-2.5 py-1 text-[13px] font-medium ${
                             needsRefill
                               ? "bg-red-100 text-red-700"
-                              : "bg-gray-100 text-gray-600"
+                              : "bg-slate-100 text-slate-600"
                           }`}
                         >
                           {item.medicine_form.name}
                         </span>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-slate-400">-</span>
                       )}
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered font-medium ${primaryTextClassName}`}
+                      className={`border-b border-slate-100 px-4 py-4 text-[13px] font-medium ${
+                        needsRefill ? "text-red-700" : "text-slate-800"
+                      }`}
                     >
                       {item.active_ingredient ?? "-"}
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
+                      className={`border-b border-slate-100 px-4 py-4 text-[13px] ${
+                        needsRefill ? "text-red-700" : "text-slate-600"
+                      }`}
                     >
                       {item.dosage ?? "-"}
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered ${secondaryTextClassName}`}
+                      className={`border-b border-slate-100 px-4 py-4 text-[13px] ${
+                        needsRefill ? "text-red-700" : "text-slate-600"
+                      }`}
                     >
                       {item.volume ?? "-"}
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered text-[13px] font-medium ${primaryTextClassName}`}
+                      className={`whitespace-nowrap border-b border-slate-100 px-4 py-4 text-[13px] font-medium ${
+                        needsRefill ? "text-red-700" : "text-slate-800"
+                      }`}
                     >
                       {item.quantity} ({item.unit})
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered text-[13px] ${secondaryTextClassName}`}
+                      className={`whitespace-nowrap border-b border-slate-100 px-4 py-4 text-[13px] ${
+                        needsRefill ? "text-red-700" : "text-slate-600"
+                      }`}
                     >
                       {item.nearestExpiry ?? "-"}
                     </td>
 
-                    <td className="inventory-table-cell">
+                    <td className="border-b border-slate-100 px-4 py-4 last:pr-5">
                       <StatusBadge
                         variant={needsRefill ? "warning" : "success"}
                         title={
@@ -225,7 +226,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                 <tr>
                   <td
                     colSpan={MEDICINE_TABLE_COLUMNS.length}
-                    className="px-5 py-10 text-center text-[13px] text-gray-500"
+                    className="bg-white px-5 py-12 text-center text-[13px] text-slate-500"
                   >
                     {needsRefillOnly
                       ? "Препаратів, що потребують поповнення, немає"
