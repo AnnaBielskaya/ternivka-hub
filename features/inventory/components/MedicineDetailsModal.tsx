@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 
 import Modal from "@/components/ui/Modal";
-import StatusBadge from "@/components/ui/StatusBadge";
 import type { InventoryItem, StockRow } from "@/features/inventory/types";
+import AvailabilityItem from "./AvailabilityItem";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
@@ -25,10 +25,6 @@ const MedicineDetailsModal = ({
   onEdit,
   onDelete,
 }: MedicineDetailsModalProps) => {
-  const statusVariant = item.needsRefill ? "warning" : "success";
-
-  const statusTitle = item.needsRefill ? "Потребує поповнення" : "Достатньо";
-
   const medicineSubtitle = [item.medicine_form?.name, item.dosage, item.volume]
     .filter(Boolean)
     .join(" · ");
@@ -50,13 +46,9 @@ const MedicineDetailsModal = ({
             {item.name}
           </h2>
 
-          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
-            {medicineSubtitle && (
-              <p className="text-xs text-slate-500">{medicineSubtitle}</p>
-            )}
-
-            <StatusBadge variant={statusVariant} title={statusTitle} />
-          </div>
+          {medicineSubtitle && (
+            <p className="mt-1 text-xs text-slate-500">{medicineSubtitle}</p>
+          )}
         </div>
       }
       onClose={onClose}
@@ -97,25 +89,26 @@ const MedicineDetailsModal = ({
       }
       size="lg"
     >
-      <div className="space-y-6 p-5">
+      <div className="space-y-5 p-5">
         <section>
           <SectionTitle title="Наявність" />
 
           <div className="grid grid-cols-3 gap-2.5">
-            <SummaryItem
+            <AvailabilityItem
               icon={<BoxesIcon />}
               label="Загальна кількість"
               value={`${item.quantity} ${item.unit}`}
-              highlight={item.needsRefill}
+              status={item.needsRefill ? "Потребує поповнення" : "Достатньо"}
+              statusVariant={item.needsRefill ? "warning" : "success"}
             />
 
-            <SummaryItem
+            <AvailabilityItem
               icon={<MinusCircleIcon />}
               label="Мінімальний залишок"
               value={`${item.minimum_quantity} ${item.unit}`}
             />
 
-            <SummaryItem
+            <AvailabilityItem
               icon={<CalendarIcon />}
               label="Найближчий термін придатності"
               value={item.nearestExpiry ?? "—"}
@@ -237,6 +230,14 @@ const MedicineDetailsModal = ({
                         </div>
                       </div>
                     </div>
+
+                    {isNearest && (
+                      <div className="mt-2">
+                        <span className="inline-flex rounded-md bg-white px-2 py-1 text-[10px] font-medium text-blue-600">
+                          Найближча партія
+                        </span>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -278,54 +279,6 @@ const InfoItem = ({ label, value }: InfoItemProps) => {
       <span className="mt-1 block truncate text-[13px] font-medium text-slate-800">
         {value || "—"}
       </span>
-    </div>
-  );
-};
-
-type SummaryItemProps = {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  highlight?: boolean;
-};
-
-const SummaryItem = ({
-  icon,
-  label,
-  value,
-  highlight = false,
-}: SummaryItemProps) => {
-  return (
-    <div
-      className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 ${
-        highlight ? "bg-red-50" : "bg-slate-50"
-      }`}
-    >
-      <div
-        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
-          highlight ? "bg-red-100 text-red-500" : "bg-white text-slate-400"
-        }`}
-      >
-        {icon}
-      </div>
-
-      <div className="min-w-0">
-        <span
-          className={`block text-[10px] ${
-            highlight ? "text-red-500" : "text-slate-400"
-          }`}
-        >
-          {label}
-        </span>
-
-        <span
-          className={`mt-0.5 block truncate text-[13px] font-semibold ${
-            highlight ? "text-red-700" : "text-slate-900"
-          }`}
-        >
-          {value}
-        </span>
-      </div>
     </div>
   );
 };
