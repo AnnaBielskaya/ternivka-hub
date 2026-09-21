@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import type {
@@ -12,11 +12,13 @@ import type {
 import {
   INPUT_CLASS_NAME,
   INVENTORY_UNITS,
-  LABEL_CLASS_NAME,
   MEDICINE_UNITS_BY_FORM,
   MONTHS,
   SELECT_CLASS_NAME,
 } from "@/features/inventory/constants";
+
+import FormField from "@/components/ui/FormField";
+import FormSection from "@/components/ui/FormSection";
 
 import MedicineNameAutocomplete from "@/features/inventory/components/MedicineNameAutocomplete";
 import { createMedicine } from "@/features/inventory/actions/create-medicine";
@@ -30,47 +32,6 @@ type MedicineFormProps = {
   medicineForms: MedicineFormRow[];
   medicinePurposes: MedicinePurposeRow[];
   onSaved: () => void;
-};
-
-type FormSectionProps = {
-  title: string;
-  description: string;
-  children: ReactNode;
-};
-
-const FormSection = ({ title, description, children }: FormSectionProps) => {
-  return (
-    <section>
-      <div className="mb-4">
-        <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-
-        <p className="mt-1 text-xs text-gray-500">{description}</p>
-      </div>
-
-      {children}
-    </section>
-  );
-};
-
-type FieldProps = {
-  label: string;
-  htmlFor?: string;
-  required?: boolean;
-  children: ReactNode;
-};
-
-const Field = ({ label, htmlFor, required = false, children }: FieldProps) => {
-  return (
-    <div>
-      <label htmlFor={htmlFor} className={LABEL_CLASS_NAME}>
-        {label}
-
-        {required && <span className="text-red-500"> *</span>}
-      </label>
-
-      {children}
-    </div>
-  );
 };
 
 const MedicineForm = ({
@@ -135,16 +96,16 @@ const MedicineForm = ({
         >
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-3">
-              <Field label="Назва" htmlFor="name" required>
+              <FormField label="Назва" htmlFor="name" required>
                 <MedicineNameAutocomplete
                   value={name}
                   onChange={setName}
                   disabled={isPending}
                 />
-              </Field>
+              </FormField>
             </div>
 
-            <Field label="Діюча речовина">
+            <FormField label="Діюча речовина">
               <input
                 id="active_ingredient"
                 name="active_ingredient"
@@ -153,9 +114,9 @@ const MedicineForm = ({
                 placeholder="Наприклад, парацетамол"
                 className={INPUT_CLASS_NAME}
               />
-            </Field>
+            </FormField>
 
-            <Field label="Форма випуску" htmlFor="form_id" required>
+            <FormField label="Форма випуску" htmlFor="form_id" required>
               <select
                 id="form_id"
                 name="form_id"
@@ -175,9 +136,9 @@ const MedicineForm = ({
                   </option>
                 ))}
               </select>
-            </Field>
+            </FormField>
 
-            <Field label="Призначення" htmlFor="purpose_id">
+            <FormField label="Призначення" htmlFor="purpose_id">
               <select
                 id="purpose_id"
                 name="purpose_id"
@@ -193,7 +154,7 @@ const MedicineForm = ({
                   </option>
                 ))}
               </select>
-            </Field>
+            </FormField>
           </div>
         </FormSection>
 
@@ -204,7 +165,7 @@ const MedicineForm = ({
           description="Дозування та фізичні характеристики"
         >
           <div className="grid grid-cols-3 gap-4">
-            <Field label="Дозування" htmlFor="dosage">
+            <FormField label="Дозування" htmlFor="dosage">
               <input
                 id="dosage"
                 name="dosage"
@@ -213,9 +174,9 @@ const MedicineForm = ({
                 placeholder="Наприклад, 500 мг"
                 className={INPUT_CLASS_NAME}
               />
-            </Field>
+            </FormField>
 
-            <Field label="Обʼєм" htmlFor="volume">
+            <FormField label="Обʼєм" htmlFor="volume">
               <input
                 id="volume"
                 name="volume"
@@ -224,7 +185,7 @@ const MedicineForm = ({
                 placeholder="Наприклад, 100 мл"
                 className={INPUT_CLASS_NAME}
               />
-            </Field>
+            </FormField>
           </div>
         </FormSection>
 
@@ -235,7 +196,7 @@ const MedicineForm = ({
           description="Фактична кількість, мінімальний залишок та термін придатності"
         >
           <div className="grid grid-cols-3 gap-4">
-            <Field label="Кількість" htmlFor="quantity">
+            <FormField label="Кількість" htmlFor="quantity">
               <input
                 id="quantity"
                 name="quantity"
@@ -246,9 +207,9 @@ const MedicineForm = ({
                 disabled={isPending}
                 className={INPUT_CLASS_NAME}
               />
-            </Field>
+            </FormField>
 
-            <Field label="Одиниця обліку" htmlFor="unit" required>
+            <FormField label="Одиниця обліку" htmlFor="unit" required>
               <select
                 id="unit"
                 name="unit"
@@ -268,9 +229,9 @@ const MedicineForm = ({
                   </option>
                 ))}
               </select>
-            </Field>
+            </FormField>
 
-            <Field label="Мінімальний залишок" htmlFor="minimum_quantity">
+            <FormField label="Мінімальний залишок" htmlFor="minimum_quantity">
               <input
                 id="minimum_quantity"
                 name="minimum_quantity"
@@ -281,10 +242,10 @@ const MedicineForm = ({
                 disabled={isPending}
                 className={INPUT_CLASS_NAME}
               />
-            </Field>
+            </FormField>
 
             <div className="col-span-3">
-              <Field label="Термін придатності">
+              <FormField label="Термін придатності">
                 <div className="grid grid-cols-2 gap-4">
                   <select
                     id="expiry_month"
@@ -318,7 +279,7 @@ const MedicineForm = ({
                   Статус визначається автоматично за фактичною та мінімальною
                   кількістю.
                 </p>
-              </Field>
+              </FormField>
             </div>
           </div>
         </FormSection>
