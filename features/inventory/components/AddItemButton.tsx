@@ -41,7 +41,7 @@ const AddItemButton = ({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl bg-gray-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
+        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
       >
         <span className="text-lg leading-none">+</span>
         <span>{title}</span>

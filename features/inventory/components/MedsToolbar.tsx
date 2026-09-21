@@ -1,4 +1,3 @@
-
 "use client";
 
 import type {
@@ -46,49 +45,41 @@ const MedsToolbar = ({
 }: MedsToolbarProps) => {
   return (
     <div className="flex items-center justify-between gap-6">
-      {/* Sorting */}
-      <div className="flex min-w-0 items-center gap-2">
-        <span className="mr-1 shrink-0 text-xs font-medium text-gray-500">
-          Сортування
-        </span>
+      <div className="flex min-w-0 items-center gap-1.5">
+        {SORT_OPTIONS.map((option) => {
+          const isActive = sortKey === option.key;
 
-        <div className="flex min-w-0 items-center gap-1.5">
-          {SORT_OPTIONS.map((option) => {
-            const isActive = sortKey === option.key;
+          return (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => onSortChange(option.key)}
+              className={`inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition ${
+                isActive
+                  ? "bg-gray-800 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              <span>{option.label}</span>
 
-            return (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => onSortChange(option.key)}
-                className={`inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition ${
-                  isActive
-                    ? "border-gray-900 bg-gray-900 text-white"
-                    : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <span>{option.label}</span>
-
-                {isActive && (
-                  <span className="text-xs leading-none">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+              {isActive && (
+                <span className="text-[13px] leading-none text-white">
+                  {sortDirection === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Filters */}
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1.5">
         <button
           type="button"
           onClick={() => onRefillChange(!refillOnly)}
-          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition ${
+          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition ${
             refillOnly
-              ? "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
-              : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+              ? "bg-gray-800 text-white"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
           }`}
         >
           <span>⚠</span>
@@ -97,7 +88,7 @@ const MedsToolbar = ({
 
         <select
           defaultValue=""
-          className="h-9 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 outline-none transition hover:bg-gray-50 focus:border-gray-400"
+          className="h-9 cursor-pointer rounded-lg bg-slate-100 px-3 text-[13px] font-medium text-slate-600 outline-none transition hover:bg-slate-200 focus:bg-slate-200"
         >
           <option value="">Усі категорії</option>
           <option value="painkillers">Ця фігня</option>

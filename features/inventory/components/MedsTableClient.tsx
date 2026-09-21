@@ -153,7 +153,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
 
                         {item.description && (
                           <p
-                            className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
+                            className={`mt-1 line-clamp-2 max-w-[220px] text-[13px] italic leading-4 ${
                               needsRefill ? "text-red-400" : "text-gray-400"
                             }`}
                           >
@@ -166,7 +166,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                     <td className="inventory-table-cell-bordered">
                       {item.medicine_form ? (
                         <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                          className={`inline-flex items-center rounded-full px-2.5 py-1 text-[13px] font-medium ${
                             needsRefill
                               ? "bg-red-100 text-red-700"
                               : "bg-gray-100 text-gray-600"
@@ -198,13 +198,13 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered text-xs font-medium ${primaryTextClassName}`}
+                      className={`inventory-table-cell-bordered text-[13px] font-medium ${primaryTextClassName}`}
                     >
                       {item.quantity} ({item.unit})
                     </td>
 
                     <td
-                      className={`inventory-table-cell-bordered text-xs ${secondaryTextClassName}`}
+                      className={`inventory-table-cell-bordered text-[13px] ${secondaryTextClassName}`}
                     >
                       {item.nearestExpiry ?? "-"}
                     </td>
@@ -225,7 +225,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                 <tr>
                   <td
                     colSpan={MEDICINE_TABLE_COLUMNS.length}
-                    className="px-5 py-10 text-center text-xs text-gray-500"
+                    className="px-5 py-10 text-center text-[13px] text-gray-500"
                   >
                     {needsRefillOnly
                       ? "Препаратів, що потребують поповнення, немає"
