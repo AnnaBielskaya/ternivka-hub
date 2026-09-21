@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import type {
   InventoryItem,
@@ -10,6 +11,8 @@ import type {
 } from "@/features/inventory/types";
 
 import { MEDICINE_TABLE_COLUMNS } from "../constants";
+import { deleteMedicine } from "../actions/delete-medicine";
+
 import MedsToolbar from "./MedsToolbar";
 import MedicineDetailsModal from "./MedicineDetailsModal";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -23,27 +26,63 @@ const collator = new Intl.Collator("uk-UA", {
 });
 
 const MedsTableClient = ({ items }: MedsTableClientProps) => {
+  const router = useRouter();
+
   const [needsRefillOnly, setNeedsRefillOnly] = useState(false);
+
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+
   const [sortKey, setSortKey] = useState<MedicineSortKey>("name");
+
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
+  const [isDeleting, startDeleting] = useTransition();
+
   const handleRowClick = (item: InventoryItem) => {
+    if (isDeleting) {
+      return;
+    }
+
     setSelectedItem(item);
   };
 
   const handleCloseModal = () => {
+    if (isDeleting) {
+      return;
+    }
+
     setSelectedItem(null);
   };
 
   const handleSortChange = (key: MedicineSortKey) => {
     if (key === sortKey) {
       setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
+
       return;
     }
 
     setSortKey(key);
     setSortDirection("asc");
+  };
+
+  const handleDelete = () => {
+    if (!selectedItem) {
+      return;
+    }
+
+    const medicineId = selectedItem.id;
+
+    startDeleting(async () => {
+      const result = await deleteMedicine(medicineId);
+
+      if (result.status === "error") {
+        window.alert(result.message);
+        return;
+      }
+
+      setSelectedItem(null);
+      router.refresh();
+    });
   };
 
   const filteredItems = useMemo(() => {
@@ -104,7 +143,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
         onRefillChange={setNeedsRefillOnly}
       />
 
-      <div className="overflow-x-auto rounded-lg bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="overflow-x-auto rounded-xl bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="max-h-[calc(100vh-260px)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <table className="inventory-table w-full border-separate border-spacing-0">
             <thead className="sticky top-0 z-10">
@@ -112,7 +151,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                 {MEDICINE_TABLE_COLUMNS.map((column) => (
                   <th
                     key={column.key}
-                    className="border-b border-slate-200 px-4 py-3 text-left text-[13px] font-semibold text-slate-500 first:pl-5 last:pr-5"
+                    className="border-b border-slate-200 px-4 py-3 text-left text-xs font-semibold text-slate-500 first:pl-5 last:pr-5"
                   >
                     {column.label}
                   </th>
@@ -144,7 +183,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
 
                         {item.description && (
                           <p
-                            className={`mt-1 line-clamp-2 max-w-[220px] text-[13px] italic leading-4 ${
+                            className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
                               needsRefill ? "text-red-400" : "text-slate-400"
                             }`}
                           >
@@ -165,6 +204,7 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                         <span className="text-slate-400">-</span>
                       )}
                     </td>
+
                     <td
                       className={`border-b border-slate-100 px-4 py-4 text-[13px] font-medium ${
                         needsRefill ? "text-red-700" : "text-slate-800"
@@ -239,7 +279,16 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
           item={selectedItem}
           stock={mockStock}
           onClose={handleCloseModal}
+          onDelete={handleDelete}
         />
+      )}
+
+      {isDeleting && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/20">
+          <div className="rounded-lg bg-white px-4 py-3 text-sm font-medium text-slate-700">
+            Видалення препарату...
+          </div>
+        </div>
       )}
     </>
   );
