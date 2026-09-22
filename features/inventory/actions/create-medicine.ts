@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 
 import type { MedicineCreateState } from "@/features/inventory/types";
 
+import { createStockBatch } from "./create-stock-batch";
+
 const ALLOWED_ROLES = ["editor", "admin", "super_admin"] as const;
 
 const normalizeText = (value: FormDataEntryValue | null) => {
@@ -106,10 +108,10 @@ export async function createMedicine(
     };
   }
 
-  if (!Number.isFinite(quantity) || quantity < 0) {
+  if (!Number.isInteger(quantity) || quantity < 0) {
     return {
       status: "error",
-      message: "Кількість має бути не меншою за 0.",
+      message: "Кількість має бути цілим числом не меншим за 0.",
     };
   }
 
@@ -154,7 +156,20 @@ export async function createMedicine(
 
   const { data: existingItems, error: existingItemsError } = await supabaseAdmin
     .from("items_medicine")
-    .select("id, name, dosage, volume")
+    .select(
+      `
+          id,
+          name,
+          form_id,
+          purpose_id,
+          dosage,
+          active_ingredient,
+          volume,
+          unit,
+          description,
+          minimum_quantity
+        `
+    )
     .eq("form_id", formId)
     .limit(1000);
 
@@ -168,22 +183,48 @@ export async function createMedicine(
   }
 
   const normalizedName = normalizeComparable(name);
-
   const normalizedDosage = normalizeComparable(dosage);
-
+  const normalizedActiveIngredient = normalizeComparable(activeIngredient);
   const normalizedVolume = normalizeComparable(volume);
+  const normalizedDescription = normalizeComparable(description);
 
-  const duplicate = existingItems?.find(
-    (item) =>
-      normalizeComparable(item.name) === normalizedName &&
-      normalizeComparable(item.dosage) === normalizedDosage &&
-      normalizeComparable(item.volume) === normalizedVolume
-  );
+  const existingMedicine = existingItems?.find((medicine) => {
+    return (
+      normalizeComparable(medicine.name) === normalizedName &&
+      medicine.form_id === formId &&
+      medicine.purpose_id === purposeId &&
+      normalizeComparable(medicine.dosage) === normalizedDosage &&
+      normalizeComparable(medicine.active_ingredient) ===
+        normalizedActiveIngredient &&
+      normalizeComparable(medicine.volume) === normalizedVolume &&
+      medicine.unit === unit &&
+      normalizeComparable(medicine.description) === normalizedDescription &&
+      Number(medicine.minimum_quantity) === minimumQuantity
+    );
+  });
 
-  if (duplicate) {
+  if (existingMedicine) {
+    if (quantity > 0 && expiryMonth !== null && expiryYear !== null) {
+      const stockResult = await createStockBatch(
+        existingMedicine.id,
+        expiryMonth,
+        expiryYear,
+        quantity
+      );
+
+      if (stockResult.status === "error") {
+        return {
+          status: "error",
+          message: stockResult.message,
+        };
+      }
+    }
+
+    revalidatePath("/");
+
     return {
-      status: "error",
-      message: "Такий варіант препарату вже існує.",
+      status: "success",
+      message: "Препарат уже існує. Партію додано до нього.",
     };
   }
 
@@ -218,7 +259,7 @@ export async function createMedicine(
     };
   }
 
-  if (expiryMonth !== null && expiryYear !== null && quantity >= 0) {
+  if (expiryMonth !== null && expiryYear !== null) {
     const { error: stockError } = await supabaseAdmin.from("stock").insert({
       item_id: medicine.id,
       expiry_month: expiryMonth,
