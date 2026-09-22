@@ -5,7 +5,7 @@ import { useState } from "react";
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
 
-import { inviteUser } from "../actions/invite-user";
+import { createUser } from "../actions/create-user";
 import { UserRole } from "../types";
 
 type CreateUserModalProps = {
@@ -13,10 +13,7 @@ type CreateUserModalProps = {
   onClose: () => void;
 };
 
-const ROLE_OPTIONS: {
-  value: UserRole;
-  label: string;
-}[] = [
+const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   {
     value: "editor",
     label: "Редагування",
@@ -29,19 +26,20 @@ const ROLE_OPTIONS: {
 
 const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
   const [phone, setPhone] = useState("");
-  const [callsign, setCallsign] = useState("");
+  const [name, setName] = useState("");
   const [role, setRole] = useState<UserRole>("editor");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
     if (isLoading) {
       return;
     }
 
-    setCallsign("");
     setPhone("");
+    setName("");
+    setRole("editor");
     setError("");
     setSuccess("");
     onClose();
@@ -54,7 +52,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     setSuccess("");
     setIsLoading(true);
 
-    const result = await inviteUser(phone, role);
+    const result = await createUser(phone, name, role);
 
     setIsLoading(false);
 
@@ -63,11 +61,11 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
       return;
     }
 
-    setSuccess("Запрошення надіслано на вказаний email.");
+    setSuccess(result.message);
 
     setTimeout(() => {
       handleClose();
-    }, 1200);
+    }, 1000);
   };
 
   return (
@@ -88,7 +86,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
 
           <CustomButton
             type="submit"
-            form="invite-user-form"
+            form="create-user-form"
             disabled={isLoading}
           >
             {isLoading ? "Створення..." : "Створити"}
@@ -96,11 +94,11 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         </div>
       }
     >
-      <form id="invite-user-form" onSubmit={handleSubmit}>
+      <form id="create-user-form" onSubmit={handleSubmit}>
         <div className="space-y-5 p-6">
           <div>
             <label
-              htmlFor="invite-phone"
+              htmlFor="create-user-phone"
               className="mb-1.5 block text-sm font-medium text-gray-700"
             >
               Телефон
@@ -108,20 +106,20 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
             </label>
 
             <input
-              id="invite-phone"
+              id="create-user-phone"
               name="phone"
-              type="phone"
+              type="tel"
               required
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
-              placeholder="(xxx) xxx-xxxx"
+              placeholder="+380..."
               className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
             />
           </div>
 
           <div>
             <label
-              htmlFor="invite-phone"
+              htmlFor="create-user-name"
               className="mb-1.5 block text-sm font-medium text-gray-700"
             >
               Позивний
@@ -129,27 +127,27 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
             </label>
 
             <input
-              id="invite-callsign"
-              name="callsign"
+              id="create-user-name"
+              name="name"
               type="text"
               required
-              value={callsign}
-              onChange={(event) => setCallsign(event.target.value)}
-              placeholder="Позивний"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Ім'я"
               className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
             />
           </div>
 
           <div>
             <label
-              htmlFor="invite-role"
+              htmlFor="create-user-role"
               className="mb-1.5 block text-sm font-medium text-gray-700"
             >
               Роль
             </label>
 
             <select
-              id="invite-role"
+              id="create-user-role"
               name="role"
               value={role}
               onChange={(event) => setRole(event.target.value as UserRole)}
