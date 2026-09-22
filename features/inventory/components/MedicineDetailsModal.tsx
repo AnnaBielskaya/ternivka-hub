@@ -103,12 +103,18 @@ const MedicineDetailsModal = ({
     startTransition(async () => {
       const result = await updateStockQuantity(stockItem.id, nextQuantity);
 
-      if (result.status === "success" && result.stock) {
-        setLocalStock((current) =>
-          current.map((currentStock) =>
-            currentStock.id === result.stock?.id ? result.stock : currentStock
-          )
-        );
+      if (result.status === "success") {
+        if (result.stock === null) {
+          setLocalStock((current) =>
+            current.filter((currentStock) => currentStock.id !== stockItem.id)
+          );
+        } else {
+          setLocalStock((current) =>
+            current.map((currentStock) =>
+              currentStock.id === result.stock?.id ? result.stock : currentStock
+            )
+          );
+        }
       } else if (result.status === "error") {
         window.alert(result.message);
       }

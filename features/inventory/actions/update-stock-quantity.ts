@@ -15,13 +15,27 @@ export type UpdateStockQuantityResult = {
     expiry_month: number;
     expiry_year: number;
     quantity: number;
-  };
+  } | null;
 };
 
 export async function updateStockQuantity(
   stockId: string,
   quantity: number
 ): Promise<UpdateStockQuantityResult> {
+  if (!stockId) {
+    return {
+      status: "error",
+      message: "Не вдалося визначити партію.",
+    };
+  }
+
+  if (quantity < 0) {
+    return {
+      status: "error",
+      message: "Кількість не може бути від'ємною.",
+    };
+  }
+
   const supabase = await createClient();
   const supabaseAdmin = createAdminClient();
 
@@ -49,28 +63,45 @@ export async function updateStockQuantity(
   ) {
     return {
       status: "error",
-      message: "У вас немає прав для зміни залишку.",
+      message: "У вас немає прав для зміни кількості.",
     };
   }
 
-  if (!Number.isFinite(quantity) || quantity < 0) {
+  if (quantity === 0) {
+    const { error } = await supabaseAdmin
+      .from("stock")
+      .delete()
+      .eq("id", stockId);
+
+    if (error) {
+      return {
+        status: "error",
+        message: "Не вдалося видалити партію.",
+      };
+    }
+
+    revalidatePath("/");
+
     return {
-      status: "error",
-      message: "Кількість не може бути від'ємною.",
+      status: "success",
+      message: "Партію видалено.",
+      stock: null,
     };
   }
 
-  const { data: stock, error: stockError } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("stock")
-    .update({ quantity })
+    .update({
+      quantity,
+    })
     .eq("id", stockId)
     .select("id, expiry_month, expiry_year, quantity")
     .single();
 
-  if (stockError || !stock) {
+  if (error || !data) {
     return {
       status: "error",
-      message: "Не вдалося змінити кількість.",
+      message: "Не вдалося оновити кількість.",
     };
   }
 
@@ -78,7 +109,7 @@ export async function updateStockQuantity(
 
   return {
     status: "success",
-    message: "Кількість успішно змінено.",
-    stock,
+    message: "Кількість оновлено.",
+    stock: data,
   };
 }
