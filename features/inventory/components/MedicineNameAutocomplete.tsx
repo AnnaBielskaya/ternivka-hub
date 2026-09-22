@@ -18,17 +18,21 @@ const MedicineNameAutocomplete = ({
   disabled = false,
 }: MedicineNameAutocompleteProps) => {
   const [suggestions, setSuggestions] = useState<MedicalItemRow[]>([]);
-
   const [isOpen, setIsOpen] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const skipNextSearchRef = useRef(false);
 
   useEffect(() => {
+    if (skipNextSearchRef.current) {
+      skipNextSearchRef.current = false;
+      return;
+    }
+
     const query = value.trim();
 
-    if (query.length < 2) {
+    if (query.length < 3) {
       setSuggestions([]);
       setIsOpen(false);
       return;
@@ -83,7 +87,9 @@ const MedicineNameAutocomplete = ({
   }, []);
 
   const handleSelect = (item: MedicalItemRow) => {
+    skipNextSearchRef.current = true;
     onSelect(item);
+    setSuggestions([]);
     setIsOpen(false);
   };
 
