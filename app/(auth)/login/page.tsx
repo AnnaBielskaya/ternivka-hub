@@ -2,15 +2,15 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 import CustomButton from "@/components/ui/CustomButton";
 
+import { loginWithPhone } from "@/features/auth/actions/login-with-phone";
+
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
 
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,13 +21,10 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const result = await loginWithPhone(phone, password);
 
-    if (error) {
-      setError("Невірний email або пароль");
+    if (result.status === "error") {
+      setError(result.message);
       setLoading(false);
       return;
     }
@@ -37,52 +34,69 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-        <h1 className="text-2xl font-semibold">Тернівські склади</h1>
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-6">
+          <h1 className="text-lg font-semibold text-gray-900">
+            Тернівські склади
+          </h1>
 
-        <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
-
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-lg border px-4 py-3"
-            required
-          />
+          <p className="mt-1 text-sm text-gray-500">Увійдіть до системи</p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm font-medium">
-            Пароль
-          </label>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="phone"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Телефон
+              </label>
 
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-lg border px-4 py-3"
-            required
-          />
-        </div>
+              <input
+                id="phone"
+                type="tel"
+                autoComplete="tel"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="+380..."
+                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                required
+              />
+            </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Пароль
+              </label>
 
-        <CustomButton
-          type="submit"
-          disabled={loading}
-          className="h-auto w-full rounded-lg bg-black px-4 py-3 text-sm text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? "Вхід..." : "Увійти"}
-        </CustomButton>
-      </form>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                required
+              />
+            </div>
+
+            {error && <p className="text-sm text-red-600">{error}</p>}
+
+            <CustomButton
+              type="submit"
+              disabled={loading}
+              className="h-10 w-full rounded-lg bg-gray-800 px-4 text-sm font-semibold text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Вхід..." : "Увійти"}
+            </CustomButton>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }
