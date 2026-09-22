@@ -9,12 +9,11 @@ import AddItemButton from "./AddItemButton";
 import MedsTableClient from "./MedsTableClient";
 
 const MedsTable = async () => {
-  const [items, medicineForms, medicinePurposes] =
-    await Promise.all([
-      getMedicalItems(),
-      getMedicineForms(),
-      getMedicinePurposes(),
-    ]);
+  const [items, medicineForms, medicinePurposes] = await Promise.all([
+    getMedicalItems(),
+    getMedicineForms(),
+    getMedicinePurposes(),
+  ]);
 
   const inventoryItems = items.map(mapInventoryItem);
 
@@ -30,7 +29,11 @@ const MedsTable = async () => {
         />
       </div>
 
-      <MedsTableClient items={inventoryItems} />
+      <MedsTableClient
+        items={items}
+        medicineForms={medicineForms}
+        medicinePurposes={medicinePurposes}
+      />
     </>
   );
 };
