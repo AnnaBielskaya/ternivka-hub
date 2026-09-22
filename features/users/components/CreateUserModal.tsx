@@ -28,20 +28,20 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<UserRole>("editor");
+  const [activationUrl, setActivationUrl] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
-    if (isLoading) {
+    if (isSubmitting) {
       return;
     }
 
     setPhone("");
     setName("");
     setRole("editor");
+    setActivationUrl("");
     setError("");
-    setSuccess("");
     onClose();
   };
 
@@ -49,23 +49,23 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     event.preventDefault();
 
     setError("");
-    setSuccess("");
-    setIsLoading(true);
+    setActivationUrl("");
+    setIsSubmitting(true);
 
     const result = await createUser(phone, name, role);
 
-    setIsLoading(false);
+    setIsSubmitting(false);
 
     if (result.status === "error") {
       setError(result.message);
       return;
     }
 
-    setSuccess(result.message);
-
-    setTimeout(() => {
-      handleClose();
-    }, 1000);
+    if (result.invitationId) {
+      setActivationUrl(
+        `${window.location.origin}/activate/${result.invitationId}`
+      );
+    }
   };
 
   return (
@@ -79,7 +79,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           <CustomButton
             variant="secondary"
             onClick={handleClose}
-            disabled={isLoading}
+            disabled={isSubmitting}
           >
             Скасувати
           </CustomButton>
@@ -87,9 +87,9 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           <CustomButton
             type="submit"
             form="create-user-form"
-            disabled={isLoading}
+            disabled={isSubmitting || Boolean(activationUrl)}
           >
-            {isLoading ? "Створення..." : "Створити"}
+            {isSubmitting ? "Створення..." : "Створити"}
           </CustomButton>
         </div>
       }
@@ -163,7 +163,26 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          {success && <p className="text-sm text-green-600">{success}</p>}
+          {activationUrl && (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <p className="text-sm font-medium text-gray-800">
+                Посилання для активації
+              </p>
+
+              <p className="mt-1 break-all text-xs text-gray-500">
+                {activationUrl}
+              </p>
+
+              <CustomButton
+                type="button"
+                variant="secondary"
+                className="mt-3"
+                onClick={() => navigator.clipboard.writeText(activationUrl)}
+              >
+                Копіювати посилання
+              </CustomButton>
+            </div>
+          )}
         </div>
       </form>
     </Modal>

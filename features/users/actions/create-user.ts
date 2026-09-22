@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,6 +13,7 @@ const CREATED_ROLES = ["editor", "admin"] as const;
 export type CreateUserResult = {
   status: "success" | "error";
   message: string;
+  invitationId?: string;
 };
 
 export async function createUser(
@@ -22,10 +25,10 @@ export async function createUser(
   const supabaseAdmin = createAdminClient();
 
   const {
-    data: { user: currentUser },
+    data: { user },
   } = await supabase.auth.getUser();
 
-  if (!currentUser) {
+  if (!user) {
     return {
       status: "error",
       message: "Необхідно авторизуватися.",
@@ -35,7 +38,7 @@ export async function createUser(
   const { data: profile, error: profileError } = await supabaseAdmin
     .from("profiles")
     .select("role")
-    .eq("id", currentUser.id)
+    .eq("id", user.id)
     .single();
 
   if (
@@ -49,67 +52,63 @@ export async function createUser(
     };
   }
 
-  if (!phone.trim()) {
+  if (!CREATED_ROLES.includes(role as (typeof CREATED_ROLES)[number])) {
+    return {
+      status: "error",
+      message: "Недоступна роль.",
+    };
+  }
+
+  const normalizedPhone = phone.trim();
+  const normalizedName = name.trim();
+
+  if (!normalizedPhone) {
     return {
       status: "error",
       message: "Вкажіть номер телефону.",
     };
   }
 
-  if (!name.trim()) {
+  if (!normalizedName) {
     return {
       status: "error",
       message: "Вкажіть ім'я.",
     };
   }
 
-  if (!CREATED_ROLES.includes(role as (typeof CREATED_ROLES)[number])) {
-    return {
-      status: "error",
-      message: "Некоректна роль.",
-    };
-  }
-
-  const { data: authData, error: authError } =
-    await supabaseAdmin.auth.admin.createUser({
-      phone: phone.trim(),
-      phone_confirm: true,
-    });
-
-  if (authError || !authData.user) {
-    console.error("Failed to create auth user:", authError);
-
-    return {
-      status: "error",
-      message:
-        authError?.message ===
-        "A user with this phone number has already been registered"
-          ? "Користувач з таким номером телефону вже існує."
-          : "Не вдалося створити користувача.",
-    };
-  }
-
-  const { error: profileCreateError } = await supabaseAdmin
-    .from("profiles")
+  const { data: invitation, error: invitationError } = await supabaseAdmin
+    .from("invitations")
     .insert({
-      id: authData.user.id,
-      name: name.trim(),
+      phone: normalizedPhone,
+      name: normalizedName,
       role,
-    });
+      invited_by: user.id,
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    })
+    .select("id")
+    .single();
 
-  if (profileCreateError) {
-    await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+  if (invitationError || !invitation) {
+    if (invitationError?.code === "23505") {
+      return {
+        status: "error",
+        message: "Для цього номера вже існує активне запрошення.",
+      };
+    }
 
-    console.error("Failed to create user profile:", profileCreateError);
+    console.error("Failed to create invitation:", invitationError);
 
     return {
       status: "error",
-      message: "Не вдалося створити профіль користувача.",
+      message: "Не вдалося створити запрошення.",
     };
   }
+
+  revalidatePath("/admin/users");
 
   return {
     status: "success",
-    message: "Користувача успішно створено.",
+    message: "Запрошення успішно створено.",
+    invitationId: invitation.id,
   };
 }
