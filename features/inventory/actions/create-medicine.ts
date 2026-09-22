@@ -230,7 +230,7 @@ export async function createMedicine(
 
   const now = new Date().toISOString();
 
-  const { data: medicine, error: medicineError } = await supabaseAdmin
+  const { data: medicine, error: medicineError } = await supabase
     .from("items_medicine")
     .insert({
       name,
@@ -260,7 +260,7 @@ export async function createMedicine(
   }
 
   if (expiryMonth !== null && expiryYear !== null) {
-    const { error: stockError } = await supabaseAdmin.from("stock").insert({
+    const { error: stockError } = await supabase.from("stock").insert({
       item_id: medicine.id,
       expiry_month: expiryMonth,
       expiry_year: expiryYear,
@@ -270,7 +270,7 @@ export async function createMedicine(
     if (stockError) {
       console.error("Failed to create stock:", stockError);
 
-      await supabaseAdmin.from("items_medicine").delete().eq("id", medicine.id);
+      await supabase.from("items_medicine").delete().eq("id", medicine.id);
 
       return {
         status: "error",

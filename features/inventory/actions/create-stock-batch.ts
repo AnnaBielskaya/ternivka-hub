@@ -76,14 +76,14 @@ export async function createStockBatch(
     };
   }
 
-  if (!Number.isFinite(quantity) || quantity <= 0) {
+  if (!Number.isInteger(quantity) || quantity <= 0) {
     return {
       status: "error",
-      message: "Кількість має бути більшою за 0.",
+      message: "Кількість має бути цілим числом більшим за 0.",
     };
   }
 
-  const { data: existingStock, error: existingStockError } = await supabaseAdmin
+  const { data: existingStock, error: existingStockError } = await supabase
     .from("stock")
     .select("id, expiry_month, expiry_year, quantity")
     .eq("item_id", itemId)
@@ -101,7 +101,7 @@ export async function createStockBatch(
   if (existingStock) {
     const nextQuantity = Number(existingStock.quantity) + quantity;
 
-    const { data: stock, error } = await supabaseAdmin
+    const { data: stock, error } = await supabase
       .from("stock")
       .update({
         quantity: nextQuantity,
@@ -126,7 +126,7 @@ export async function createStockBatch(
     };
   }
 
-  const { data: stock, error } = await supabaseAdmin
+  const { data: stock, error } = await supabase
     .from("stock")
     .insert({
       item_id: itemId,
