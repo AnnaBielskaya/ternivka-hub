@@ -1,16 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import Modal from "@/components/ui/Modal";
-import type { InventoryItem, StockRow } from "@/features/inventory/types";
+import CustomButton from "@/components/ui/CustomButton";
 import AvailabilityItem from "./AvailabilityItem";
+import AddStockBatchForm from "./AddStockBatchForm";
+import StockBatchCard from "./StockBatchCard";
+
 import CalendarIcon from "@/components/inventory/icons/CalendarIcon";
-import SectionDivider from "@/components/ui/SectionDivider";
 import BoxesIcon from "@/components/inventory/icons/BoxesIcon";
 import MinusCircleIcon from "@/components/inventory/icons/MinusCircleIcon";
+
+import SectionDivider from "@/components/ui/SectionDivider";
 import SectionTitle from "@/components/ui/SectionTitle";
-import CustomButton from "@/components/ui/CustomButton";
+
+import type { InventoryItem, StockRow } from "@/features/inventory/types";
+
+import { updateStockQuantity } from "@/features/inventory/actions/update-stock-quantity";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
@@ -31,30 +38,99 @@ const MedicineDetailsModal = ({
   onEdit,
   onDelete,
 }: MedicineDetailsModalProps) => {
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [localStock, setLocalStock] = useState<StockRow[]>(stock);
+
+  const [updatingStockId, setUpdatingStockId] = useState<string | null>(null);
+
+  const [isPending, startTransition] = useTransition();
+
+  const [isAddBatchOpen, setIsAddBatchOpen] = useState(false);
 
   const medicineSubtitle = [item.medicine_form?.name, item.dosage, item.volume]
     .filter(Boolean)
     .join(" · ");
 
-  const sortedStock = [...stock].sort((a, b) => {
-    const dateA = a.expiry_year * 100 + a.expiry_month;
-    const dateB = b.expiry_year * 100 + b.expiry_month;
+  const sortedStock = useMemo(
+    () =>
+      [...localStock].sort(
+        (a, b) =>
+          a.expiry_year * 100 +
+          a.expiry_month -
+          (b.expiry_year * 100 + b.expiry_month)
+      ),
+    [localStock]
+  );
 
-    return dateA - dateB;
-  });
+  const totalQuantity = useMemo(
+    () =>
+      localStock.reduce(
+        (total, stockItem) => total + Number(stockItem.quantity),
+        0
+      ),
+    [localStock]
+  );
 
-  const handleDeleteClick = () => {
-    setIsDeleteConfirmOpen(true);
+  const nearestStock = useMemo(
+    () =>
+      [...localStock]
+        .filter((stockItem) => Number(stockItem.quantity) > 0)
+        .sort(
+          (a, b) =>
+            a.expiry_year * 100 +
+            a.expiry_month -
+            (b.expiry_year * 100 + b.expiry_month)
+        )[0] ?? null,
+    [localStock]
+  );
+
+  const nearestExpiry = nearestStock
+    ? formatExpiry(nearestStock.expiry_month, nearestStock.expiry_year)
+    : null;
+
+  const needsRefill = totalQuantity < item.minimum_quantity;
+
+  const handleChangeQuantity = (stockItem: StockRow, delta: number) => {
+    const currentQuantity = Number(stockItem.quantity);
+
+    const nextQuantity = Math.max(0, currentQuantity + delta);
+
+    if (nextQuantity === currentQuantity || updatingStockId) {
+      return;
+    }
+
+    setUpdatingStockId(stockItem.id);
+
+    startTransition(async () => {
+      const result = await updateStockQuantity(stockItem.id, nextQuantity);
+
+      if (result.status === "success" && result.stock) {
+        setLocalStock((current) =>
+          current.map((currentStock) =>
+            currentStock.id === result.stock?.id ? result.stock : currentStock
+          )
+        );
+      } else if (result.status === "error") {
+        window.alert(result.message);
+      }
+
+      setUpdatingStockId(null);
+    });
   };
 
-  const handleCancelDelete = () => {
-    setIsDeleteConfirmOpen(false);
-  };
+  const handleBatchSaved = (updatedStock: StockRow) => {
+    setLocalStock((current) => {
+      const exists = current.some(
+        (currentStock) => currentStock.id === updatedStock.id
+      );
 
-  const handleConfirmDelete = () => {
-    setIsDeleteConfirmOpen(false);
-    onDelete?.();
+      if (exists) {
+        return current.map((currentStock) =>
+          currentStock.id === updatedStock.id ? updatedStock : currentStock
+        );
+      }
+
+      return [...current, updatedStock];
+    });
   };
 
   return (
@@ -76,7 +152,7 @@ const MedicineDetailsModal = ({
         footer={
           <div className="flex items-center justify-between gap-2">
             {onDelete ? (
-              <CustomButton variant="dangerOutline" onClick={handleDeleteClick}>
+              <CustomButton variant="dangerOutline" onClick={onDelete}>
                 Видалити
               </CustomButton>
             ) : (
@@ -104,110 +180,79 @@ const MedicineDetailsModal = ({
               <AvailabilityItem
                 icon={<BoxesIcon />}
                 label="Загальна кількість"
-                value={`${item.quantity} (${item.unit})`}
-                status={item.needsRefill ? "Потребує поповнення" : "Достатньо"}
-                statusVariant={item.needsRefill ? "warning" : "success"}
+                value={`${totalQuantity} ${item.unit}`}
+                status={needsRefill ? "Потребує поповнення" : "Достатньо"}
+                statusVariant={needsRefill ? "warning" : "success"}
               />
 
               <AvailabilityItem
                 icon={<MinusCircleIcon />}
                 label="Мінімальний залишок"
-                value={`${item.minimum_quantity} (${item.unit})`}
+                value={`${item.minimum_quantity} ${item.unit}`}
               />
 
               <AvailabilityItem
                 icon={<CalendarIcon />}
                 label="Найближчий термін придатності"
-                value={item.nearestExpiry ?? "—"}
+                value={nearestExpiry ?? "—"}
               />
             </div>
           </section>
 
-          <section>
-            <div className="mb-3 flex items-center justify-between">
-              <SectionTitle title="Партії" className="mb-0" />
+          <SectionDivider />
 
-              {sortedStock.length > 0 && (
-                <span className="text-[12px] text-slate-400">
-                  {sortedStock.length}{" "}
-                  {sortedStock.length === 1 ? "партія" : "партії"}
-                </span>
-              )}
+          <section>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <SectionTitle title="Партії" className="mb-0" />
+
+                {sortedStock.length > 0 && (
+                  <span className="text-[11px] text-slate-400">
+                    {sortedStock.length}{" "}
+                    {sortedStock.length === 1 ? "партія" : "партії"}
+                  </span>
+                )}
+              </div>
+
+              <CustomButton
+                type="button"
+                onClick={() => setIsAddBatchOpen((current) => !current)}
+              >
+                + Додати партію
+              </CustomButton>
             </div>
 
-            {sortedStock.length > 0 ? (
-              <div className="grid grid-cols-2 gap-2.5">
-                {sortedStock.map((stockItem, index) => {
-                  const isNearest = index === 0;
-
-                  return (
-                    <div
-                      key={stockItem.id}
-                      className={`rounded-lg px-3.5 py-3 ${
-                        isNearest ? "bg-blue-50" : "bg-slate-50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex min-w-0 items-center gap-2.5">
-                          <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
-                              isNearest
-                                ? "bg-blue-100 text-blue-600"
-                                : "bg-white text-slate-400"
-                            }`}
-                          >
-                            <CalendarIcon />
-                          </div>
-
-                          <div className="min-w-0">
-                            <span className="block text-[12px] text-slate-400">
-                              Термін придатності
-                            </span>
-
-                            <span
-                              className={`mt-0.5 block text-[13px] font-semibold ${
-                                isNearest ? "text-blue-800" : "text-slate-900"
-                              }`}
-                            >
-                              {formatExpiry(
-                                stockItem.expiry_month,
-                                stockItem.expiry_year
-                              )}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-2.5">
-                          <div className="text-right">
-                            <span className="block text-[12px] text-slate-400">
-                              Кількість
-                            </span>
-
-                            <span className="mt-0.5 block text-[13px] font-semibold text-slate-900">
-                              {stockItem.quantity} ({item.unit})
-                            </span>
-                          </div>
-
-                          <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
-                              isNearest
-                                ? "bg-blue-100 text-blue-600"
-                                : "bg-white text-slate-400"
-                            }`}
-                          >
-                            <BoxesIcon />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="rounded-lg bg-slate-50 px-3.5 py-3 text-xs text-slate-500">
-                Інформація про партії відсутня
-              </div>
+            {isAddBatchOpen && (
+              <AddStockBatchForm
+                itemId={item.id}
+                unit={item.unit}
+                onCancel={() => setIsAddBatchOpen(false)}
+                onSaved={handleBatchSaved}
+              />
             )}
+
+            <div className={isAddBatchOpen ? "mt-2.5" : ""}>
+              {sortedStock.length > 0 ? (
+                <div className="grid grid-cols-2 gap-2.5">
+                  {sortedStock.map((stockItem, index) => (
+                    <StockBatchCard
+                      key={stockItem.id}
+                      stock={stockItem}
+                      unit={item.unit}
+                      isNearest={index === 0}
+                      isUpdating={isPending && updatingStockId === stockItem.id}
+                      onChangeQuantity={handleChangeQuantity}
+                    />
+                  ))}
+                </div>
+              ) : (
+                !isAddBatchOpen && (
+                  <div className="rounded-lg bg-slate-50 px-3.5 py-3 text-xs text-slate-500">
+                    Інформація про партії відсутня
+                  </div>
+                )
+              )}
+            </div>
           </section>
 
           <SectionDivider />
@@ -251,41 +296,8 @@ const MedicineDetailsModal = ({
               </section>
             </>
           )}
-
-          <SectionDivider />
         </div>
       </Modal>
-
-      {isDeleteConfirmOpen && (
-        <Modal
-          isOpen={true}
-          title="Видалити препарат?"
-          onClose={handleCancelDelete}
-          size="sm"
-          footer={
-            <div className="flex items-center justify-end gap-2">
-              <CustomButton variant="secondary" onClick={handleCancelDelete}>
-                Скасувати
-              </CustomButton>
-
-              <CustomButton variant="danger" onClick={handleConfirmDelete}>
-                Видалити
-              </CustomButton>
-            </div>
-          }
-        >
-          <div className="p-5">
-            <p className="text-sm leading-5 text-slate-600">
-              Ви впевнені, що хочете видалити препарат «{item.name}»?
-            </p>
-
-            <p className="mt-2 text-xs leading-5 text-slate-400">
-              Усі партії цього препарату також будуть видалені. Цю дію неможливо
-              скасувати.
-            </p>
-          </div>
-        </Modal>
-      )}
     </>
   );
 };

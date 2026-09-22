@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 
 import type {
   InventoryItem,
+  MedicineFormRow,
+  MedicinePurposeRow,
   MedicineSortKey,
   SortDirection,
 } from "@/features/inventory/types";
@@ -14,22 +16,31 @@ import { deleteMedicine } from "../actions/delete-medicine";
 
 import MedsToolbar from "./MedsToolbar";
 import MedicineDetailsModal from "./MedicineDetailsModal";
+import EditMedicineModal from "./EditMedicineModal";
 import StatusBadge from "@/components/ui/StatusBadge";
 
 type MedsTableClientProps = {
   items: InventoryItem[];
+  medicineForms: MedicineFormRow[];
+  medicinePurposes: MedicinePurposeRow[];
 };
 
 const collator = new Intl.Collator("uk-UA", {
   sensitivity: "base",
 });
 
-const MedsTableClient = ({ items }: MedsTableClientProps) => {
+const MedsTableClient = ({
+  items,
+  medicineForms,
+  medicinePurposes,
+}: MedsTableClientProps) => {
   const router = useRouter();
 
   const [needsRefillOnly, setNeedsRefillOnly] = useState(false);
 
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
   const [sortKey, setSortKey] = useState<MedicineSortKey>("name");
 
@@ -266,6 +277,25 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
           stock={selectedItem.stock}
           onClose={handleCloseModal}
           onDelete={handleDelete}
+          onEdit={() => {
+            setEditingItem(selectedItem);
+            setSelectedItem(null);
+          }}
+        />
+      )}
+
+      {editingItem && (
+        <EditMedicineModal
+          item={editingItem}
+          medicineForms={medicineForms}
+          medicinePurposes={medicinePurposes}
+          onClose={() => {
+            setEditingItem(null);
+          }}
+          onSaved={() => {
+            setEditingItem(null);
+            router.refresh();
+          }}
         />
       )}
 
