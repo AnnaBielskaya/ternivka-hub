@@ -8,7 +8,7 @@ import CustomButton from "@/components/ui/CustomButton";
 import { inviteUser } from "../actions/invite-user";
 import { UserRole } from "../types";
 
-type InviteUserModalProps = {
+type CreateUserModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
@@ -17,10 +17,6 @@ const ROLE_OPTIONS: {
   value: UserRole;
   label: string;
 }[] = [
-  {
-    value: "viewer",
-    label: "Перегляд",
-  },
   {
     value: "editor",
     label: "Редагування",
@@ -31,9 +27,10 @@ const ROLE_OPTIONS: {
   },
 ];
 
-const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState<UserRole>("viewer");
+const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
+  const [phone, setPhone] = useState("");
+  const [callsign, setCallsign] = useState("");
+  const [role, setRole] = useState<UserRole>("editor");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -43,8 +40,8 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
       return;
     }
 
-    setEmail("");
-    setRole("viewer");
+    setCallsign("");
+    setPhone("");
     setError("");
     setSuccess("");
     onClose();
@@ -57,7 +54,7 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
     setSuccess("");
     setIsLoading(true);
 
-    const result = await inviteUser(email, role);
+    const result = await inviteUser(phone, role);
 
     setIsLoading(false);
 
@@ -76,8 +73,9 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
   return (
     <Modal
       isOpen={isOpen}
-      title="Запросити користувача"
+      title="Створити користувача"
       onClose={handleClose}
+      size="sm"
       footer={
         <div className="flex justify-end gap-3">
           <CustomButton
@@ -93,7 +91,7 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
             form="invite-user-form"
             disabled={isLoading}
           >
-            {isLoading ? "Надсилання..." : "Запросити"}
+            {isLoading ? "Створення..." : "Створити"}
           </CustomButton>
         </div>
       }
@@ -102,20 +100,42 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
         <div className="space-y-5 p-6">
           <div>
             <label
-              htmlFor="invite-email"
+              htmlFor="invite-phone"
               className="mb-1.5 block text-sm font-medium text-gray-700"
             >
-              Email
+              Телефон
+              <span className="text-red-500"> *</span>
             </label>
 
             <input
-              id="invite-email"
-              name="email"
-              type="email"
+              id="invite-phone"
+              name="phone"
+              type="phone"
               required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="example@email.com"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              placeholder="(xxx) xxx-xxxx"
+              className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="invite-phone"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              Позивний
+              <span className="text-red-500"> *</span>
+            </label>
+
+            <input
+              id="invite-callsign"
+              name="callsign"
+              type="text"
+              required
+              value={callsign}
+              onChange={(event) => setCallsign(event.target.value)}
+              placeholder="Позивний"
               className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
             />
           </div>
@@ -152,4 +172,4 @@ const InviteUserModal = ({ isOpen, onClose }: InviteUserModalProps) => {
   );
 };
 
-export default InviteUserModal;
+export default CreateUserModal;

@@ -7,7 +7,6 @@ import type {
   InventoryItem,
   MedicineSortKey,
   SortDirection,
-  StockRow,
 } from "@/features/inventory/types";
 
 import { MEDICINE_TABLE_COLUMNS } from "../constants";
@@ -180,16 +179,12 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                       </div>
                     </td>
 
-                    <td className="border-b border-slate-100 px-4 py-4">
-                      {item.medicine_form ? (
-                        <StatusBadge
-                          kind="form"
-                          variant={needsRefill ? "warning" : "info"}
-                          title={item.medicine_form.name}
-                        />
-                      ) : (
-                        <span className="text-slate-400">-</span>
-                      )}
+                    <td
+                      className={`border-b border-slate-100 px-4 py-4 text-[13px] ${
+                        needsRefill ? "text-red-700" : "text-slate-600"
+                      }`}
+                    >
+                      {item.dosage ?? "-"}
                     </td>
 
                     <td
@@ -200,12 +195,16 @@ const MedsTableClient = ({ items }: MedsTableClientProps) => {
                       {item.active_ingredient ?? "-"}
                     </td>
 
-                    <td
-                      className={`border-b border-slate-100 px-4 py-4 text-[13px] ${
-                        needsRefill ? "text-red-700" : "text-slate-600"
-                      }`}
-                    >
-                      {item.dosage ?? "-"}
+                    <td className="border-b border-slate-100 px-4 py-4">
+                      {item.medicine_form ? (
+                        <StatusBadge
+                          kind="form"
+                          variant={needsRefill ? "warning" : "info"}
+                          title={item.medicine_form.name}
+                        />
+                      ) : (
+                        <span className="text-slate-400">-</span>
+                      )}
                     </td>
 
                     <td

@@ -2,8 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-
-type UserRole = "viewer" | "editor" | "admin" | "super_admin";
+import { UserRole } from "../types";
 
 export async function inviteUser(email: string, role: UserRole) {
   const supabase = await createClient();

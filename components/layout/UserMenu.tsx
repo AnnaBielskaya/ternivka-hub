@@ -7,15 +7,15 @@ type UserMenuProps = {
   name: string;
   role: UserRole;
   setIsOpen: (value: boolean) => void;
-  onInviteUser: () => void;
+  onCreateUser: () => void;
 };
 
-const UserMenu = ({ name, role, setIsOpen, onInviteUser }: UserMenuProps) => {
+const UserMenu = ({ name, role, setIsOpen, onCreateUser }: UserMenuProps) => {
   const canManageUsers = role === "admin" || role === "super_admin";
 
-  const handleInviteUser = () => {
+  const handleCreateUser = () => {
     setIsOpen(false);
-    onInviteUser();
+    onCreateUser();
   };
 
   return (
@@ -72,10 +72,10 @@ const UserMenu = ({ name, role, setIsOpen, onInviteUser }: UserMenuProps) => {
 
               <button
                 type="button"
-                onClick={handleInviteUser}
+                onClick={handleCreateUser}
                 className="w-full cursor-pointer rounded-xl px-4 py-3 text-left text-sm transition hover:bg-gray-100"
               >
-                Запросити користувача
+                Створити користувача
               </button>
             </>
           )}

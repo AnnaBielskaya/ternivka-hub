@@ -104,7 +104,7 @@ const MedicineDetailsModal = ({
               <AvailabilityItem
                 icon={<BoxesIcon />}
                 label="Загальна кількість"
-                value={`${item.quantity} ${item.unit}`}
+                value={`${item.quantity} (${item.unit})`}
                 status={item.needsRefill ? "Потребує поповнення" : "Достатньо"}
                 statusVariant={item.needsRefill ? "warning" : "success"}
               />
@@ -112,7 +112,7 @@ const MedicineDetailsModal = ({
               <AvailabilityItem
                 icon={<MinusCircleIcon />}
                 label="Мінімальний залишок"
-                value={`${item.minimum_quantity} ${item.unit}`}
+                value={`${item.minimum_quantity} (${item.unit})`}
               />
 
               <AvailabilityItem
@@ -122,50 +122,6 @@ const MedicineDetailsModal = ({
               />
             </div>
           </section>
-
-          <SectionDivider />
-
-          <section>
-            <SectionTitle title="Характеристики" />
-
-            <div className="grid grid-cols-3 gap-x-6 gap-y-4">
-              <InfoItem label="Діюча речовина" value={item.active_ingredient} />
-
-              <InfoItem
-                label="Форма випуску"
-                value={item.medicine_form?.name}
-              />
-
-              <InfoItem
-                label="Призначення"
-                value={item.medicine_purpose?.name}
-              />
-
-              <InfoItem label="Дозування" value={item.dosage} />
-
-              <InfoItem label="Обʼєм" value={item.volume} />
-
-              <InfoItem label="Одиниця обліку" value={item.unit} />
-            </div>
-          </section>
-
-          {item.description && (
-            <>
-              <SectionDivider />
-
-              <section>
-                <SectionTitle title="Опис" />
-
-                <div className="rounded-lg bg-slate-50 px-3.5 py-3">
-                  <p className="whitespace-pre-wrap text-xs leading-5 text-slate-600">
-                    {item.description}
-                  </p>
-                </div>
-              </section>
-            </>
-          )}
-
-          <SectionDivider />
 
           <section>
             <div className="mb-3 flex items-center justify-between">
@@ -228,7 +184,7 @@ const MedicineDetailsModal = ({
                             </span>
 
                             <span className="mt-0.5 block text-[13px] font-semibold text-slate-900">
-                              {stockItem.quantity} {item.unit}
+                              {stockItem.quantity} ({item.unit})
                             </span>
                           </div>
 
@@ -243,14 +199,6 @@ const MedicineDetailsModal = ({
                           </div>
                         </div>
                       </div>
-
-                      {isNearest && (
-                        <div className="mt-2">
-                          <span className="inline-flex rounded-md bg-white px-2 py-1 text-[10px] font-medium text-blue-600">
-                            Найближча партія
-                          </span>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
@@ -261,6 +209,50 @@ const MedicineDetailsModal = ({
               </div>
             )}
           </section>
+
+          <SectionDivider />
+
+          <section>
+            <SectionTitle title="Характеристики" />
+
+            <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+              <InfoItem label="Діюча речовина" value={item.active_ingredient} />
+
+              <InfoItem
+                label="Форма випуску"
+                value={item.medicine_form?.name}
+              />
+
+              <InfoItem
+                label="Призначення"
+                value={item.medicine_purpose?.name}
+              />
+
+              <InfoItem label="Дозування" value={item.dosage} />
+
+              <InfoItem label="Обʼєм" value={item.volume} />
+
+              <InfoItem label="Одиниця обліку" value={item.unit} />
+            </div>
+          </section>
+
+          {item.description && (
+            <>
+              <SectionDivider />
+
+              <section>
+                <SectionTitle title="Опис" />
+
+                <div className="rounded-lg bg-slate-50 px-3.5 py-3">
+                  <p className="whitespace-pre-wrap text-xs leading-5 text-slate-600">
+                    {item.description}
+                  </p>
+                </div>
+              </section>
+            </>
+          )}
+
+          <SectionDivider />
         </div>
       </Modal>
 

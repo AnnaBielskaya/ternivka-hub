@@ -6,8 +6,8 @@ import Logo from "./Logo";
 import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
 import UserMenu from "./UserMenu";
-import InviteUserModal from "@/features/users/components/InviteUserModal";
 import { UserRole } from "@/features/users/types";
+import CreateUserModal from "@/features/users/components/CreateUserModal";
 
 type UserMenuProps = {
   name: string;
@@ -80,11 +80,11 @@ const Header = ({ name, role }: UserMenuProps) => {
           name={name}
           role={role}
           setIsOpen={setIsOpen}
-          onInviteUser={() => setIsInviteModalOpen(true)}
+          onCreateUser={() => setIsInviteModalOpen(true)}
         />
       )}
 
-      <InviteUserModal
+      <CreateUserModal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
       />
