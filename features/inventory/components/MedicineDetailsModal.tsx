@@ -1,12 +1,19 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
 import AvailabilityItem from "./AvailabilityItem";
 import AddStockBatchForm from "./AddStockBatchForm";
 import StockBatchCard from "./StockBatchCard";
+import MedicineAuditTable from "./MedicineAuditTable";
 
 import CalendarIcon from "@/components/inventory/icons/CalendarIcon";
 import BoxesIcon from "@/components/inventory/icons/BoxesIcon";
@@ -18,6 +25,7 @@ import SectionTitle from "@/components/ui/SectionTitle";
 import type { InventoryItem, StockRow } from "@/features/inventory/types";
 
 import { updateStockQuantity } from "@/features/inventory/actions/update-stock-quantity";
+import { getMedicineAuditLogs } from "@/features/inventory/actions/get-medicine-audit-logs";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
@@ -39,12 +47,14 @@ const MedicineDetailsModal = ({
   onDelete,
 }: MedicineDetailsModalProps) => {
   const [localStock, setLocalStock] = useState<StockRow[]>(stock);
-
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null);
-
   const [isPending, startTransition] = useTransition();
-
   const [isAddBatchOpen, setIsAddBatchOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [auditLogs, setAuditLogs] = useState<
+    Awaited<ReturnType<typeof getMedicineAuditLogs>>
+  >([]);
+  const [isAuditLoading, setIsAuditLoading] = useState(true);
 
   const medicineSubtitle = [item.medicine_form?.name, item.dosage, item.volume]
     .filter(Boolean)
@@ -89,9 +99,20 @@ const MedicineDetailsModal = ({
 
   const needsRefill = totalQuantity < item.minimum_quantity;
 
+  const loadAuditLogs = useCallback(async () => {
+    const logs = await getMedicineAuditLogs(item.id);
+
+    setAuditLogs(logs);
+    setIsAuditLoading(false);
+  }, [item.id]);
+
+  useEffect(() => {
+    setIsAuditLoading(true);
+    loadAuditLogs();
+  }, [loadAuditLogs]);
+
   const handleChangeQuantity = (stockItem: StockRow, delta: number) => {
     const currentQuantity = Number(stockItem.quantity);
-
     const nextQuantity = Math.max(0, currentQuantity + delta);
 
     if (nextQuantity === currentQuantity || updatingStockId) {
@@ -115,7 +136,9 @@ const MedicineDetailsModal = ({
             )
           );
         }
-      } else if (result.status === "error") {
+
+        await loadAuditLogs();
+      } else {
         window.alert(result.message);
       }
 
@@ -137,6 +160,21 @@ const MedicineDetailsModal = ({
 
       return [...current, updatedStock];
     });
+
+    loadAuditLogs();
+  };
+
+  const handleDeleteClick = () => {
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteConfirmOpen(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsDeleteConfirmOpen(false);
+    onDelete?.();
   };
 
   return (
@@ -158,7 +196,7 @@ const MedicineDetailsModal = ({
         footer={
           <div className="flex items-center justify-between gap-2">
             {onDelete ? (
-              <CustomButton variant="dangerOutline" onClick={onDelete}>
+              <CustomButton variant="dangerOutline" onClick={handleDeleteClick}>
                 Видалити
               </CustomButton>
             ) : (
@@ -302,8 +340,53 @@ const MedicineDetailsModal = ({
               </section>
             </>
           )}
+
+          <SectionDivider />
+
+          <section>
+            <SectionTitle title="Історія змін" />
+
+            {isAuditLoading ? (
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3 text-xs text-slate-400">
+                Завантаження історії...
+              </div>
+            ) : (
+              <MedicineAuditTable logs={auditLogs} />
+            )}
+          </section>
         </div>
       </Modal>
+
+      {isDeleteConfirmOpen && (
+        <Modal
+          isOpen={true}
+          title="Видалити препарат?"
+          onClose={handleCancelDelete}
+          size="sm"
+          footer={
+            <div className="flex items-center justify-end gap-2">
+              <CustomButton variant="secondary" onClick={handleCancelDelete}>
+                Скасувати
+              </CustomButton>
+
+              <CustomButton variant="danger" onClick={handleConfirmDelete}>
+                Видалити
+              </CustomButton>
+            </div>
+          }
+        >
+          <div className="p-5">
+            <p className="text-sm leading-5 text-slate-600">
+              Ви впевнені, що хочете видалити препарат «{item.name}»?
+            </p>
+
+            <p className="mt-2 text-xs leading-5 text-slate-400">
+              Усі партії цього препарату також будуть видалені. Цю дію неможливо
+              скасувати.
+            </p>
+          </div>
+        </Modal>
+      )}
     </>
   );
 };

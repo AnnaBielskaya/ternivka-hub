@@ -59,7 +59,7 @@ export async function deleteMedicine(
     };
   }
 
-  const { error: stockError } = await supabaseAdmin
+  const { error: stockError } = await supabase
     .from("stock")
     .delete()
     .eq("item_id", medicineId);
@@ -73,7 +73,7 @@ export async function deleteMedicine(
     };
   }
 
-  const { error: deleteError } = await supabaseAdmin
+  const { error: deleteError } = await supabase
     .from("items_medicine")
     .delete()
     .eq("id", medicineId);

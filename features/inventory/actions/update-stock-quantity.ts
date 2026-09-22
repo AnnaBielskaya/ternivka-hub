@@ -22,20 +22,6 @@ export async function updateStockQuantity(
   stockId: string,
   quantity: number
 ): Promise<UpdateStockQuantityResult> {
-  if (!stockId) {
-    return {
-      status: "error",
-      message: "Не вдалося визначити партію.",
-    };
-  }
-
-  if (quantity < 0) {
-    return {
-      status: "error",
-      message: "Кількість не може бути від'ємною.",
-    };
-  }
-
   const supabase = await createClient();
   const supabaseAdmin = createAdminClient();
 
@@ -63,22 +49,26 @@ export async function updateStockQuantity(
   ) {
     return {
       status: "error",
-      message: "У вас немає прав для зміни кількості.",
+      message: "У вас немає прав для зміни залишку.",
+    };
+  }
+
+  if (!stockId) {
+    return {
+      status: "error",
+      message: "Не вдалося визначити партію.",
     };
   }
 
   if (!Number.isInteger(quantity) || quantity < 0) {
     return {
       status: "error",
-      message: "Кількість має бути цілим числом.",
+      message: "Кількість має бути цілим числом не меншим за 0.",
     };
   }
 
   if (quantity === 0) {
-    const { error } = await supabaseAdmin
-      .from("stock")
-      .delete()
-      .eq("id", stockId);
+    const { error } = await supabase.from("stock").delete().eq("id", stockId);
 
     if (error) {
       return {
@@ -96,7 +86,7 @@ export async function updateStockQuantity(
     };
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data: stock, error } = await supabase
     .from("stock")
     .update({
       quantity,
@@ -105,10 +95,10 @@ export async function updateStockQuantity(
     .select("id, expiry_month, expiry_year, quantity")
     .single();
 
-  if (error || !data) {
+  if (error || !stock) {
     return {
       status: "error",
-      message: "Не вдалося оновити кількість.",
+      message: "Не вдалося змінити кількість партії.",
     };
   }
 
@@ -117,6 +107,6 @@ export async function updateStockQuantity(
   return {
     status: "success",
     message: "Кількість оновлено.",
-    stock: data,
+    stock,
   };
 }
