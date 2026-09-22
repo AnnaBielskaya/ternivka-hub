@@ -74,8 +74,8 @@ const AddStockBatchForm = ({
             <input
               id="batch_quantity"
               type="number"
-              min="0.01"
-              step="0.01"
+              min="0"
+              step="1"
               value={quantity}
               disabled={isPending}
               placeholder="0"

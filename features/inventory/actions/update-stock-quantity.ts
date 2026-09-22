@@ -67,6 +67,13 @@ export async function updateStockQuantity(
     };
   }
 
+  if (!Number.isInteger(quantity) || quantity < 0) {
+    return {
+      status: "error",
+      message: "Кількість має бути цілим числом.",
+    };
+  }
+
   if (quantity === 0) {
     const { error } = await supabaseAdmin
       .from("stock")

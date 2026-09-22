@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useActionState,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { useActionState, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import type {
@@ -70,33 +65,18 @@ const EMPTY_FORM: MedicineFormValues = {
   description: "",
 };
 
-const getMedicineQuantity = (
-  stock: MedicalItemRow["stock"],
-) => {
-  return stock.reduce(
-    (total, item) =>
-      total + Number(item.quantity),
-    0,
-  );
+const getMedicineQuantity = (stock: MedicalItemRow["stock"]) => {
+  return stock.reduce((total, item) => total + Number(item.quantity), 0);
 };
 
-const getNearestStock = (
-  stock: MedicalItemRow["stock"],
-) => {
+const getNearestStock = (stock: MedicalItemRow["stock"]) => {
   return (
     [...stock]
-      .filter(
-        (item) =>
-          Number(item.quantity) > 0,
-      )
+      .filter((item) => Number(item.quantity) > 0)
       .sort((a, b) => {
-        const dateA =
-          a.expiry_year * 100 +
-          a.expiry_month;
+        const dateA = a.expiry_year * 100 + a.expiry_month;
 
-        const dateB =
-          b.expiry_year * 100 +
-          b.expiry_month;
+        const dateB = b.expiry_year * 100 + b.expiry_month;
 
         return dateA - dateB;
       })[0] ?? null
@@ -110,40 +90,26 @@ const MedicineForm = ({
 }: MedicineFormProps) => {
   const router = useRouter();
 
-  const [form, setForm] =
-    useState<MedicineFormValues>(
-      EMPTY_FORM,
-    );
+  const [form, setForm] = useState<MedicineFormValues>(EMPTY_FORM);
 
-  const [
-    state,
-    formAction,
-    isPending,
-  ] = useActionState(
+  const [state, formAction, isPending] = useActionState(
     createMedicine,
-    initialMedicineCreateState,
+    initialMedicineCreateState
   );
 
-  const selectedForm =
-    medicineForms.find(
-      (medicineForm) =>
-        medicineForm.id === form.form_id,
-    );
+  const selectedForm = medicineForms.find(
+    (medicineForm) => medicineForm.id === form.form_id
+  );
 
-  const availableUnitValues =
-    selectedForm
-      ? MEDICINE_UNITS_BY_FORM[
-          selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
-        ] ?? []
-      : [];
+  const availableUnitValues = selectedForm
+    ? MEDICINE_UNITS_BY_FORM[
+        selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
+      ] ?? []
+    : [];
 
-  const availableUnits =
-    INVENTORY_UNITS.filter(
-      (inventoryUnit) =>
-        availableUnitValues.includes(
-          inventoryUnit.value as never,
-        ),
-    );
+  const availableUnits = INVENTORY_UNITS.filter((inventoryUnit) =>
+    availableUnitValues.includes(inventoryUnit.value as never)
+  );
 
   useEffect(() => {
     if (!selectedForm) {
@@ -160,20 +126,13 @@ const MedicineForm = ({
         selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
       ] ?? [];
 
-    if (
-      !allowedUnits.includes(
-        form.unit as never,
-      )
-    ) {
+    if (!allowedUnits.includes(form.unit as never)) {
       setForm((current) => ({
         ...current,
         unit: allowedUnits[0] ?? "",
       }));
     }
-  }, [
-    selectedForm,
-    form.unit,
-  ]);
+  }, [selectedForm, form.unit]);
 
   useEffect(() => {
     if (state.status !== "success") {
@@ -182,17 +141,11 @@ const MedicineForm = ({
 
     router.refresh();
     onSaved();
-  }, [
-    state.status,
-    router,
-    onSaved,
-  ]);
+  }, [state.status, router, onSaved]);
 
-  const updateField = <
-    K extends keyof MedicineFormValues,
-  >(
+  const updateField = <K extends keyof MedicineFormValues>(
     field: K,
-    value: MedicineFormValues[K],
+    value: MedicineFormValues[K]
   ) => {
     setForm((current) => ({
       ...current,
@@ -200,61 +153,29 @@ const MedicineForm = ({
     }));
   };
 
-  const handleSelectMedicine = (
-    medicine: MedicalItemRow,
-  ) => {
-    const quantity =
-      getMedicineQuantity(
-        medicine.stock,
-      );
+  const handleSelectMedicine = (medicine: MedicalItemRow) => {
+    const quantity = getMedicineQuantity(medicine.stock);
 
-    const nearestStock =
-      getNearestStock(
-        medicine.stock,
-      );
+    const nearestStock = getNearestStock(medicine.stock);
 
     setForm({
       name: medicine.name,
-      active_ingredient:
-        medicine.active_ingredient ??
-        "",
-      form_id:
-        medicine.medicine_form?.id ??
-        "",
-      purpose_id:
-        medicine.medicine_purpose?.id ??
-        "",
-      dosage:
-        medicine.dosage ?? "",
-      volume:
-        medicine.volume ?? "",
+      active_ingredient: medicine.active_ingredient ?? "",
+      form_id: medicine.medicine_form?.id ?? "",
+      purpose_id: medicine.medicine_purpose?.id ?? "",
+      dosage: medicine.dosage ?? "",
+      volume: medicine.volume ?? "",
       quantity: String(quantity),
       unit: medicine.unit,
-      minimum_quantity: String(
-        medicine.minimum_quantity,
-      ),
-      expiry_month:
-        nearestStock
-          ? String(
-              nearestStock.expiry_month,
-            )
-          : "",
-      expiry_year:
-        nearestStock
-          ? String(
-              nearestStock.expiry_year,
-            )
-          : "",
-      description:
-        medicine.description ?? "",
+      minimum_quantity: String(medicine.minimum_quantity),
+      expiry_month: nearestStock ? String(nearestStock.expiry_month) : "",
+      expiry_year: nearestStock ? String(nearestStock.expiry_year) : "",
+      description: medicine.description ?? "",
     });
   };
 
   return (
-    <form
-      id="medicine-form"
-      action={formAction}
-    >
+    <form id="medicine-form" action={formAction}>
       <div className="space-y-7 p-6">
         <FormSection
           title="Основна інформація"
@@ -262,22 +183,11 @@ const MedicineForm = ({
         >
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-3">
-              <FormField
-                label="Назва"
-                htmlFor="name"
-                required
-              >
+              <FormField label="Назва" htmlFor="name" required>
                 <MedicineNameAutocomplete
                   value={form.name}
-                  onChange={(value) =>
-                    updateField(
-                      "name",
-                      value,
-                    )
-                  }
-                  onSelect={
-                    handleSelectMedicine
-                  }
+                  onChange={(value) => updateField("name", value)}
+                  onSelect={handleSelectMedicine}
                   disabled={isPending}
                 />
               </FormField>
@@ -288,103 +198,56 @@ const MedicineForm = ({
                 id="active_ingredient"
                 name="active_ingredient"
                 type="text"
-                value={
-                  form.active_ingredient
-                }
+                value={form.active_ingredient}
                 disabled={isPending}
                 placeholder="Наприклад, парацетамол"
-                className={
-                  INPUT_CLASS_NAME
-                }
+                className={INPUT_CLASS_NAME}
                 onChange={(event) =>
-                  updateField(
-                    "active_ingredient",
-                    event.target.value,
-                  )
+                  updateField("active_ingredient", event.target.value)
                 }
               />
             </FormField>
 
-            <FormField
-              label="Форма випуску"
-              htmlFor="form_id"
-              required
-            >
+            <FormField label="Форма випуску" htmlFor="form_id" required>
               <select
                 id="form_id"
                 name="form_id"
                 required
                 value={form.form_id}
                 disabled={isPending}
-                className={
-                  SELECT_CLASS_NAME
-                }
-                onChange={(event) =>
-                  updateField(
-                    "form_id",
-                    event.target.value,
-                  )
-                }
+                className={SELECT_CLASS_NAME}
+                onChange={(event) => updateField("form_id", event.target.value)}
               >
-                <option
-                  value=""
-                  disabled
-                >
+                <option value="" disabled>
                   Оберіть форму
                 </option>
 
-                {medicineForms.map(
-                  (medicineForm) => (
-                    <option
-                      key={
-                        medicineForm.id
-                      }
-                      value={
-                        medicineForm.id
-                      }
-                    >
-                      {
-                        medicineForm.name
-                      }
-                    </option>
-                  ),
-                )}
+                {medicineForms.map((medicineForm) => (
+                  <option key={medicineForm.id} value={medicineForm.id}>
+                    {medicineForm.name}
+                  </option>
+                ))}
               </select>
             </FormField>
 
-            <FormField
-              label="Призначення"
-              htmlFor="purpose_id"
-            >
+            <FormField label="Призначення" htmlFor="purpose_id">
               <select
                 id="purpose_id"
                 name="purpose_id"
                 value={form.purpose_id}
                 disabled={isPending}
-                className={
-                  SELECT_CLASS_NAME
-                }
+                className={SELECT_CLASS_NAME}
                 onChange={(event) =>
-                  updateField(
-                    "purpose_id",
-                    event.target.value,
-                  )
+                  updateField("purpose_id", event.target.value)
                 }
               >
-                <option value="">
-                  Не обрано
-                </option>
+                <option value="">Не обрано</option>
 
-                {medicinePurposes.map(
-                  (purpose) => (
-                    <option
-                      key={purpose.id}
-                      value={purpose.id}
-                    >
-                      {purpose.name}
-                    </option>
-                  ),
-                )}
+                {medicinePurposes.map((purpose) => (
+                  <option key={purpose.id} value={purpose.id}>
+                    {purpose.name}
+                  </option>
+                ))}
               </select>
             </FormField>
           </div>
@@ -397,10 +260,7 @@ const MedicineForm = ({
           description="Дозування та фізичні характеристики"
         >
           <div className="grid grid-cols-3 gap-4">
-            <FormField
-              label="Дозування"
-              htmlFor="dosage"
-            >
+            <FormField label="Дозування" htmlFor="dosage">
               <input
                 id="dosage"
                 name="dosage"
@@ -408,22 +268,12 @@ const MedicineForm = ({
                 value={form.dosage}
                 disabled={isPending}
                 placeholder="Наприклад, 500 мг"
-                className={
-                  INPUT_CLASS_NAME
-                }
-                onChange={(event) =>
-                  updateField(
-                    "dosage",
-                    event.target.value,
-                  )
-                }
+                className={INPUT_CLASS_NAME}
+                onChange={(event) => updateField("dosage", event.target.value)}
               />
             </FormField>
 
-            <FormField
-              label="Обʼєм"
-              htmlFor="volume"
-            >
+            <FormField label="Обʼєм" htmlFor="volume">
               <input
                 id="volume"
                 name="volume"
@@ -431,15 +281,8 @@ const MedicineForm = ({
                 value={form.volume}
                 disabled={isPending}
                 placeholder="Наприклад, 100 мл"
-                className={
-                  INPUT_CLASS_NAME
-                }
-                onChange={(event) =>
-                  updateField(
-                    "volume",
-                    event.target.value,
-                  )
-                }
+                className={INPUT_CLASS_NAME}
+                onChange={(event) => updateField("volume", event.target.value)}
               />
             </FormField>
           </div>
@@ -452,104 +295,56 @@ const MedicineForm = ({
           description="Фактична кількість, мінімальний залишок та термін придатності"
         >
           <div className="grid grid-cols-3 gap-4">
-            <FormField
-              label="Кількість"
-              htmlFor="quantity"
-            >
+            <FormField label="Кількість" htmlFor="quantity">
               <input
                 id="quantity"
                 name="quantity"
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={form.quantity}
                 disabled={isPending}
-                className={
-                  INPUT_CLASS_NAME
-                }
+                className={INPUT_CLASS_NAME}
                 onChange={(event) =>
-                  updateField(
-                    "quantity",
-                    event.target.value,
-                  )
+                  updateField("quantity", event.target.value)
                 }
               />
             </FormField>
 
-            <FormField
-              label="Одиниця обліку"
-              htmlFor="unit"
-              required
-            >
+            <FormField label="Одиниця обліку" htmlFor="unit" required>
               <select
                 id="unit"
                 name="unit"
                 required
                 value={form.unit}
-                disabled={
-                  isPending ||
-                  !selectedForm
-                }
-                className={
-                  SELECT_CLASS_NAME
-                }
-                onChange={(event) =>
-                  updateField(
-                    "unit",
-                    event.target.value,
-                  )
-                }
+                disabled={isPending || !selectedForm}
+                className={SELECT_CLASS_NAME}
+                onChange={(event) => updateField("unit", event.target.value)}
               >
-                <option
-                  value=""
-                  disabled
-                >
-                  {!selectedForm
-                    ? "Спочатку оберіть форму"
-                    : "Оберіть одиницю"}
+                <option value="" disabled>
+                  {!selectedForm ? "Спочатку оберіть форму" : "Оберіть одиницю"}
                 </option>
 
-                {availableUnits.map(
-                  (inventoryUnit) => (
-                    <option
-                      key={
-                        inventoryUnit.value
-                      }
-                      value={
-                        inventoryUnit.value
-                      }
-                    >
-                      {
-                        inventoryUnit.label
-                      }
-                    </option>
-                  ),
-                )}
+                {availableUnits.map((inventoryUnit) => (
+                  <option key={inventoryUnit.value} value={inventoryUnit.value}>
+                    {inventoryUnit.label}
+                  </option>
+                ))}
               </select>
             </FormField>
 
-            <FormField
-              label="Мінімальний залишок"
-              htmlFor="minimum_quantity"
-            >
+            <FormField label="Мінімальний залишок" htmlFor="minimum_quantity">
               <input
                 id="minimum_quantity"
                 name="minimum_quantity"
                 type="number"
                 min="0"
-                step="0.01"
-                value={
-                  form.minimum_quantity
-                }
+                step="1"
+                value={form.minimum_quantity}
                 disabled={isPending}
-                className={
-                  INPUT_CLASS_NAME
-                }
+                className={INPUT_CLASS_NAME}
                 onChange={(event) =>
-                  updateField(
-                    "minimum_quantity",
-                    event.target.value,
-                  )
+                  updateField("minimum_quantity", event.target.value)
                 }
               />
             </FormField>
@@ -560,39 +355,20 @@ const MedicineForm = ({
                   <select
                     id="expiry_month"
                     name="expiry_month"
-                    value={
-                      form.expiry_month
-                    }
+                    value={form.expiry_month}
                     disabled={isPending}
-                    className={
-                      SELECT_CLASS_NAME
-                    }
+                    className={SELECT_CLASS_NAME}
                     onChange={(event) =>
-                      updateField(
-                        "expiry_month",
-                        event.target.value,
-                      )
+                      updateField("expiry_month", event.target.value)
                     }
                   >
-                    <option value="">
-                      Місяць
-                    </option>
+                    <option value="">Місяць</option>
 
-                    {MONTHS.map(
-                      (month) => (
-                        <option
-                          key={month}
-                          value={month}
-                        >
-                          {String(
-                            month,
-                          ).padStart(
-                            2,
-                            "0",
-                          )}
-                        </option>
-                      ),
-                    )}
+                    {MONTHS.map((month) => (
+                      <option key={month} value={month}>
+                        {String(month).padStart(2, "0")}
+                      </option>
+                    ))}
                   </select>
 
                   <input
@@ -602,24 +378,18 @@ const MedicineForm = ({
                     min="2020"
                     step="1"
                     placeholder="Рік"
-                    value={
-                      form.expiry_year
-                    }
+                    value={form.expiry_year}
                     disabled={isPending}
-                    className={
-                      INPUT_CLASS_NAME
-                    }
+                    className={INPUT_CLASS_NAME}
                     onChange={(event) =>
-                      updateField(
-                        "expiry_year",
-                        event.target.value,
-                      )
+                      updateField("expiry_year", event.target.value)
                     }
                   />
                 </div>
 
                 <p className="mt-2 text-xs text-gray-400">
-                  Статус визначається автоматично за фактичною та мінімальною кількістю.
+                  Статус визначається автоматично за фактичною та мінімальною
+                  кількістю.
                 </p>
               </FormField>
             </div>
@@ -640,20 +410,14 @@ const MedicineForm = ({
             disabled={isPending}
             placeholder="Особливості зберігання, примітки або інша важлива інформація..."
             className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-gray-50"
-            onChange={(event) =>
-              updateField(
-                "description",
-                event.target.value,
-              )
-            }
+            onChange={(event) => updateField("description", event.target.value)}
           />
         </FormSection>
 
         {state.message && (
           <div
             className={`rounded-lg px-4 py-3 text-sm ${
-              state.status ===
-              "success"
+              state.status === "success"
                 ? "bg-green-50 text-green-700"
                 : "bg-red-50 text-red-700"
             }`}
