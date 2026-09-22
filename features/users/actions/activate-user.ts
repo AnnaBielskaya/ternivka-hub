@@ -68,27 +68,6 @@ export async function activateUser(
     };
   }
 
-  const acceptedAt = new Date().toISOString();
-
-  const { data: claimedInvitation, error: claimError } = await supabaseAdmin
-    .from("invitations")
-    .update({
-      accepted_at: acceptedAt,
-    })
-    .eq("id", invitationId)
-    .is("accepted_at", null)
-    .is("revoked_at", null)
-    .gt("expires_at", acceptedAt)
-    .select("id")
-    .maybeSingle();
-
-  if (claimError || !claimedInvitation) {
-    return {
-      status: "error",
-      message: "Посилання вже використано або втратило чинність.",
-    };
-  }
-
   const technicalEmail = `${invitation.id}@internal.local`;
 
   const { data: authData, error: authError } =
@@ -102,18 +81,11 @@ export async function activateUser(
     });
 
   if (authError || !authData.user) {
-    await supabaseAdmin
-      .from("invitations")
-      .update({
-        accepted_at: null,
-      })
-      .eq("id", invitationId);
-
-    console.error("Failed to create auth user:", authError);
+    console.error("AUTH ERROR:", authError);
 
     return {
       status: "error",
-      message: "Не вдалося створити акаунт.",
+      message: authError?.message || "Не вдалося створити акаунт.",
     };
   }
 
@@ -125,20 +97,42 @@ export async function activateUser(
   });
 
   if (profileError) {
+    console.error("PROFILE ERROR:", profileError);
+
     await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
-
-    await supabaseAdmin
-      .from("invitations")
-      .update({
-        accepted_at: null,
-      })
-      .eq("id", invitationId);
-
-    console.error("Failed to create profile:", profileError);
 
     return {
       status: "error",
-      message: "Не вдалося створити профіль.",
+      message: profileError.message || "Не вдалося створити профіль.",
+    };
+  }
+
+  const acceptedAt = new Date().toISOString();
+
+  const { data: acceptedInvitation, error: acceptError } = await supabaseAdmin
+    .from("invitations")
+    .update({
+      accepted_at: acceptedAt,
+    })
+    .eq("id", invitationId)
+    .is("accepted_at", null)
+    .is("revoked_at", null)
+    .gt("expires_at", acceptedAt)
+    .select("id")
+    .maybeSingle();
+
+  if (acceptError || !acceptedInvitation) {
+    console.error("INVITATION ERROR:", acceptError);
+
+    await supabaseAdmin.from("profiles").delete().eq("id", authData.user.id);
+
+    await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+
+    return {
+      status: "error",
+      message:
+        acceptError?.message ||
+        "Посилання вже використано або втратило чинність.",
     };
   }
 
