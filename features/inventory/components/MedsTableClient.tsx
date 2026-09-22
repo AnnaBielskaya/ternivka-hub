@@ -160,6 +160,12 @@ const MedsTableClient = ({
               {filteredItems.map((item) => {
                 const needsRefill = item.needsRefill;
 
+                console.log(item.name, {
+                  quantity: item.quantity,
+                  minimum_quantity: item.minimum_quantity,
+                  needsRefill: item.needsRefill,
+                });
+
                 return (
                   <tr
                     key={item.id}

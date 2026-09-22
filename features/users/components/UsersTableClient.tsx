@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import CustomButton from "@/components/ui/CustomButton";
 import StatusBadge from "@/components/ui/StatusBadge";
 
-import type { AdminUser } from "../actions/get-users";
+import type { AdminInvitation, AdminUser } from "../actions/get-users";
+
 import { setUserActive } from "../actions/set-user-active";
 import EditUserModal from "./EditUserModal";
 
 type UsersTableClientProps = {
   users: AdminUser[];
+  invitations: AdminInvitation[];
 };
 
 const ROLE_LABELS = {
@@ -20,7 +22,7 @@ const ROLE_LABELS = {
   super_admin: "Супер-адміністратор",
 } as const;
 
-const UsersTableClient = ({ users }: UsersTableClientProps) => {
+const UsersTableClient = ({ users, invitations }: UsersTableClientProps) => {
   const router = useRouter();
 
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
@@ -54,6 +56,12 @@ const UsersTableClient = ({ users }: UsersTableClientProps) => {
 
       router.refresh();
     });
+  };
+
+  const handleCopyInvitation = async (invitationId: string) => {
+    const activationUrl = `${window.location.origin}/activate/${invitationId}`;
+
+    await navigator.clipboard.writeText(activationUrl);
   };
 
   return (
@@ -160,6 +168,90 @@ const UsersTableClient = ({ users }: UsersTableClientProps) => {
           </tbody>
         </table>
       </div>
+
+      {invitations.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="border-b border-gray-100 px-5 py-4">
+            <h2 className="text-sm font-semibold text-gray-900">Запрошені</h2>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Активні посилання для активації акаунтів
+            </p>
+          </div>
+
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/70">
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Позивний
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Телефон
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Роль
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Дійсне до
+                </th>
+
+                <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500">
+                  Посилання
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {invitations.map((invitation) => (
+                <tr
+                  key={invitation.id}
+                  className="border-b border-gray-100 last:border-b-0"
+                >
+                  <td className="px-5 py-4">
+                    <span className="text-sm font-medium text-gray-900">
+                      {invitation.name || "—"}
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span className="text-sm text-gray-600">
+                      {invitation.phone || "—"}
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span className="text-sm text-gray-600">
+                      {ROLE_LABELS[invitation.role]}
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span className="text-sm text-gray-600">
+                      {new Date(invitation.expires_at).toLocaleDateString(
+                        "uk-UA"
+                      )}
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="flex justify-end">
+                      <CustomButton
+                        variant="secondary"
+                        onClick={() => handleCopyInvitation(invitation.id)}
+                      >
+                        Копіювати
+                      </CustomButton>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {editingUser && (
         <EditUserModal
