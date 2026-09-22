@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import CalendarIcon from "@/components/inventory/icons/CalendarIcon";
-import BoxesIcon from "@/components/inventory/icons/BoxesIcon";
 import type { StockRow } from "@/features/inventory/types";
 
 type StockBatchCardProps = {
@@ -23,6 +24,41 @@ const StockBatchCard = ({
   isUpdating,
   onChangeQuantity,
 }: StockBatchCardProps) => {
+  const [quantity, setQuantity] = useState(String(stock.quantity));
+
+  useEffect(() => {
+    setQuantity(String(stock.quantity));
+  }, [stock.quantity]);
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuantity(event.target.value);
+  };
+
+  const handleQuantityBlur = () => {
+    const parsedQuantity = Number(quantity);
+
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
+      setQuantity(String(stock.quantity));
+      return;
+    }
+
+    const currentQuantity = Number(stock.quantity);
+
+    if (parsedQuantity === currentQuantity) {
+      return;
+    }
+
+    onChangeQuantity(stock, parsedQuantity - currentQuantity);
+  };
+
+  const handleQuantityKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      event.currentTarget.blur();
+    }
+  };
+
   return (
     <div
       className={`rounded-lg px-3.5 py-3 ${
@@ -66,10 +102,16 @@ const StockBatchCard = ({
             −
           </button>
 
-          <div className="min-w-[72px] text-center">
-            <span className="block text-[13px] font-semibold text-slate-900">
-              {stock.quantity}
-            </span>
+          <div className="min-w-[2px] text-center">
+            <input
+              min="0"
+              value={quantity}
+              disabled={isUpdating}
+              onChange={handleQuantityChange}
+              onBlur={handleQuantityBlur}
+              onKeyDown={handleQuantityKeyDown}
+              className="h-7 w-[60px] cursor-text rounded-md border border-transparent bg-white text-center text-[13px] font-semibold text-slate-900 outline-none transition hover:border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+            />
 
             <span className="block text-[10px] text-slate-400">{unit}</span>
           </div>
