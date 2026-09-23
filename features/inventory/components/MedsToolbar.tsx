@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+
 import { MEDICINE_UNITS_BY_FORM } from "../constants";
 
 type MedsToolbarProps = {
@@ -10,7 +11,7 @@ type MedsToolbarProps = {
   onRefillChange: (value: boolean) => void;
 };
 
-const FORM_FILTERS = ["Усі форми", ...Object.keys(MEDICINE_UNITS_BY_FORM)];
+const FORM_FILTERS = Object.keys(MEDICINE_UNITS_BY_FORM);
 
 const MedsToolbar = ({
   selectedForm,
@@ -19,37 +20,25 @@ const MedsToolbar = ({
   onRefillChange,
 }: MedsToolbarProps) => {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="flex min-w-0 items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {FORM_FILTERS.map((filter) => {
-          const isActive =
-            filter === "Усі форми"
-              ? selectedForm === null
-              : selectedForm === filter;
+    <div className="flex items-center justify-between gap-3">
+      <select
+        value={selectedForm ?? ""}
+        onChange={(event) => onFormChange(event.target.value || null)}
+        className="h-9 min-w-0 max-w-52 cursor-pointer rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-600 outline-none transition hover:border-slate-300 focus:border-slate-300 focus:ring-2 focus:ring-slate-100"
+      >
+        <option value="">Усі форми</option>
 
-          return (
-            <button
-              key={filter}
-              type="button"
-              onClick={() =>
-                onFormChange(filter === "Усі форми" ? null : filter)
-              }
-              className={`inline-flex h-8 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[13px] transition ${
-                isActive
-                  ? "bg-slate-100 font-semibold text-slate-900"
-                  : "font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
-              }`}
-            >
-              {filter}
-            </button>
-          );
-        })}
-      </div>
+        {FORM_FILTERS.map((filter) => (
+          <option key={filter} value={filter}>
+            {filter}
+          </option>
+        ))}
+      </select>
 
       <button
         type="button"
         onClick={() => onRefillChange(!refillOnly)}
-        className={`inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-[13px] transition ${
+        className={`inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-[13px] transition ${
           refillOnly
             ? "bg-red-50 font-medium text-red-700"
             : "font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800"

@@ -1,5 +1,3 @@
-import MedicineIcon from "./MedicineIcon";
-
 const PAGE_HEADERS = {
   medicine: {
     title: "Препарати",
