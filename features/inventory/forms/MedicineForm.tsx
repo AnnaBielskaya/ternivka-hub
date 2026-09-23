@@ -15,9 +15,10 @@ import {
   INVENTORY_UNITS,
   MEDICINE_UNITS_BY_FORM,
   MONTHS,
-  SELECT_CLASS_NAME,
 } from "@/features/inventory/constants";
 
+import CustomButton from "@/components/ui/CustomButton";
+import DropdownSelect from "@/components/ui/DropdownSelect";
 import FormField from "@/components/ui/FormField";
 import FormSection from "@/components/ui/FormSection";
 
@@ -174,6 +175,32 @@ const MedicineForm = ({
     });
   };
 
+  const formOptions = medicineForms.map((medicineForm) => ({
+    value: medicineForm.id,
+    label: medicineForm.name,
+  }));
+
+  const purposeOptions = [
+    {
+      value: "",
+      label: "Не обрано",
+    },
+    ...medicinePurposes.map((purpose) => ({
+      value: purpose.id,
+      label: purpose.name,
+    })),
+  ];
+
+  const unitOptions = availableUnits.map((inventoryUnit) => ({
+    value: inventoryUnit.value,
+    label: inventoryUnit.label,
+  }));
+
+  const monthOptions = MONTHS.map((month) => ({
+    value: String(month),
+    label: String(month).padStart(2, "0"),
+  }));
+
   return (
     <form id="medicine-form" action={formAction}>
       <div className="space-y-7 p-4 sm:p-6">
@@ -208,47 +235,30 @@ const MedicineForm = ({
               />
             </FormField>
 
-            <FormField label="Форма випуску" htmlFor="form_id" required>
-              <select
-                id="form_id"
-                name="form_id"
-                required
-                value={form.form_id}
+            <FormField label="Форма випуску" required>
+              <DropdownSelect
+                value={form.form_id || null}
+                options={formOptions}
+                placeholder="Оберіть форму"
+                variant="outline"
                 disabled={isPending}
-                className={SELECT_CLASS_NAME}
-                onChange={(event) => updateField("form_id", event.target.value)}
-              >
-                <option value="" disabled>
-                  Оберіть форму
-                </option>
+                onChange={(value) => updateField("form_id", value ?? "")}
+              />
 
-                {medicineForms.map((medicineForm) => (
-                  <option key={medicineForm.id} value={medicineForm.id}>
-                    {medicineForm.name}
-                  </option>
-                ))}
-              </select>
+              <input type="hidden" name="form_id" value={form.form_id} />
             </FormField>
 
-            <FormField label="Призначення" htmlFor="purpose_id">
-              <select
-                id="purpose_id"
-                name="purpose_id"
-                value={form.purpose_id}
+            <FormField label="Призначення">
+              <DropdownSelect
+                value={form.purpose_id || null}
+                options={purposeOptions}
+                placeholder="Не обрано"
+                variant="outline"
                 disabled={isPending}
-                className={SELECT_CLASS_NAME}
-                onChange={(event) =>
-                  updateField("purpose_id", event.target.value)
-                }
-              >
-                <option value="">Не обрано</option>
+                onChange={(value) => updateField("purpose_id", value ?? "")}
+              />
 
-                {medicinePurposes.map((purpose) => (
-                  <option key={purpose.id} value={purpose.id}>
-                    {purpose.name}
-                  </option>
-                ))}
-              </select>
+              <input type="hidden" name="purpose_id" value={form.purpose_id} />
             </FormField>
           </div>
         </FormSection>
@@ -311,26 +321,19 @@ const MedicineForm = ({
               />
             </FormField>
 
-            <FormField label="Одиниця обліку" htmlFor="unit" required>
-              <select
-                id="unit"
-                name="unit"
-                required
-                value={form.unit}
+            <FormField label="Одиниця обліку" required>
+              <DropdownSelect
+                value={form.unit || null}
+                options={unitOptions}
+                placeholder={
+                  !selectedForm ? "Спочатку оберіть форму" : "Оберіть одиницю"
+                }
+                variant="outline"
                 disabled={isPending || !selectedForm}
-                className={SELECT_CLASS_NAME}
-                onChange={(event) => updateField("unit", event.target.value)}
-              >
-                <option value="" disabled>
-                  {!selectedForm ? "Спочатку оберіть форму" : "Оберіть одиницю"}
-                </option>
+                onChange={(value) => updateField("unit", value ?? "")}
+              />
 
-                {availableUnits.map((inventoryUnit) => (
-                  <option key={inventoryUnit.value} value={inventoryUnit.value}>
-                    {inventoryUnit.label}
-                  </option>
-                ))}
-              </select>
+              <input type="hidden" name="unit" value={form.unit} />
             </FormField>
 
             <FormField label="Мінімальний залишок" htmlFor="minimum_quantity">
@@ -352,24 +355,24 @@ const MedicineForm = ({
             <div className="md:col-span-2 lg:col-span-3">
               <FormField label="Термін придатності">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <select
-                    id="expiry_month"
-                    name="expiry_month"
-                    value={form.expiry_month}
-                    disabled={isPending}
-                    className={SELECT_CLASS_NAME}
-                    onChange={(event) =>
-                      updateField("expiry_month", event.target.value)
-                    }
-                  >
-                    <option value="">Місяць</option>
+                  <div>
+                    <DropdownSelect
+                      value={form.expiry_month || null}
+                      options={monthOptions}
+                      placeholder="Місяць"
+                      variant="outline"
+                      disabled={isPending}
+                      onChange={(value) =>
+                        updateField("expiry_month", value ?? "")
+                      }
+                    />
 
-                    {MONTHS.map((month) => (
-                      <option key={month} value={month}>
-                        {String(month).padStart(2, "0")}
-                      </option>
-                    ))}
-                  </select>
+                    <input
+                      type="hidden"
+                      name="expiry_month"
+                      value={form.expiry_month}
+                    />
+                  </div>
 
                   <input
                     id="expiry_year"

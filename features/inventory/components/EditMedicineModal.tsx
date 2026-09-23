@@ -4,6 +4,8 @@ import { useEffect, useState, useTransition } from "react";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
+import DropdownSelect from "@/components/ui/DropdownSelect";
+
 import type {
   InventoryItem,
   MedicineFormRow,
@@ -16,7 +18,6 @@ import {
   INPUT_CLASS_NAME,
   INVENTORY_UNITS,
   MEDICINE_UNITS_BY_FORM,
-  SELECT_CLASS_NAME,
 } from "@/features/inventory/constants";
 
 type EditMedicineModalProps = {
@@ -29,7 +30,7 @@ type EditMedicineModalProps = {
 
 type MedicineFieldProps = {
   label: string;
-  htmlFor: string;
+  htmlFor?: string;
   children: React.ReactNode;
 };
 
@@ -105,6 +106,27 @@ const EditMedicineModal = ({
       setUnit(allowedUnits[0] ?? "");
     }
   }, [formId, selectedForm, unit]);
+
+  const formOptions = medicineForms.map((form) => ({
+    value: form.id,
+    label: form.name,
+  }));
+
+  const purposeOptions = [
+    {
+      value: "",
+      label: "Не обрано",
+    },
+    ...medicinePurposes.map((purpose) => ({
+      value: purpose.id,
+      label: purpose.name,
+    })),
+  ];
+
+  const unitOptions = availableUnits.map((inventoryUnit) => ({
+    value: inventoryUnit.value,
+    label: inventoryUnit.label,
+  }));
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -199,43 +221,26 @@ const EditMedicineModal = ({
                 />
               </MedicineField>
 
-              <MedicineField label="Форма випуску" htmlFor="edit-form">
-                <select
-                  id="edit-form"
-                  value={formId}
-                  onChange={(event) => setFormId(event.target.value)}
-                  required
+              <MedicineField label="Форма випуску">
+                <DropdownSelect
+                  value={formId || null}
+                  options={formOptions}
+                  placeholder="Оберіть форму"
+                  variant="outline"
                   disabled={isPending}
-                  className={SELECT_CLASS_NAME}
-                >
-                  <option value="" disabled>
-                    Оберіть форму
-                  </option>
-
-                  {medicineForms.map((form) => (
-                    <option key={form.id} value={form.id}>
-                      {form.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setFormId(value ?? "")}
+                />
               </MedicineField>
 
-              <MedicineField label="Призначення" htmlFor="edit-purpose">
-                <select
-                  id="edit-purpose"
-                  value={purposeId}
-                  onChange={(event) => setPurposeId(event.target.value)}
+              <MedicineField label="Призначення">
+                <DropdownSelect
+                  value={purposeId || null}
+                  options={purposeOptions}
+                  placeholder="Не обрано"
+                  variant="outline"
                   disabled={isPending}
-                  className={SELECT_CLASS_NAME}
-                >
-                  <option value="">Не обрано</option>
-
-                  {medicinePurposes.map((purpose) => (
-                    <option key={purpose.id} value={purpose.id}>
-                      {purpose.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setPurposeId(value ?? "")}
+                />
               </MedicineField>
             </div>
           </section>
@@ -274,30 +279,17 @@ const EditMedicineModal = ({
                 />
               </MedicineField>
 
-              <MedicineField label="Одиниця обліку" htmlFor="edit-unit">
-                <select
-                  id="edit-unit"
-                  value={unit}
-                  onChange={(event) => setUnit(event.target.value)}
-                  required
+              <MedicineField label="Одиниця обліку">
+                <DropdownSelect
+                  value={unit || null}
+                  options={unitOptions}
+                  placeholder={
+                    !selectedForm ? "Спочатку оберіть форму" : "Оберіть одиницю"
+                  }
+                  variant="outline"
                   disabled={isPending || !selectedForm}
-                  className={SELECT_CLASS_NAME}
-                >
-                  <option value="" disabled>
-                    {!selectedForm
-                      ? "Спочатку оберіть форму"
-                      : "Оберіть одиницю"}
-                  </option>
-
-                  {availableUnits.map((inventoryUnit) => (
-                    <option
-                      key={inventoryUnit.value}
-                      value={inventoryUnit.value}
-                    >
-                      {inventoryUnit.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setUnit(value ?? "")}
+                />
               </MedicineField>
             </div>
           </section>

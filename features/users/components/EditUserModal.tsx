@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
+import DropdownSelect from "@/components/ui/DropdownSelect";
 
 import { updateUser } from "../actions/update-user";
 import type { AdminUser } from "../actions/get-users";
@@ -31,8 +32,11 @@ const ROLE_OPTIONS: {
 
 const EditUserModal = ({ user, onClose, onSaved }: EditUserModalProps) => {
   const [phone, setPhone] = useState(user.phone ?? "");
+
   const [name, setName] = useState(user.name ?? "");
+
   const [role, setRole] = useState<UserRole>(user.role);
+
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -81,7 +85,7 @@ const EditUserModal = ({ user, onClose, onSaved }: EditUserModalProps) => {
       }
     >
       <form id="edit-user-form" onSubmit={handleSubmit}>
-        <div className="space-y-5 p-6">
+        <div className="space-y-5 p-4 sm:p-6">
           <div>
             <label
               htmlFor="edit-user-phone"
@@ -97,7 +101,8 @@ const EditUserModal = ({ user, onClose, onSaved }: EditUserModalProps) => {
               onChange={(event) => setPhone(event.target.value)}
               placeholder="+380..."
               required
-              className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              disabled={isSubmitting}
+              className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-gray-50"
             />
           </div>
 
@@ -115,30 +120,27 @@ const EditUserModal = ({ user, onClose, onSaved }: EditUserModalProps) => {
               value={name}
               onChange={(event) => setName(event.target.value)}
               required
-              className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              disabled={isSubmitting}
+              className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-gray-50"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="edit-user-role"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
-            >
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">
               Роль
             </label>
 
-            <select
-              id="edit-user-role"
+            <DropdownSelect
               value={role}
-              onChange={(event) => setRole(event.target.value as UserRole)}
-              className="h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-            >
-              {ROLE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              options={ROLE_OPTIONS}
+              variant="outline"
+              disabled={isSubmitting}
+              onChange={(value) => {
+                if (value) {
+                  setRole(value as UserRole);
+                }
+              }}
+            />
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
