@@ -92,38 +92,39 @@ const StockBatchCard = ({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            disabled={isUpdating || Number(stock.quantity) <= 0}
-            onClick={() => onChangeQuantity(stock, -1)}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            −
-          </button>
+        <div className="flex flex-col items-center">
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              disabled={isUpdating || Number(stock.quantity) <= 0}
+              onClick={() => onChangeQuantity(stock, -1)}
+              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              −
+            </button>
 
-          <div className="min-w-[2px] text-center">
-            <input
-              min="0"
-              value={quantity}
+            <div className="min-w-[2px] text-center">
+              <input
+                min="0"
+                value={quantity}
+                disabled={isUpdating}
+                onChange={handleQuantityChange}
+                onBlur={handleQuantityBlur}
+                onKeyDown={handleQuantityKeyDown}
+                className="h-7 w-[60px] cursor-text rounded-md border border-transparent bg-white text-center text-[13px] font-semibold text-slate-900 outline-none transition hover:border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+            <button
+              type="button"
               disabled={isUpdating}
-              onChange={handleQuantityChange}
-              onBlur={handleQuantityBlur}
-              onKeyDown={handleQuantityKeyDown}
-              className="h-7 w-[60px] cursor-text rounded-md border border-transparent bg-white text-center text-[13px] font-semibold text-slate-900 outline-none transition hover:border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
-            />
-
-            <span className="block text-[10px] text-slate-400">{unit}</span>
+              onClick={() => onChangeQuantity(stock, 1)}
+              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              +
+            </button>
           </div>
 
-          <button
-            type="button"
-            disabled={isUpdating}
-            onClick={() => onChangeQuantity(stock, 1)}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            +
-          </button>
+          <span className="block text-[10px] text-slate-400">{unit}</span>
         </div>
       </div>
     </div>
