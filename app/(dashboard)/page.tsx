@@ -1,6 +1,7 @@
 import { getMedicalItems } from "@/features/inventory/queries/item.queries";
 import { getMedicineForms } from "@/features/inventory/queries/medicine-form.queries";
 import { getMedicinePurposes } from "@/features/inventory/queries/medicine-purpose.queries";
+import { getCurrentUser } from "@/features/auth/actions/get-current-user";
 
 import Header from "@/components/inventory/Header";
 
@@ -10,10 +11,11 @@ import MedsTableClient from "@/features/inventory/components/MedsTableClient";
 import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item";
 
 export default async function HomePage() {
-  const [items, medicineForms, medicinePurposes] = await Promise.all([
+  const [items, medicineForms, medicinePurposes, user] = await Promise.all([
     getMedicalItems(),
     getMedicineForms(),
     getMedicinePurposes(),
+    getCurrentUser(),
   ]);
 
   const inventoryItems = items.map(mapInventoryItem);
@@ -32,6 +34,7 @@ export default async function HomePage() {
 
       <MedsTableClient
         items={inventoryItems}
+        role={user.role}
         medicineForms={medicineForms}
         medicinePurposes={medicinePurposes}
       />

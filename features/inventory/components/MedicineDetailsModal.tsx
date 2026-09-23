@@ -26,10 +26,12 @@ import type { InventoryItem, StockRow } from "@/features/inventory/types";
 
 import { updateStockQuantity } from "@/features/inventory/actions/update-stock-quantity";
 import { getMedicineAuditLogs } from "@/features/inventory/actions/get-medicine-audit-logs";
+import { UserRole } from "@/features/users/types";
 
 type MedicineDetailsModalProps = {
   item: InventoryItem;
   stock: StockRow[];
+  role: UserRole;
   onClose: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -42,6 +44,7 @@ const formatExpiry = (month: number, year: number) => {
 const MedicineDetailsModal = ({
   item,
   stock,
+  role,
   onClose,
   onEdit,
   onDelete,
@@ -195,7 +198,7 @@ const MedicineDetailsModal = ({
         onClose={onClose}
         footer={
           <div className="flex items-center justify-between gap-2">
-            {onDelete ? (
+            {role == "super_admin" || (role == "admin" && onDelete) ? (
               <CustomButton variant="dangerOutline" onClick={handleDeleteClick}>
                 Видалити
               </CustomButton>

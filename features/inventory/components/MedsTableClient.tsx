@@ -18,9 +18,11 @@ import MedsToolbar from "./MedsToolbar";
 import MedicineDetailsModal from "./MedicineDetailsModal";
 import EditMedicineModal from "./EditMedicineModal";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { UserRole } from "@/features/users/types";
 
 type MedsTableClientProps = {
   items: InventoryItem[];
+  role: UserRole;
   medicineForms: MedicineFormRow[];
   medicinePurposes: MedicinePurposeRow[];
 };
@@ -31,6 +33,7 @@ const collator = new Intl.Collator("uk-UA", {
 
 const MedsTableClient = ({
   items,
+  role,
   medicineForms,
   medicinePurposes,
 }: MedsTableClientProps) => {
@@ -160,12 +163,6 @@ const MedsTableClient = ({
               {filteredItems.map((item) => {
                 const needsRefill = item.needsRefill;
 
-                console.log(item.name, {
-                  quantity: item.quantity,
-                  minimum_quantity: item.minimum_quantity,
-                  needsRefill: item.needsRefill,
-                });
-
                 return (
                   <tr
                     key={item.id}
@@ -280,6 +277,7 @@ const MedsTableClient = ({
       {selectedItem && (
         <MedicineDetailsModal
           item={selectedItem}
+          role={role}
           stock={selectedItem.stock}
           onClose={handleCloseModal}
           onDelete={handleDelete}
