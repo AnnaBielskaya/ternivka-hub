@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import type {
@@ -176,13 +176,13 @@ const MedicineForm = ({
 
   return (
     <form id="medicine-form" action={formAction}>
-      <div className="space-y-7 p-6">
+      <div className="space-y-7 p-4 sm:p-6">
         <FormSection
           title="Основна інформація"
           description="Основні характеристики препарату"
         >
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="md:col-span-2 lg:col-span-3">
               <FormField label="Назва" htmlFor="name" required>
                 <MedicineNameAutocomplete
                   value={form.name}
@@ -259,7 +259,7 @@ const MedicineForm = ({
           title="Характеристики"
           description="Дозування та фізичні характеристики"
         >
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <FormField label="Дозування" htmlFor="dosage">
               <input
                 id="dosage"
@@ -294,7 +294,7 @@ const MedicineForm = ({
           title="Залишок"
           description="Фактична кількість, мінімальний залишок та термін придатності"
         >
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <FormField label="Кількість" htmlFor="quantity">
               <input
                 id="quantity"
@@ -349,9 +349,9 @@ const MedicineForm = ({
               />
             </FormField>
 
-            <div className="col-span-3">
+            <div className="md:col-span-2 lg:col-span-3">
               <FormField label="Термін придатності">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <select
                     id="expiry_month"
                     name="expiry_month"
