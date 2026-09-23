@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { name: "Препарати", link: "/" },
-  { name: "Медичні розхідники", link: "/category/medicalsupplies" },
-  { name: "Мед. обладнання", link: "/category/equipment" },
+  { name: "Розхідники", link: "/category/medicalsupplies" },
+  { name: "Обладнання", link: "/category/equipment" },
+  { name: "Такмед", link: "/category/tacmed" },
 ];
 
 const CategoryTabs = () => {
