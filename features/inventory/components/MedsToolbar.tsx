@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
 import { MEDICINE_UNITS_BY_FORM } from "../constants";
 
 type MedsToolbarProps = {
@@ -18,7 +19,7 @@ const MedsToolbar = ({
   onRefillChange,
 }: MedsToolbarProps) => {
   return (
-    <div className="mb-3 flex items-center justify-between gap-6 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+    <div className="flex items-center justify-between gap-4">
       <div className="flex min-w-0 items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {FORM_FILTERS.map((filter) => {
           const isActive =
@@ -33,10 +34,10 @@ const MedsToolbar = ({
               onClick={() =>
                 onFormChange(filter === "Усі форми" ? null : filter)
               }
-              className={`inline-flex h-9 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[13px] font-medium transition ${
+              className={`inline-flex h-8 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[13px] transition ${
                 isActive
-                  ? "bg-gray-800 text-white shadow-sm"
-                  : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                  ? "bg-slate-100 font-semibold text-slate-900"
+                  : "font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
               {filter}
@@ -45,20 +46,23 @@ const MedsToolbar = ({
         })}
       </div>
 
-      <div className="shrink-0 border-l border-slate-200 pl-3">
-        <button
-          type="button"
-          onClick={() => onRefillChange(!refillOnly)}
-          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition ${
-            refillOnly
-              ? "bg-red-100 text-red-700 shadow-sm"
-              : "bg-red-50/70 text-red-600 hover:bg-red-100 hover:text-red-700"
-          }`}
-        >
-          <span className="text-[12px]">⚠</span>
-          <span>Потребує поповнення</span>
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={() => onRefillChange(!refillOnly)}
+        className={`inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-[13px] transition ${
+          refillOnly
+            ? "bg-red-50 text-red-700"
+            : "text-slate-500 hover:bg-red-50 hover:text-red-700"
+        }`}
+      >
+        <AlertTriangle
+          size={14}
+          strokeWidth={1.8}
+          className={refillOnly ? "text-red-600" : "text-red-500"}
+        />
+
+        <span className="font-medium">Потребує поповнення</span>
+      </button>
     </div>
   );
 };

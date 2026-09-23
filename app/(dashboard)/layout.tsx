@@ -35,7 +35,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen">
       <Header name={profile.name} role={profile.role} />
 
-      <main className="flex flex-col gap-5 px-6 pt-3">{children}</main>
+      <main className="flex flex-col gap-5 px-6 pt-6">{children}</main>
     </div>
   );
 }

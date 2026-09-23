@@ -27,10 +27,10 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
             <Link
               key={tab.name}
               href={tab.link}
-              className={`flex min-w-[88px] items-center justify-center rounded-xl px-3 py-2.5 text-[12px] font-medium transition ${
+              className={`flex min-w-[88px] items-center justify-center rounded-xl px-3 py-2.5 text-[12px] transition ${
                 isActive
-                  ? "bg-slate-100 text-slate-900 shadow-sm"
-                  : "text-slate-400 hover:bg-slate-50 hover:text-slate-700"
+                  ? "bg-slate-100 font-semibold text-slate-900 shadow-sm"
+                  : "font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
               {tab.name}
@@ -42,7 +42,7 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
   }
 
   return (
-    <nav className="inline-flex items-center gap-1 rounded-xl bg-slate-100/80 p-1">
+    <nav className="flex items-center gap-6">
       {tabs.map((tab) => {
         const isActive = pathname === tab.link;
 
@@ -50,10 +50,10 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
           <Link
             key={tab.name}
             href={tab.link}
-            className={`rounded-lg px-3.5 py-2 text-[13px] font-medium transition ${
+            className={`py-1 text-[13px] transition ${
               isActive
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:bg-white/60 hover:text-slate-800"
+                ? "font-semibold text-slate-900"
+                : "font-medium text-slate-500 hover:text-slate-800"
             }`}
           >
             {tab.name}
