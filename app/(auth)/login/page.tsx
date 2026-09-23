@@ -1,15 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import CustomButton from "@/components/ui/CustomButton";
-
 import { loginWithPhone } from "@/features/auth/actions/login-with-phone";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,11 +22,7 @@ export default function LoginPage() {
     if (result.status === "error") {
       setError(result.message);
       setLoading(false);
-      return;
     }
-
-    router.push("/");
-    router.refresh();
   }
 
   return (

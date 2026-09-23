@@ -1,5 +1,7 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -59,8 +61,5 @@ export async function loginWithPhone(
     };
   }
 
-  return {
-    status: "success",
-    message: "Вхід успішний.",
-  };
+  redirect("/");
 }

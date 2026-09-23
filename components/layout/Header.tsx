@@ -2,19 +2,20 @@
 
 import { useEffect, useState } from "react";
 
+import { UserRole } from "@/features/users/types";
+
 import Logo from "./Logo";
 import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
 import UserMenu from "./UserMenu";
-import { UserRole } from "@/features/users/types";
 import CreateUserModal from "@/features/users/components/CreateUserModal";
 
-type UserMenuProps = {
+type HeaderProps = {
   name: string;
   role: UserRole;
 };
 
-const Header = ({ name, role }: UserMenuProps) => {
+const Header = ({ name, role }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
