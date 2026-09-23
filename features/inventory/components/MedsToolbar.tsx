@@ -1,18 +1,13 @@
 "use client";
 
+import { MEDICINE_UNITS_BY_FORM } from "../constants";
+
 type MedsToolbarProps = {
   refillOnly: boolean;
   onRefillChange: (value: boolean) => void;
 };
 
-const FORM_FILTERS = [
-  "Усі форми",
-  "Таблетки",
-  "Капсули",
-  "Ампули",
-  "Розчини",
-  "Мазі",
-];
+const FORM_FILTERS = ["Усі форми", ...Object.keys(MEDICINE_UNITS_BY_FORM)];
 
 const MedsToolbar = ({ refillOnly, onRefillChange }: MedsToolbarProps) => {
   return (
