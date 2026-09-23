@@ -1,3 +1,4 @@
+import Header from "@/components/ui/Header";
 import { getUsers } from "@/features/users/actions/get-users";
 import UsersTableClient from "@/features/users/components/UsersTableClient";
 
@@ -6,13 +7,7 @@ const Page = async () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Користувачі</h1>
-
-        <p className="mt-1 text-sm text-gray-500">
-          Керування користувачами системи
-        </p>
-      </div>
+      <Header variant="users" />
 
       <UsersTableClient users={users} invitations={invitations} />
     </div>

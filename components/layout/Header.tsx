@@ -2,22 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-import { UserRole } from "@/features/users/types";
+import type { UserRole } from "@/features/users/types";
 
 import Logo from "./Logo";
-import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
 import UserMenu from "./UserMenu";
 import CreateUserModal from "@/features/users/components/CreateUserModal";
+import UserProfileModal from "@/features/users/components/UserProfileModal";
 
 type HeaderProps = {
+  userId: string;
   name: string;
   role: UserRole;
 };
 
-const Header = ({ name, role }: HeaderProps) => {
+const Header = ({ userId, name, role }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const firstLetter = name.trim().charAt(0).toUpperCase();
 
@@ -87,6 +91,7 @@ const Header = ({ name, role }: HeaderProps) => {
           name={name}
           role={role}
           setIsOpen={setIsOpen}
+          onProfile={() => setIsProfileModalOpen(true)}
           onCreateUser={() => setIsInviteModalOpen(true)}
         />
       )}
@@ -94,6 +99,14 @@ const Header = ({ name, role }: HeaderProps) => {
       <CreateUserModal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
+      />
+
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        userId={userId}
+        name={name}
+        role={role}
+        onClose={() => setIsProfileModalOpen(false)}
       />
     </>
   );

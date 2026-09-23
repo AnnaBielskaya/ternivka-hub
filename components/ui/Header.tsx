@@ -1,3 +1,5 @@
+import { title } from "process";
+
 const PAGE_HEADERS = {
   medicine: {
     title: "Препарати",
@@ -15,6 +17,10 @@ const PAGE_HEADERS = {
     title: "Такмед",
     subtitle: "Шось буде",
   },
+  users: {
+    title: "Користувачі",
+    subtitle: "Керування користувачами системи",
+  },
 };
 
 type HeaderProps = {
@@ -26,7 +32,7 @@ const Header = ({ variant }: HeaderProps) => {
 
   return (
     <div className="flex flex-col">
-      <h2 className="text-xl font-bold">{title}</h2>
+      <h2 className="text-xl font-semibold">{title}</h2>
       <p className="text-xs text-slate-400">{subtitle}</p>
     </div>
   );

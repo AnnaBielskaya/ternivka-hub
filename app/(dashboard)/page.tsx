@@ -3,7 +3,7 @@ import { getMedicineForms } from "@/features/inventory/queries/medicine-form.que
 import { getMedicinePurposes } from "@/features/inventory/queries/medicine-purpose.queries";
 import { getCurrentUser } from "@/features/auth/actions/get-current-user";
 
-import Header from "@/components/inventory/Header";
+import Header from "@/components/ui/Header";
 
 import AddItemButton from "@/features/inventory/components/AddItemButton";
 import MedsTableClient from "@/features/inventory/components/MedsTableClient";
