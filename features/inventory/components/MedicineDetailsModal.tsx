@@ -50,13 +50,19 @@ const MedicineDetailsModal = ({
   onDelete,
 }: MedicineDetailsModalProps) => {
   const [localStock, setLocalStock] = useState<StockRow[]>(stock);
+
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null);
+
   const [isPending, startTransition] = useTransition();
+
   const [isAddBatchOpen, setIsAddBatchOpen] = useState(false);
+
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
   const [auditLogs, setAuditLogs] = useState<
     Awaited<ReturnType<typeof getMedicineAuditLogs>>
   >([]);
+
   const [isAuditLoading, setIsAuditLoading] = useState(true);
 
   const medicineSubtitle = [item.medicine_form?.name, item.dosage, item.volume]
@@ -116,6 +122,7 @@ const MedicineDetailsModal = ({
 
   const handleChangeQuantity = (stockItem: StockRow, delta: number) => {
     const currentQuantity = Number(stockItem.quantity);
+
     const nextQuantity = Math.max(0, currentQuantity + delta);
 
     if (nextQuantity === currentQuantity || updatingStockId) {
@@ -191,22 +198,27 @@ const MedicineDetailsModal = ({
             </h2>
 
             {medicineSubtitle && (
-              <p className="mt-1 text-xs text-slate-500">{medicineSubtitle}</p>
+              <p className="mt-1 truncate text-xs text-slate-500 sm:truncate-none">
+                {medicineSubtitle}
+              </p>
             )}
           </div>
         }
         onClose={onClose}
         footer={
-          <div className="flex items-center justify-between gap-2">
-            {role == "super_admin" || (role == "admin" && onDelete) ? (
-              <CustomButton variant="dangerOutline" onClick={handleDeleteClick}>
-                Видалити
-              </CustomButton>
-            ) : (
-              <div />
-            )}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="sm:shrink-0">
+              {role === "super_admin" || (role === "admin" && onDelete) ? (
+                <CustomButton
+                  variant="dangerOutline"
+                  onClick={handleDeleteClick}
+                >
+                  Видалити
+                </CustomButton>
+              ) : null}
+            </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
               <CustomButton variant="secondary" onClick={onClose}>
                 Закрити
               </CustomButton>
@@ -219,11 +231,11 @@ const MedicineDetailsModal = ({
         }
         size="lg"
       >
-        <div className="space-y-5 p-5">
+        <div className="space-y-5 p-4 sm:p-5">
           <section>
             <SectionTitle title="Наявність" />
 
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
               <AvailabilityItem
                 icon={<BoxesIcon />}
                 label="Загальна кількість"
@@ -249,12 +261,12 @@ const MedicineDetailsModal = ({
           <SectionDivider />
 
           <section>
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
+            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 items-center gap-2.5">
                 <SectionTitle title="Партії" className="mb-0" />
 
                 {sortedStock.length > 0 && (
-                  <span className="text-[11px] text-slate-400">
+                  <span className="shrink-0 text-[11px] text-slate-400">
                     {sortedStock.length}{" "}
                     {sortedStock.length === 1 ? "партія" : "партії"}
                   </span>
@@ -280,7 +292,7 @@ const MedicineDetailsModal = ({
 
             <div className={isAddBatchOpen ? "mt-2.5" : ""}>
               {sortedStock.length > 0 ? (
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                   {sortedStock.map((stockItem, index) => (
                     <StockBatchCard
                       key={stockItem.id}
@@ -307,7 +319,7 @@ const MedicineDetailsModal = ({
           <section>
             <SectionTitle title="Характеристики" />
 
-            <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
               <InfoItem label="Діюча речовина" value={item.active_ingredient} />
 
               <InfoItem
@@ -354,7 +366,9 @@ const MedicineDetailsModal = ({
                 Завантаження історії...
               </div>
             ) : (
-              <MedicineAuditTable logs={auditLogs} />
+              <div className="max-w-full overflow-x-auto">
+                <MedicineAuditTable logs={auditLogs} />
+              </div>
             )}
           </section>
         </div>
@@ -367,7 +381,7 @@ const MedicineDetailsModal = ({
           onClose={handleCancelDelete}
           size="sm"
           footer={
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
               <CustomButton variant="secondary" onClick={handleCancelDelete}>
                 Скасувати
               </CustomButton>
@@ -378,7 +392,7 @@ const MedicineDetailsModal = ({
             </div>
           }
         >
-          <div className="p-5">
+          <div className="p-4 sm:p-5">
             <p className="text-sm leading-5 text-slate-600">
               Ви впевнені, що хочете видалити препарат «{item.name}»?
             </p>

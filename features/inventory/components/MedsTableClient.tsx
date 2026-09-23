@@ -186,10 +186,10 @@ const MedsTableClient = ({
                     type="button"
                     onClick={() => handleRowClick(item)}
                     disabled={isDeleting}
-                    className={`w-full cursor-pointer rounded-xl border p-4 text-left transition ${
+                    className={`w-full cursor-pointer rounded-xl p-4 text-left transition ${
                       needsRefill
-                        ? "border-red-100 bg-red-50 hover:border-red-200 hover:bg-red-100/70"
-                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                        ? "bg-red-50/60 hover:bg-red-50/80"
+                        : "bg-slate-50/80 hover:bg-slate-100/80"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -278,7 +278,7 @@ const MedsTableClient = ({
                       </div>
                     </div>
 
-                    <div className="mt-4 flex items-end justify-between gap-3 border-t border-slate-100 pt-3">
+                    <div className="mt-4 flex items-end justify-between gap-3 border-t border-slate-200/60 pt-3">
                       <div>
                         <span className="block text-[11px] text-slate-400">
                           Кількість

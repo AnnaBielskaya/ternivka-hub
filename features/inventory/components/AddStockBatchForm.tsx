@@ -22,13 +22,9 @@ const AddStockBatchForm = ({
   onSaved,
 }: AddStockBatchFormProps) => {
   const [quantity, setQuantity] = useState("");
-
   const [expiryMonth, setExpiryMonth] = useState("");
-
   const [expiryYear, setExpiryYear] = useState("");
-
   const [error, setError] = useState("");
-
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,9 +55,9 @@ const AddStockBatchForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-2.5 rounded-lg bg-slate-50 p-3.5"
+      className="mt-2.5 rounded-lg bg-slate-50 p-3.5 sm:p-4"
     >
-      <div className="grid grid-cols-4 items-end gap-2.5">
+      <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-2.5">
         <div>
           <label
             htmlFor="batch_quantity"
@@ -70,7 +66,7 @@ const AddStockBatchForm = ({
             Кількість
           </label>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <input
               id="batch_quantity"
               type="number"
@@ -79,11 +75,11 @@ const AddStockBatchForm = ({
               value={quantity}
               disabled={isPending}
               placeholder="0"
-              className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              className="h-9 w-full min-w-0 rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-slate-50"
               onChange={(event) => setQuantity(event.target.value)}
             />
 
-            <span className="text-[10px] text-slate-400">{unit}</span>
+            <span className="shrink-0 text-[10px] text-slate-400">{unit}</span>
           </div>
         </div>
 
@@ -99,7 +95,7 @@ const AddStockBatchForm = ({
             id="batch_expiry_month"
             value={expiryMonth}
             disabled={isPending}
-            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-slate-50"
             onChange={(event) => setExpiryMonth(event.target.value)}
           >
             <option value="">Місяць</option>
@@ -128,22 +124,23 @@ const AddStockBatchForm = ({
             value={expiryYear}
             disabled={isPending}
             placeholder="2027"
-            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-slate-50"
             onChange={(event) => setExpiryYear(event.target.value)}
           />
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex w-full items-center gap-1.5 sm:col-span-2 lg:col-span-1">
           <CustomButton
             type="button"
             variant="secondary"
             onClick={onCancel}
             disabled={isPending}
+            className="flex-1"
           >
             Скасувати
           </CustomButton>
 
-          <CustomButton type="submit" disabled={isPending}>
+          <CustomButton type="submit" disabled={isPending} className="flex-1">
             Додати
           </CustomButton>
         </div>
