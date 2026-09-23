@@ -62,10 +62,6 @@ const Header = ({ name, role }: HeaderProps) => {
             </div>
 
             <div className="flex shrink-0 items-center gap-3 lg:gap-4">
-              <div className="hidden lg:block">
-                <SearchInput />
-              </div>
-
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
@@ -82,10 +78,6 @@ const Header = ({ name, role }: HeaderProps) => {
                 </span>
               </button>
             </div>
-          </div>
-
-          <div className="mt-3 lg:hidden">
-            <SearchInput />
           </div>
         </div>
       </header>
