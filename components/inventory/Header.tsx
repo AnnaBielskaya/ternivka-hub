@@ -1,8 +1,7 @@
 const PAGE_HEADERS = {
   medicine: {
     title: "Препарати",
-    subtitle:
-      "Перелік медикаментів у наявності. Зверніть увагу на медикаменти, які потребують поповнення.",
+    subtitle: "Зверніть увагу на медикаменти, які потребують поповнення.",
   },
   supplies: {
     title: "Розхідники",
@@ -23,13 +22,12 @@ type HeaderProps = {
 };
 
 const Header = ({ variant }: HeaderProps) => {
-  const { title } = PAGE_HEADERS[variant];
+  const { title, subtitle } = PAGE_HEADERS[variant];
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row items-center gap-2 mb-1">
-        <h2 className="text-xl font-bold">{title}</h2>
-      </div>
+      <h2 className="text-xl font-bold">{title}</h2>
+      <p className="text-xs text-slate-400">{subtitle}</p>
     </div>
   );
 };

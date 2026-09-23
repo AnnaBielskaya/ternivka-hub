@@ -22,7 +22,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-1 justify-between">
         <Header variant="medicine" />
 
         <AddItemButton
