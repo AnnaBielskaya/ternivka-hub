@@ -1,12 +1,36 @@
 export const MEDICINE_TABLE_COLUMNS = [
-  { key: "name", label: "Назва" },
-  { key: "dosage", label: "Дозування" },
-  { key: "active_ingredient", label: "Діюча речовина" },
-  { key: "form", label: "Форма випуску" },
-  { key: "volume", label: "Об'єм" },
-  { key: "quantity", label: "Залишок" },
-  { key: "nearestExpiry", label: "Найближчий строк" },
-  { key: "status", label: "Статус" },
+  {
+    key: "name",
+    label: "Назва",
+  },
+  {
+    key: "dosage",
+    label: "Дозування",
+  },
+  {
+    key: "active_ingredient",
+    label: "Діюча речовина",
+  },
+  {
+    key: "medicine_form",
+    label: "Форма",
+  },
+  {
+    key: "volume",
+    label: "Обʼєм",
+  },
+  {
+    key: "quantity",
+    label: "Кількість",
+  },
+  {
+    key: "nearestExpiry",
+    label: "Термін придатності",
+  },
+  {
+    key: "status",
+    label: "Статус",
+  },
 ] as const;
 
 export const INVENTORY_UNITS = [

@@ -16,6 +16,8 @@ type UsersTableClientProps = {
   invitations: AdminInvitation[];
 };
 
+type UsersTab = "users" | "invitations";
+
 const ROLE_LABELS = {
   editor: "Редагування",
   admin: "Адміністратор",
@@ -24,6 +26,8 @@ const ROLE_LABELS = {
 
 const UsersTableClient = ({ users, invitations }: UsersTableClientProps) => {
   const router = useRouter();
+
+  const [activeTab, setActiveTab] = useState<UsersTab>("users");
 
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
 
@@ -66,119 +70,36 @@ const UsersTableClient = ({ users, invitations }: UsersTableClientProps) => {
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/70">
-              <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
-                Позивний
-              </th>
+      <div className="border-b border-gray-200">
+        <div className="flex gap-6">
+          <button
+            type="button"
+            onClick={() => setActiveTab("users")}
+            className={`cursor-pointer border-b-2 pb-3 text-sm font-medium transition ${
+              activeTab === "users"
+                ? "border-gray-900 text-gray-900"
+                : "border-transparent text-gray-400 hover:text-gray-700"
+            }`}
+          >
+            Користувачі
+          </button>
 
-              <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
-                Телефон
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
-                Роль
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
-                Статус
-              </th>
-
-              <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500">
-                Дії
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {users.length > 0 ? (
-              users.map((user) => {
-                const isUpdating = isPending && pendingUserId === user.id;
-
-                return (
-                  <tr
-                    key={user.id}
-                    className="border-b border-gray-100 last:border-b-0"
-                  >
-                    <td className="px-5 py-4">
-                      <span className="text-sm font-medium text-gray-900">
-                        {user.name || "—"}
-                      </span>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <span className="text-sm text-gray-600">
-                        {user.phone || "—"}
-                      </span>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <span className="text-sm text-gray-600">
-                        {ROLE_LABELS[user.role]}
-                      </span>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <StatusBadge
-                        title={user.is_active ? "Активний" : "Деактивований"}
-                        variant={user.is_active ? "success" : "warning"}
-                      />
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <CustomButton
-                          variant="secondary"
-                          onClick={() => setEditingUser(user)}
-                          disabled={isUpdating}
-                        >
-                          Редагувати
-                        </CustomButton>
-
-                        <CustomButton
-                          variant={
-                            user.is_active ? "dangerOutline" : "secondary"
-                          }
-                          onClick={() => handleToggleActive(user)}
-                          disabled={isUpdating}
-                        >
-                          {isUpdating
-                            ? "..."
-                            : user.is_active
-                            ? "Деактивувати"
-                            : "Активувати"}
-                        </CustomButton>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="px-5 py-12 text-center text-sm text-gray-400"
-                >
-                  Користувачів поки немає
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+          <button
+            type="button"
+            onClick={() => setActiveTab("invitations")}
+            className={`cursor-pointer border-b-2 pb-3 text-sm font-medium transition ${
+              activeTab === "invitations"
+                ? "border-gray-900 text-gray-900"
+                : "border-transparent text-gray-400 hover:text-gray-700"
+            }`}
+          >
+            Запрошені
+          </button>
+        </div>
       </div>
 
-      {invitations.length > 0 && (
+      {activeTab === "users" && (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-          <div className="border-b border-gray-100 px-5 py-4">
-            <h2 className="text-sm font-semibold text-gray-900">Запрошені</h2>
-
-            <p className="mt-1 text-xs text-gray-500">
-              Активні посилання для активації акаунтів
-            </p>
-          </div>
-
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/70">
@@ -195,6 +116,115 @@ const UsersTableClient = ({ users, invitations }: UsersTableClientProps) => {
                 </th>
 
                 <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Статус
+                </th>
+
+                <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500">
+                  Дії
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {users.length > 0 ? (
+                users.map((user) => {
+                  const isUpdating = isPending && pendingUserId === user.id;
+
+                  return (
+                    <tr
+                      key={user.id}
+                      className="border-b border-gray-100 last:border-b-0"
+                    >
+                      <td className="px-5 py-4">
+                        <span className="text-sm font-medium text-gray-900">
+                          {user.name || "—"}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-600">
+                          {user.phone || "—"}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-600">
+                          {ROLE_LABELS[user.role]}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <StatusBadge
+                          title={user.is_active ? "Активний" : "Деактивований"}
+                          variant={user.is_active ? "success" : "warning"}
+                        />
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <CustomButton
+                            variant="secondary"
+                            onClick={() => setEditingUser(user)}
+                            disabled={isUpdating}
+                          >
+                            Редагувати
+                          </CustomButton>
+
+                          <CustomButton
+                            variant={
+                              user.is_active ? "dangerOutline" : "secondary"
+                            }
+                            onClick={() => handleToggleActive(user)}
+                            disabled={isUpdating}
+                          >
+                            {isUpdating
+                              ? "..."
+                              : user.is_active
+                              ? "Деактивувати"
+                              : "Активувати"}
+                          </CustomButton>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-5 py-12 text-center text-sm text-gray-400"
+                  >
+                    Користувачів поки немає
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {activeTab === "invitations" && (
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/70">
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Позивний
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Телефон
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Роль
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
+                  Статус
+                </th>
+
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500">
                   Дійсне до
                 </th>
 
@@ -205,49 +235,87 @@ const UsersTableClient = ({ users, invitations }: UsersTableClientProps) => {
             </thead>
 
             <tbody>
-              {invitations.map((invitation) => (
-                <tr
-                  key={invitation.id}
-                  className="border-b border-gray-100 last:border-b-0"
-                >
-                  <td className="px-5 py-4">
-                    <span className="text-sm font-medium text-gray-900">
-                      {invitation.name || "—"}
-                    </span>
-                  </td>
+              {invitations.length > 0 ? (
+                invitations.map((invitation) => {
+                  const isAccepted = Boolean(invitation.accepted_at);
 
-                  <td className="px-5 py-4">
-                    <span className="text-sm text-gray-600">
-                      {invitation.phone || "—"}
-                    </span>
-                  </td>
+                  const isExpired =
+                    !isAccepted &&
+                    new Date(invitation.expires_at) <= new Date();
 
-                  <td className="px-5 py-4">
-                    <span className="text-sm text-gray-600">
-                      {ROLE_LABELS[invitation.role]}
-                    </span>
-                  </td>
+                  return (
+                    <tr
+                      key={invitation.id}
+                      className="border-b border-gray-100 last:border-b-0"
+                    >
+                      <td className="px-5 py-4">
+                        <span className="text-sm font-medium text-gray-900">
+                          {invitation.name || "—"}
+                        </span>
+                      </td>
 
-                  <td className="px-5 py-4">
-                    <span className="text-sm text-gray-600">
-                      {new Date(invitation.expires_at).toLocaleDateString(
-                        "uk-UA"
-                      )}
-                    </span>
-                  </td>
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-600">
+                          {invitation.phone || "—"}
+                        </span>
+                      </td>
 
-                  <td className="px-5 py-4">
-                    <div className="flex justify-end">
-                      <CustomButton
-                        variant="secondary"
-                        onClick={() => handleCopyInvitation(invitation.id)}
-                      >
-                        Копіювати
-                      </CustomButton>
-                    </div>
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-600">
+                          {ROLE_LABELS[invitation.role]}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <StatusBadge
+                          title={
+                            isAccepted
+                              ? "Прийнято"
+                              : isExpired
+                              ? "Протерміновано"
+                              : "Очікує активації"
+                          }
+                          variant={
+                            isAccepted
+                              ? "success"
+                              : isExpired
+                              ? "warning"
+                              : "info"
+                          }
+                        />
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-600">
+                          {new Date(invitation.expires_at).toLocaleDateString(
+                            "uk-UA"
+                          )}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <div className="flex justify-end">
+                          <CustomButton
+                            variant="secondary"
+                            onClick={() => handleCopyInvitation(invitation.id)}
+                          >
+                            Копіювати
+                          </CustomButton>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-5 py-12 text-center text-sm text-gray-400"
+                  >
+                    Запрошень поки немає
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

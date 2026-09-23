@@ -51,6 +51,8 @@ const MedsTableClient = ({
 
   const [isDeleting, startDeleting] = useTransition();
 
+  const [selectedForm, setSelectedForm] = useState<string | null>(null);
+
   const handleRowClick = (item: InventoryItem) => {
     if (isDeleting) {
       return;
@@ -99,7 +101,15 @@ const MedsTableClient = ({
   };
 
   const filteredItems = useMemo(() => {
-    const sortedItems = [...items].sort((a, b) => {
+    const filtered = items.filter((item) => {
+      if (!selectedForm) {
+        return true;
+      }
+
+      return item.medicine_form?.name === selectedForm;
+    });
+
+    const sortedItems = [...filtered].sort((a, b) => {
       let comparison = 0;
 
       switch (sortKey) {
@@ -107,11 +117,30 @@ const MedsTableClient = ({
           comparison = collator.compare(a.name, b.name);
           break;
 
+        case "dosage":
+          comparison = collator.compare(a.dosage ?? "", b.dosage ?? "");
+          break;
+
         case "active_ingredient":
           comparison = collator.compare(
             a.active_ingredient ?? "",
             b.active_ingredient ?? ""
           );
+          break;
+
+        case "medicine_form":
+          comparison = collator.compare(
+            a.medicine_form?.name ?? "",
+            b.medicine_form?.name ?? ""
+          );
+          break;
+
+        case "volume":
+          comparison = collator.compare(a.volume ?? "", b.volume ?? "");
+          break;
+
+        case "quantity":
+          comparison = Number(a.quantity) - Number(b.quantity);
           break;
 
         case "nearestExpiry":
@@ -131,14 +160,13 @@ const MedsTableClient = ({
     return needsRefillOnly
       ? sortedItems.filter((item) => item.needsRefill)
       : sortedItems;
-  }, [items, needsRefillOnly, sortKey, sortDirection]);
+  }, [items, selectedForm, needsRefillOnly, sortKey, sortDirection]);
 
   return (
     <>
       <MedsToolbar
-        sortKey={sortKey}
-        sortDirection={sortDirection}
-        onSortChange={handleSortChange}
+        selectedForm={selectedForm}
+        onFormChange={setSelectedForm}
         refillOnly={needsRefillOnly}
         onRefillChange={setNeedsRefillOnly}
       />
@@ -148,14 +176,32 @@ const MedsTableClient = ({
           <table className="inventory-table w-full border-separate border-spacing-0">
             <thead className="sticky top-0 z-10">
               <tr className="bg-slate-50">
-                {MEDICINE_TABLE_COLUMNS.map((column) => (
-                  <th
-                    key={column.key}
-                    className="border-b border-slate-200 px-4 py-3 text-left text-xs font-semibold text-slate-500 first:pl-5 last:pr-5"
-                  >
-                    {column.label}
-                  </th>
-                ))}
+                {MEDICINE_TABLE_COLUMNS.map((column) => {
+                  const isActiveSort = column.key === sortKey;
+
+                  return (
+                    <th
+                      key={column.key}
+                      className="border-b border-slate-200 px-4 py-3 text-left text-xs font-semibold text-slate-500 first:pl-5 last:pr-5"
+                    >
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleSortChange(column.key as MedicineSortKey)
+                        }
+                        className="flex cursor-pointer items-center gap-1.5 transition hover:text-slate-900"
+                      >
+                        <span>{column.label}</span>
+
+                        {isActiveSort && (
+                          <span className="text-[10px] text-slate-400">
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </button>
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
 

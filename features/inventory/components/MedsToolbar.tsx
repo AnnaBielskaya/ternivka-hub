@@ -1,72 +1,45 @@
 "use client";
 
-import type {
-  MedicineSortKey,
-  SortDirection,
-} from "@/features/inventory/types";
+import { MEDICINE_UNITS_BY_FORM } from "../constants";
 
 type MedsToolbarProps = {
-  sortKey: MedicineSortKey;
-  sortDirection: SortDirection;
-  onSortChange: (key: MedicineSortKey) => void;
-
+  selectedForm: string | null;
+  onFormChange: (form: string | null) => void;
   refillOnly: boolean;
   onRefillChange: (value: boolean) => void;
 };
 
-const SORT_OPTIONS: {
-  key: MedicineSortKey;
-  label: string;
-}[] = [
-  {
-    key: "name",
-    label: "Назва",
-  },
-  {
-    key: "active_ingredient",
-    label: "Діюча речовина",
-  },
-  {
-    key: "nearestExpiry",
-    label: "Строк придатності",
-  },
-  {
-    key: "status",
-    label: "Статус",
-  },
-];
+const FORM_FILTERS = ["Усі форми", ...Object.keys(MEDICINE_UNITS_BY_FORM)];
 
 const MedsToolbar = ({
-  sortKey,
-  sortDirection,
-  onSortChange,
+  selectedForm,
+  onFormChange,
   refillOnly,
   onRefillChange,
 }: MedsToolbarProps) => {
   return (
     <div className="flex items-center justify-between gap-6">
-      <div className="flex min-w-0 items-center gap-1.5">
-        {SORT_OPTIONS.map((option) => {
-          const isActive = sortKey === option.key;
+      <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {FORM_FILTERS.map((filter) => {
+          const isActive =
+            filter === "Усі форми"
+              ? selectedForm === null
+              : selectedForm === filter;
 
           return (
             <button
-              key={option.key}
+              key={filter}
               type="button"
-              onClick={() => onSortChange(option.key)}
-              className={`inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition ${
+              onClick={() =>
+                onFormChange(filter === "Усі форми" ? null : filter)
+              }
+              className={`inline-flex h-9 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[13px] font-medium transition ${
                 isActive
                   ? "bg-gray-800 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
-              <span>{option.label}</span>
-
-              {isActive && (
-                <span className="text-[13px] leading-none text-white">
-                  {sortDirection === "asc" ? "↑" : "↓"}
-                </span>
-              )}
+              {filter}
             </button>
           );
         })}
@@ -85,17 +58,6 @@ const MedsToolbar = ({
           <span>⚠</span>
           <span>Потребує поповнення</span>
         </button>
-
-        <select
-          defaultValue=""
-          className="h-9 cursor-pointer rounded-lg bg-slate-100 px-3 text-[13px] font-medium text-slate-600 outline-none transition hover:bg-slate-200 focus:bg-slate-200"
-        >
-          <option value="">Усі категорії</option>
-          <option value="painkillers">Ця фігня</option>
-          <option value="antibiotics">Поки</option>
-          <option value="infusions">Не працює</option>
-          <option value="other">Треба обговорити</option>
-        </select>
       </div>
     </div>
   );

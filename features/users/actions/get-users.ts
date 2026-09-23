@@ -22,8 +22,8 @@ export type AdminInvitation = {
   name: string | null;
   phone: string | null;
   role: UserRole;
-  created_at: string;
   expires_at: string;
+  accepted_at: string | null;
 };
 
 export type AdminUsersData = {
@@ -80,10 +80,8 @@ export async function getUsers(): Promise<AdminUsersData> {
 
     supabaseAdmin
       .from("invitations")
-      .select("id, name, phone, role, created_at, expires_at")
-      .is("accepted_at", null)
+      .select("id, name, phone, role, expires_at, accepted_at")
       .is("revoked_at", null)
-      .gt("expires_at", new Date().toISOString())
       .order("created_at", {
         ascending: false,
       }),

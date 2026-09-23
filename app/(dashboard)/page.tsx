@@ -18,13 +18,7 @@ export default async function HomePage() {
     getCurrentUser(),
   ]);
 
-  const inventoryItems = items.map((item) =>
-    mapInventoryItem({
-      ...item,
-      medicine_form: item.medicine_form[0] ?? null,
-      medicine_purpose: item.medicine_purpose[0] ?? null,
-    })
-  );
+  const inventoryItems = items.map(mapInventoryItem);
 
   return (
     <>

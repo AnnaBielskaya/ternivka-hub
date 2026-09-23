@@ -5,7 +5,8 @@ export async function getMedicalItems() {
 
   const { data, error } = await supabase
     .from("items_medicine")
-    .select(`
+    .select(
+      `
       id,
       name,
       description,
@@ -14,32 +15,36 @@ export async function getMedicalItems() {
       volume,
       unit,
       minimum_quantity,
-
       medicine_form:medicine_forms (
         id,
         name
       ),
-
       medicine_purpose:medicine_purposes (
         id,
         code,
         name
       ),
-
       stock (
         id,
         expiry_month,
         expiry_year,
         quantity
       )
-    `)
+    `
+    )
     .order("name", { ascending: true });
 
   if (error) {
-    throw new Error(
-      `Failed to load medical inventory: ${error.message}`,
-    );
+    throw new Error(`Failed to load medical inventory: ${error.message}`);
   }
 
-  return data ?? [];
+  return (data ?? []).map((item) => ({
+    ...item,
+    medicine_form: Array.isArray(item.medicine_form)
+      ? item.medicine_form[0] ?? null
+      : item.medicine_form ?? null,
+    medicine_purpose: Array.isArray(item.medicine_purpose)
+      ? item.medicine_purpose[0] ?? null
+      : item.medicine_purpose ?? null,
+  }));
 }

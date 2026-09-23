@@ -51,9 +51,15 @@ export type InventoryItem = {
 
 export type MedicineSortKey =
   | "name"
+  | "dosage"
   | "active_ingredient"
+  | "medicine_form"
+  | "volume"
+  | "quantity"
   | "nearestExpiry"
   | "status";
+
+export type SortDirection = "asc" | "desc";
 
 export type SortDirection = "asc" | "desc";
 
