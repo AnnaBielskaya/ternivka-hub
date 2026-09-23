@@ -50,31 +50,51 @@ const Header = ({ name, role }: HeaderProps) => {
 
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-8">
-          <Logo />
+      <header>
+        <div className="px-4 py-3 sm:px-6 sm:py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-7 sm:gap-8">
+              <Logo />
 
-          <CategoryTabs />
-        </div>
-
-        <div className="flex items-center gap-4">
-          <SearchInput />
-
-          <button
-            type="button"
-            onClick={() => setIsOpen(true)}
-            aria-label="Відкрити меню користувача"
-            aria-expanded={isOpen}
-            className="flex cursor-pointer items-center gap-2 rounded-lg transition hover:bg-slate-50"
-          >
-            <div className="text-[13px] font-medium text-slate-700">{name}</div>
-
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600 transition hover:bg-slate-200">
-              {firstLetter}
+              <div className="hidden sm:block">
+                <CategoryTabs variant="header" />
+              </div>
             </div>
-          </button>
+
+            <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+              <div className="hidden sm:block">
+                <SearchInput />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                aria-label="Відкрити меню користувача"
+                aria-expanded={isOpen}
+                className="group flex cursor-pointer items-center gap-2 rounded-xl p-1 transition hover:bg-slate-50"
+              >
+                <span className="hidden max-w-40 truncate text-[13px] font-medium text-slate-700 sm:block">
+                  {name}
+                </span>
+
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-semibold text-slate-600 transition group-hover:bg-slate-200">
+                  {firstLetter}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-3 sm:hidden">
+            <SearchInput />
+          </div>
         </div>
       </header>
+
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden">
+        <div className="w-full p-2">
+          <CategoryTabs variant="bottom" />
+        </div>
+      </nav>
 
       {isOpen && (
         <UserMenu

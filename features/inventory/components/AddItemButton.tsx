@@ -42,7 +42,7 @@ const AddItemButton = ({
       <CustomButton
         type="button"
         onClick={() => setIsOpen(true)}
-        className="h-10 gap-2 rounded-lg bg-gray-900 px-4 text-sm font-semibold shadow-sm hover:bg-gray-800 active:scale-[0.98]"
+        className="h-10 gap-2 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98]"
       >
         <span className="text-lg leading-none">+</span>
         <span>{title}</span>
