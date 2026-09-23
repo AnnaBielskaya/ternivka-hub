@@ -51,17 +51,17 @@ const MedsToolbar = ({
         onClick={() => onRefillChange(!refillOnly)}
         className={`inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-[13px] transition ${
           refillOnly
-            ? "bg-red-50 text-red-700"
-            : "text-slate-500 hover:bg-red-50 hover:text-red-700"
+            ? "bg-red-50 font-medium text-red-700"
+            : "font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800"
         }`}
       >
         <AlertTriangle
           size={14}
           strokeWidth={1.8}
-          className={refillOnly ? "text-red-600" : "text-red-500"}
+          className={refillOnly ? "text-red-600" : "text-slate-400"}
         />
 
-        <span className="font-medium">Потребує поповнення</span>
+        <span>Потребує поповнення</span>
       </button>
     </div>
   );
