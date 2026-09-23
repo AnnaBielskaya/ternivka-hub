@@ -51,6 +51,8 @@ const MedsTableClient = ({
 
   const [isDeleting, startDeleting] = useTransition();
 
+  const [selectedForm, setSelectedForm] = useState<string | null>(null);
+
   const handleRowClick = (item: InventoryItem) => {
     if (isDeleting) {
       return;
@@ -99,7 +101,15 @@ const MedsTableClient = ({
   };
 
   const filteredItems = useMemo(() => {
-    const sortedItems = [...items].sort((a, b) => {
+    const filtered = items.filter((item) => {
+      if (!selectedForm) {
+        return true;
+      }
+
+      return item.medicine_form?.name === selectedForm;
+    });
+
+    const sortedItems = [...filtered].sort((a, b) => {
       let comparison = 0;
 
       switch (sortKey) {
@@ -150,11 +160,13 @@ const MedsTableClient = ({
     return needsRefillOnly
       ? sortedItems.filter((item) => item.needsRefill)
       : sortedItems;
-  }, [items, needsRefillOnly, sortKey, sortDirection]);
+  }, [items, selectedForm, needsRefillOnly, sortKey, sortDirection]);
 
   return (
     <>
       <MedsToolbar
+        selectedForm={selectedForm}
+        onFormChange={setSelectedForm}
         refillOnly={needsRefillOnly}
         onRefillChange={setNeedsRefillOnly}
       />
