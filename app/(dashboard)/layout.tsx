@@ -35,7 +35,7 @@ export default async function DashboardLayout({
     <div className="flex h-screen flex-col overflow-hidden">
       <Header name={profile.name} role={profile.role} />
 
-      <main className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-6 py-3">
+      <main className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-4 py-4 sm:px-6 sm:py-3">
         {children}
       </main>
     </div>
