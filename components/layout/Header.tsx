@@ -53,16 +53,16 @@ const Header = ({ name, role }: HeaderProps) => {
       <header>
         <div className="px-4 py-3 sm:px-6 sm:py-3">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-7 sm:gap-8">
+            <div className="flex min-w-0 items-center gap-7 lg:gap-8">
               <Logo />
 
-              <div className="hidden sm:block">
+              <div className="hidden lg:block">
                 <CategoryTabs variant="header" />
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-3 sm:gap-4">
-              <div className="hidden sm:block">
+            <div className="flex shrink-0 items-center gap-3 lg:gap-4">
+              <div className="hidden lg:block">
                 <SearchInput />
               </div>
 
@@ -73,7 +73,7 @@ const Header = ({ name, role }: HeaderProps) => {
                 aria-expanded={isOpen}
                 className="group flex cursor-pointer items-center gap-2 rounded-xl p-1 transition hover:bg-slate-50"
               >
-                <span className="hidden max-w-40 truncate text-[13px] font-medium text-slate-700 sm:block">
+                <span className="hidden max-w-40 truncate text-[13px] font-medium text-slate-700 lg:block">
                   {name}
                 </span>
 
@@ -84,13 +84,13 @@ const Header = ({ name, role }: HeaderProps) => {
             </div>
           </div>
 
-          <div className="mt-3 sm:hidden">
+          <div className="mt-3 lg:hidden">
             <SearchInput />
           </div>
         </div>
       </header>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
         <div className="w-full p-2">
           <CategoryTabs variant="bottom" />
         </div>

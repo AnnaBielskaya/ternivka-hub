@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 
 const SearchInput = () => {
   return (
-    <div className="relative w-full sm:w-64">
+    <div className="relative w-full lg:w-64">
       <Search
         size={15}
         strokeWidth={1.8}
