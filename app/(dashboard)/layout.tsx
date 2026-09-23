@@ -32,10 +32,12 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="flex h-screen flex-col overflow-hidden">
       <Header name={profile.name} role={profile.role} />
 
-      <main className="flex flex-col gap-4 px-6 pt-6">{children}</main>
+      <main className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-6 py-3">
+        {children}
+      </main>
     </div>
   );
 }

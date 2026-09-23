@@ -50,8 +50,8 @@ const Header = ({ name, role }: HeaderProps) => {
 
   return (
     <>
-      <header className="border-b border-slate-200 bg-white">
-        <div className="px-3 py-3 sm:px-6 sm:py-4">
+      <header>
+        <div className="px-3 py-3 sm:px-6 sm:py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-7 sm:gap-8">
               <Logo />
