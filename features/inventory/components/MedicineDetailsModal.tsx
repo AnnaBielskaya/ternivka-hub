@@ -198,7 +198,7 @@ const MedicineDetailsModal = ({
             </h2>
 
             {medicineSubtitle && (
-              <p className="mt-1 truncate text-xs text-slate-500 sm:truncate-none">
+              <p className="mt-1 truncate text-xs text-slate-500">
                 {medicineSubtitle}
               </p>
             )}
@@ -206,8 +206,8 @@ const MedicineDetailsModal = ({
         }
         onClose={onClose}
         footer={
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="sm:shrink-0">
+          <div className="flex items-center justify-between gap-2">
+            <div className="shrink-0">
               {role === "super_admin" || (role === "admin" && onDelete) ? (
                 <CustomButton
                   variant="dangerOutline"
@@ -218,15 +218,11 @@ const MedicineDetailsModal = ({
               ) : null}
             </div>
 
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-              <CustomButton variant="secondary" onClick={onClose}>
-                Закрити
-              </CustomButton>
-
-              {onEdit && (
+            {onEdit && (
+              <div className="shrink-0">
                 <CustomButton onClick={onEdit}>Редагувати</CustomButton>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         }
         size="lg"
@@ -319,7 +315,7 @@ const MedicineDetailsModal = ({
           <section>
             <SectionTitle title="Характеристики" />
 
-            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-5 gap-y-4">
               <InfoItem label="Діюча речовина" value={item.active_ingredient} />
 
               <InfoItem
@@ -381,7 +377,7 @@ const MedicineDetailsModal = ({
           onClose={handleCancelDelete}
           size="sm"
           footer={
-            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+            <div className="flex items-center justify-end gap-2">
               <CustomButton variant="secondary" onClick={handleCancelDelete}>
                 Скасувати
               </CustomButton>
@@ -418,7 +414,7 @@ const InfoItem = ({ label, value }: InfoItemProps) => {
     <div className="min-w-0">
       <span className="block text-[12px] text-slate-400">{label}</span>
 
-      <span className="mt-1 block truncate text-[13px] font-medium text-slate-800">
+      <span className="mt-1 block break-words text-[13px] font-medium leading-4 text-slate-800">
         {value || "—"}
       </span>
     </div>

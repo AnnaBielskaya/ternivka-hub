@@ -90,11 +90,9 @@ const Header = ({ name, role }: HeaderProps) => {
         </div>
       </header>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_18px_rgba(15,23,42,0.04)] backdrop-blur-md sm:hidden">
-        <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex min-h-16 min-w-max items-center justify-center px-3">
-            <CategoryTabs variant="bottom" />
-          </div>
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden">
+        <div className="w-full p-2">
+          <CategoryTabs variant="bottom" />
         </div>
       </nav>
 

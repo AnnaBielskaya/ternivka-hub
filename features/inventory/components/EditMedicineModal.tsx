@@ -12,13 +12,12 @@ import type {
 
 import { updateMedicine } from "@/features/inventory/actions/update-medicine";
 
-const INVENTORY_UNITS = [
-  { value: "блістер", label: "Блістер" },
-  { value: "упаковка", label: "Упаковка" },
-  { value: "ампули", label: "Ампули" },
-  { value: "грам", label: "Грам" },
-  { value: "штука", label: "Штука" },
-] as const;
+import {
+  INPUT_CLASS_NAME,
+  INVENTORY_UNITS,
+  MEDICINE_UNITS_BY_FORM,
+  SELECT_CLASS_NAME,
+} from "@/features/inventory/constants";
 
 type EditMedicineModalProps = {
   item: InventoryItem;
@@ -28,13 +27,26 @@ type EditMedicineModalProps = {
   onSaved: () => void;
 };
 
-const inputClassName =
-  "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100";
+type MedicineFieldProps = {
+  label: string;
+  htmlFor: string;
+  children: React.ReactNode;
+};
 
-const selectClassName =
-  "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100";
+const MedicineField = ({ label, htmlFor, children }: MedicineFieldProps) => {
+  return (
+    <div className="min-w-0">
+      <label
+        htmlFor={htmlFor}
+        className="mb-1.5 block text-sm font-medium text-gray-700"
+      >
+        {label}
+      </label>
 
-const labelClassName = "mb-1.5 block text-sm font-medium text-gray-700";
+      {children}
+    </div>
+  );
+};
 
 const EditMedicineModal = ({
   item,
@@ -44,50 +56,61 @@ const EditMedicineModal = ({
   onSaved,
 }: EditMedicineModalProps) => {
   const [name, setName] = useState(item.name);
+
   const [activeIngredient, setActiveIngredient] = useState(
     item.active_ingredient ?? ""
   );
+
   const [formId, setFormId] = useState(item.medicine_form?.id ?? "");
+
   const [purposeId, setPurposeId] = useState(item.medicine_purpose?.id ?? "");
+
   const [dosage, setDosage] = useState(item.dosage ?? "");
+
   const [volume, setVolume] = useState(item.volume ?? "");
+
   const [unit, setUnit] = useState(item.unit);
+
   const [minimumQuantity, setMinimumQuantity] = useState(
     String(item.minimum_quantity)
   );
+
   const [description, setDescription] = useState(item.description ?? "");
 
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    const selectedForm = medicineForms.find((form) => form.id === formId);
+  const selectedForm = medicineForms.find((form) => form.id === formId);
 
+  const availableUnitValues = selectedForm
+    ? MEDICINE_UNITS_BY_FORM[
+        selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
+      ] ?? []
+    : [];
+
+  const availableUnits = INVENTORY_UNITS.filter((inventoryUnit) =>
+    availableUnitValues.includes(inventoryUnit.value as never)
+  );
+
+  useEffect(() => {
     if (!selectedForm) {
       return;
     }
 
     const allowedUnits =
-      selectedForm.name === "Таблетки"
-        ? ["блістер", "упаковка"]
-        : selectedForm.name === "Мазь"
-        ? ["штука"]
-        : selectedForm.name === "Краплі"
-        ? ["штука"]
-        : selectedForm.name === "Розчин"
-        ? ["ампули"]
-        : selectedForm.name === "Саше"
-        ? ["штука", "упаковка"]
-        : ["штука", "упаковка"];
+      MEDICINE_UNITS_BY_FORM[
+        selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
+      ] ?? [];
 
-    if (!allowedUnits.includes(unit)) {
-      setUnit(allowedUnits[0]);
+    if (!allowedUnits.includes(unit as never)) {
+      setUnit(allowedUnits[0] ?? "");
     }
-  }, [formId, medicineForms, unit]);
+  }, [formId, selectedForm, unit]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData();
+
     formData.set("name", name);
     formData.set("form_id", formId);
     formData.set("purpose_id", purposeId);
@@ -137,7 +160,7 @@ const EditMedicineModal = ({
       }
     >
       <form id="edit-medicine-form" onSubmit={handleSubmit}>
-        <div className="space-y-6 p-6">
+        <div className="space-y-7 p-4 sm:p-6">
           <section>
             <div className="mb-4">
               <h3 className="text-sm font-semibold text-gray-900">
@@ -149,48 +172,41 @@ const EditMedicineModal = ({
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-3">
-                <label htmlFor="edit-name" className={labelClassName}>
-                  Назва <span className="text-red-500">*</span>
-                </label>
-
-                <input
-                  id="edit-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  required
-                  className={inputClassName}
-                />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="md:col-span-2 lg:col-span-3">
+                <MedicineField label="Назва" htmlFor="edit-name">
+                  <input
+                    id="edit-name"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    required
+                    disabled={isPending}
+                    className={INPUT_CLASS_NAME}
+                  />
+                </MedicineField>
               </div>
 
-              <div>
-                <label
-                  htmlFor="edit-active-ingredient"
-                  className={labelClassName}
-                >
-                  Діюча речовина
-                </label>
-
+              <MedicineField
+                label="Діюча речовина"
+                htmlFor="edit-active-ingredient"
+              >
                 <input
                   id="edit-active-ingredient"
                   value={activeIngredient}
                   onChange={(event) => setActiveIngredient(event.target.value)}
-                  className={inputClassName}
+                  disabled={isPending}
+                  className={INPUT_CLASS_NAME}
                 />
-              </div>
+              </MedicineField>
 
-              <div>
-                <label htmlFor="edit-form" className={labelClassName}>
-                  Форма випуску <span className="text-red-500">*</span>
-                </label>
-
+              <MedicineField label="Форма випуску" htmlFor="edit-form">
                 <select
                   id="edit-form"
                   value={formId}
                   onChange={(event) => setFormId(event.target.value)}
                   required
-                  className={selectClassName}
+                  disabled={isPending}
+                  className={SELECT_CLASS_NAME}
                 >
                   <option value="" disabled>
                     Оберіть форму
@@ -202,18 +218,15 @@ const EditMedicineModal = ({
                     </option>
                   ))}
                 </select>
-              </div>
+              </MedicineField>
 
-              <div>
-                <label htmlFor="edit-purpose" className={labelClassName}>
-                  Призначення
-                </label>
-
+              <MedicineField label="Призначення" htmlFor="edit-purpose">
                 <select
                   id="edit-purpose"
                   value={purposeId}
                   onChange={(event) => setPurposeId(event.target.value)}
-                  className={selectClassName}
+                  disabled={isPending}
+                  className={SELECT_CLASS_NAME}
                 >
                   <option value="">Не обрано</option>
 
@@ -223,7 +236,7 @@ const EditMedicineModal = ({
                     </option>
                   ))}
                 </select>
-              </div>
+              </MedicineField>
             </div>
           </section>
 
@@ -240,46 +253,43 @@ const EditMedicineModal = ({
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label htmlFor="edit-dosage" className={labelClassName}>
-                  Дозування
-                </label>
-
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <MedicineField label="Дозування" htmlFor="edit-dosage">
                 <input
                   id="edit-dosage"
                   value={dosage}
                   onChange={(event) => setDosage(event.target.value)}
-                  className={inputClassName}
+                  disabled={isPending}
+                  className={INPUT_CLASS_NAME}
                 />
-              </div>
+              </MedicineField>
 
-              <div>
-                <label htmlFor="edit-volume" className={labelClassName}>
-                  Обʼєм
-                </label>
-
+              <MedicineField label="Обʼєм" htmlFor="edit-volume">
                 <input
                   id="edit-volume"
                   value={volume}
                   onChange={(event) => setVolume(event.target.value)}
-                  className={inputClassName}
+                  disabled={isPending}
+                  className={INPUT_CLASS_NAME}
                 />
-              </div>
+              </MedicineField>
 
-              <div>
-                <label htmlFor="edit-unit" className={labelClassName}>
-                  Одиниця обліку <span className="text-red-500">*</span>
-                </label>
-
+              <MedicineField label="Одиниця обліку" htmlFor="edit-unit">
                 <select
                   id="edit-unit"
                   value={unit}
                   onChange={(event) => setUnit(event.target.value)}
                   required
-                  className={selectClassName}
+                  disabled={isPending || !selectedForm}
+                  className={SELECT_CLASS_NAME}
                 >
-                  {INVENTORY_UNITS.map((inventoryUnit) => (
+                  <option value="" disabled>
+                    {!selectedForm
+                      ? "Спочатку оберіть форму"
+                      : "Оберіть одиницю"}
+                  </option>
+
+                  {availableUnits.map((inventoryUnit) => (
                     <option
                       key={inventoryUnit.value}
                       value={inventoryUnit.value}
@@ -288,7 +298,7 @@ const EditMedicineModal = ({
                     </option>
                   ))}
                 </select>
-              </div>
+              </MedicineField>
             </div>
           </section>
 
@@ -305,15 +315,11 @@ const EditMedicineModal = ({
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label
-                  htmlFor="edit-minimum-quantity"
-                  className={labelClassName}
-                >
-                  Мінімальний залишок
-                </label>
-
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <MedicineField
+                label="Мінімальний залишок"
+                htmlFor="edit-minimum-quantity"
+              >
                 <input
                   id="edit-minimum-quantity"
                   type="number"
@@ -321,9 +327,10 @@ const EditMedicineModal = ({
                   step="1"
                   value={minimumQuantity}
                   onChange={(event) => setMinimumQuantity(event.target.value)}
-                  className={inputClassName}
+                  disabled={isPending}
+                  className={INPUT_CLASS_NAME}
                 />
-              </div>
+              </MedicineField>
             </div>
           </section>
 
@@ -341,8 +348,10 @@ const EditMedicineModal = ({
             <textarea
               value={description}
               onChange={(event) => setDescription(event.target.value)}
+              disabled={isPending}
               rows={4}
-              className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              placeholder="Особливості зберігання, примітки або інша важлива інформація..."
+              className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-gray-50"
             />
           </section>
         </div>

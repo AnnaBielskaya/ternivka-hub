@@ -5,9 +5,18 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { name: "Препарати", link: "/" },
-  { name: "Розхідники", link: "/category/medicalsupplies" },
-  { name: "Обладнання", link: "/category/equipment" },
-  { name: "Такмед", link: "/category/tacmed" },
+  {
+    name: "Розхідники",
+    link: "/category/medicalsupplies",
+  },
+  {
+    name: "Обладнання",
+    link: "/category/equipment",
+  },
+  {
+    name: "Такмед",
+    link: "/category/tacmed",
+  },
 ];
 
 type CategoryTabsProps = {
@@ -19,7 +28,7 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
 
   if (variant === "bottom") {
     return (
-      <nav className="flex min-w-max items-stretch gap-1">
+      <nav className="grid w-full grid-cols-4 gap-1">
         {tabs.map((tab) => {
           const isActive = pathname === tab.link;
 
@@ -27,13 +36,13 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
             <Link
               key={tab.name}
               href={tab.link}
-              className={`flex min-w-[88px] items-center justify-center rounded-xl px-3 py-2.5 text-[12px] transition ${
+              className={`flex min-w-0 items-center justify-center rounded-lg px-1 py-2.5 text-center text-[11px] leading-4 transition sm:text-[12px] ${
                 isActive
-                  ? "bg-slate-100 font-semibold text-slate-900 shadow-sm"
+                  ? "bg-slate-100 font-semibold text-slate-900"
                   : "font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
-              {tab.name}
+              <span className="truncate">{tab.name}</span>
             </Link>
           );
         })}
