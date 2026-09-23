@@ -18,6 +18,8 @@ export default async function HomePage() {
     getCurrentUser(),
   ]);
 
+  console.log("items", items);
+
   const inventoryItems = items.map((item) =>
     mapInventoryItem({
       ...item,
