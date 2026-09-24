@@ -2,34 +2,42 @@ export const MEDICINE_TABLE_COLUMNS = [
   {
     key: "name",
     label: "Назва",
+    sortable: true,
   },
   {
     key: "dosage",
     label: "Дозування",
+    sortable: true,
   },
   {
     key: "active_ingredient",
     label: "Діюча речовина",
+    sortable: true,
   },
   {
     key: "medicine_form",
     label: "Форма",
+    sortable: true,
   },
   {
     key: "volume",
     label: "Обʼєм",
+    sortable: true,
   },
   {
     key: "quantity",
     label: "Кількість",
+    sortable: true,
   },
   {
     key: "nearestExpiry",
     label: "Термін придатності",
+    sortable: true,
   },
   {
     key: "status",
     label: "Статус",
+    sortable: true,
   },
 ] as const;
 

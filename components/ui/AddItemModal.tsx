@@ -7,7 +7,7 @@ import type {
   MedicinePurposeRow,
 } from "@/features/inventory/types";
 
-import MedicineForm from "@/features/inventory/forms/MedicineForm";
+import MedicineForm from "@/features/inventory/medicine/forms/MedicineForm";
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
 

@@ -2,22 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-import { UserRole } from "@/features/users/types";
+import type { UserRole } from "@/features/users/types";
 
 import Logo from "./Logo";
-import SearchInput from "./Search";
 import CategoryTabs from "./CategoryTabs";
 import UserMenu from "./UserMenu";
 import CreateUserModal from "@/features/users/components/CreateUserModal";
+import UserProfileModal from "@/features/users/components/UserProfileModal";
 
 type HeaderProps = {
+  userId: string;
   name: string;
   role: UserRole;
 };
 
-const Header = ({ name, role }: HeaderProps) => {
+const Header = ({ userId, name, role }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const firstLetter = name.trim().charAt(0).toUpperCase();
 
@@ -53,19 +57,15 @@ const Header = ({ name, role }: HeaderProps) => {
       <header>
         <div className="px-4 py-3 sm:px-6 sm:py-3">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-7 sm:gap-8">
+            <div className="flex min-w-0 items-center gap-7 lg:gap-8">
               <Logo />
 
-              <div className="hidden sm:block">
+              <div className="hidden lg:block">
                 <CategoryTabs variant="header" />
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-3 sm:gap-4">
-              <div className="hidden sm:block">
-                <SearchInput />
-              </div>
-
+            <div className="flex shrink-0 items-center gap-3 lg:gap-4">
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
@@ -73,7 +73,7 @@ const Header = ({ name, role }: HeaderProps) => {
                 aria-expanded={isOpen}
                 className="group flex cursor-pointer items-center gap-2 rounded-xl p-1 transition hover:bg-slate-50"
               >
-                <span className="hidden max-w-40 truncate text-[13px] font-medium text-slate-700 sm:block">
+                <span className="hidden max-w-40 truncate text-[13px] font-medium text-slate-700 lg:block">
                   {name}
                 </span>
 
@@ -83,24 +83,15 @@ const Header = ({ name, role }: HeaderProps) => {
               </button>
             </div>
           </div>
-
-          <div className="mt-3 sm:hidden">
-            <SearchInput />
-          </div>
         </div>
       </header>
-
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden">
-        <div className="w-full p-2">
-          <CategoryTabs variant="bottom" />
-        </div>
-      </nav>
 
       {isOpen && (
         <UserMenu
           name={name}
           role={role}
           setIsOpen={setIsOpen}
+          onProfile={() => setIsProfileModalOpen(true)}
           onCreateUser={() => setIsInviteModalOpen(true)}
         />
       )}
@@ -108,6 +99,14 @@ const Header = ({ name, role }: HeaderProps) => {
       <CreateUserModal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
+      />
+
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        userId={userId}
+        name={name}
+        role={role}
+        onClose={() => setIsProfileModalOpen(false)}
       />
     </>
   );

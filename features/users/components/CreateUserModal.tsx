@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
+import DropdownSelect from "@/components/ui/DropdownSelect";
 
 import { createUser } from "../actions/create-user";
 import { UserRole } from "../types";
@@ -13,7 +14,10 @@ type CreateUserModalProps = {
   onClose: () => void;
 };
 
-const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+const ROLE_OPTIONS: {
+  value: UserRole;
+  label: string;
+}[] = [
   {
     value: "editor",
     label: "Редагування",
@@ -95,7 +99,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
       }
     >
       <form id="create-user-form" onSubmit={handleSubmit}>
-        <div className="space-y-5 p-6">
+        <div className="space-y-5 p-4 sm:p-6">
           <div>
             <label
               htmlFor="create-user-phone"
@@ -139,26 +143,21 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           </div>
 
           <div>
-            <label
-              htmlFor="create-user-role"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
-            >
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">
               Роль
             </label>
 
-            <select
-              id="create-user-role"
-              name="role"
+            <DropdownSelect
               value={role}
-              onChange={(event) => setRole(event.target.value as UserRole)}
-              className="h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-            >
-              {ROLE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              options={ROLE_OPTIONS}
+              variant="outline"
+              disabled={isSubmitting}
+              onChange={(value) => {
+                if (value) {
+                  setRole(value as UserRole);
+                }
+              }}
+            />
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}

@@ -15,10 +15,10 @@ const ADD_ITEM_CONFIG = {
     title: "Додати препарат",
   },
   medicalsupplies: {
-    title: "Додати медичний розхідник",
+    title: "Додати розхідник",
   },
   equipment: {
-    title: "Додати медичне обладнання",
+    title: "Додати обладнання",
   },
 } as const;
 
@@ -42,10 +42,12 @@ const AddItemButton = ({
       <CustomButton
         type="button"
         onClick={() => setIsOpen(true)}
-        className="h-10 gap-2 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98]"
+        aria-label={title}
+        className="h-10 w-10 rounded-lg bg-blue-600 px-0 text-lg font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98] sm:h-10 sm:w-auto sm:gap-2 sm:px-4 sm:text-sm"
       >
-        <span className="text-lg leading-none">+</span>
-        <span>{title}</span>
+        <span className="leading-none">+</span>
+
+        <span className="hidden sm:inline">{title}</span>
       </CustomButton>
 
       <AddItemModal

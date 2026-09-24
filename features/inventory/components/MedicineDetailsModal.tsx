@@ -24,8 +24,8 @@ import SectionTitle from "@/components/ui/SectionTitle";
 
 import type { InventoryItem, StockRow } from "@/features/inventory/types";
 
-import { updateStockQuantity } from "@/features/inventory/actions/update-stock-quantity";
-import { getMedicineAuditLogs } from "@/features/inventory/actions/get-medicine-audit-logs";
+import { updateStockQuantity } from "@/features/inventory/medicine/actions/update-stock-quantity";
+import { getMedicineAuditLogs } from "@/features/inventory/medicine/actions/get-medicine-audit-logs";
 import { UserRole } from "@/features/users/types";
 
 type MedicineDetailsModalProps = {

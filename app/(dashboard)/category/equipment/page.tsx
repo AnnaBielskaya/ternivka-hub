@@ -1,9 +1,16 @@
-import React from 'react'
+import Header from "@/components/ui/Header";
+import AddItemButton from "@/components/ui/AddItemButton";
 
 const Equipment = () => {
   return (
-    <div>Equipment</div>
-  )
-}
+    <>
+      <div className="flex items-center gap-1 justify-between">
+        <Header variant="equipment" />
 
-export default Equipment
+        <AddItemButton variant="equipment" />
+      </div>
+    </>
+  );
+};
+
+export default Equipment;

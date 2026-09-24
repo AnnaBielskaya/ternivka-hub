@@ -1,6 +1,6 @@
 "use client";
 
-import type { MedicineAuditLog } from "@/features/inventory/actions/get-medicine-audit-logs";
+import type { MedicineAuditLog } from "@/features/inventory/medicine/actions/get-medicine-audit-logs";
 
 type MedicineAuditTableProps = {
   logs: MedicineAuditLog[];

@@ -3,10 +3,12 @@
 import { useState, useTransition } from "react";
 
 import CustomButton from "@/components/ui/CustomButton";
+import DropdownSelect from "@/components/ui/DropdownSelect";
+
 import { MONTHS } from "@/features/inventory/constants";
 import type { StockRow } from "@/features/inventory/types";
 
-import { createStockBatch } from "@/features/inventory/actions/create-stock-batch";
+import { createStockBatch } from "@/features/inventory/medicine/actions/create-stock-batch";
 
 type AddStockBatchFormProps = {
   itemId: string;
@@ -26,6 +28,11 @@ const AddStockBatchForm = ({
   const [expiryYear, setExpiryYear] = useState("");
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  const monthOptions = MONTHS.map((month) => ({
+    value: String(month),
+    label: String(month).padStart(2, "0"),
+  }));
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -84,28 +91,17 @@ const AddStockBatchForm = ({
         </div>
 
         <div>
-          <label
-            htmlFor="batch_expiry_month"
-            className="mb-1 block text-[11px] font-medium text-slate-600"
-          >
+          <label className="mb-1 block text-[11px] font-medium text-slate-600">
             Місяць
           </label>
 
-          <select
-            id="batch_expiry_month"
-            value={expiryMonth}
-            disabled={isPending}
-            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-xs text-slate-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-slate-50"
-            onChange={(event) => setExpiryMonth(event.target.value)}
-          >
-            <option value="">Місяць</option>
-
-            {MONTHS.map((month) => (
-              <option key={month} value={month}>
-                {String(month).padStart(2, "0")}
-              </option>
-            ))}
-          </select>
+          <DropdownSelect
+            value={expiryMonth || null}
+            options={monthOptions}
+            placeholder="Місяць"
+            variant="outline"
+            onChange={(value) => setExpiryMonth(value ?? "")}
+          />
         </div>
 
         <div>
