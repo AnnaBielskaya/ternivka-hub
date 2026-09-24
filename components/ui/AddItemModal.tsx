@@ -8,6 +8,8 @@ import type {
 } from "@/features/inventory/types";
 
 import MedicineForm from "@/features/inventory/medicine/forms/MedicineForm";
+import EquipmentForm from "@/features/inventory/equipment/components/EquipmentForm";
+
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
 
@@ -18,9 +20,11 @@ const MODAL_CONFIG = {
   },
   medicalsupplies: {
     title: "Додати медичний розхідник",
+    submitLabel: "Додати розхідник",
   },
   equipment: {
     title: "Додати медичне обладнання",
+    submitLabel: "Додати обладнання",
   },
 } as const;
 
@@ -53,15 +57,17 @@ const AddItemModal = ({
 
   const config = MODAL_CONFIG[variant];
 
+  const formId = variant === "medicine" ? "medicine-form" : "equipment-form";
+
   const footer =
-    variant === "medicine" ? (
+    variant === "medicine" || variant === "equipment" ? (
       <div className="flex justify-end gap-3">
         <CustomButton variant="secondary" onClick={handleClose}>
           Скасувати
         </CustomButton>
 
-        <CustomButton type="submit" form="medicine-form">
-          {MODAL_CONFIG.medicine.submitLabel}
+        <CustomButton type="submit" form={formId}>
+          {config.submitLabel}
         </CustomButton>
       </div>
     ) : null;
@@ -80,6 +86,10 @@ const AddItemModal = ({
           medicinePurposes={medicinePurposes}
           onSaved={handleSaved}
         />
+      )}
+
+      {variant === "equipment" && (
+        <EquipmentForm key={formVersion} onSaved={handleSaved} />
       )}
     </Modal>
   );

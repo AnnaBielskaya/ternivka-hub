@@ -44,3 +44,33 @@ export const EQUIPMENT_POWER_LABELS: Record<EquipmentPowerSource, string> = {
   autonomous: "Автономне",
   both: "Від мережі + автономне",
 };
+
+export const EQUIPMENT_STATUS_OPTIONS = [
+  {
+    value: "working",
+    label: "Робочий",
+  },
+  {
+    value: "not_working",
+    label: "Не робочий",
+  },
+  {
+    value: "incomplete",
+    label: "Не комплектний",
+  },
+] as const;
+
+export const EQUIPMENT_POWER_OPTIONS = [
+  {
+    value: "mains",
+    label: "Від мережі",
+  },
+  {
+    value: "autonomous",
+    label: "Автономне",
+  },
+  {
+    value: "both",
+    label: "Від мережі + автономне",
+  },
+] as const;
