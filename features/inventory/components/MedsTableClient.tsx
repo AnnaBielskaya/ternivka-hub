@@ -19,8 +19,9 @@ import MedicineDetailsModal from "./MedicineDetailsModal";
 import EditMedicineModal from "./EditMedicineModal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import InventoryCard from "@/components/ui/table/InventoryCard";
-import InventoryEmptyState from "@/components/ui/table/InventoryEmptyState";
+import InventoryTable from "@/components/ui/table/InventoryTable";
 import { UserRole } from "@/features/users/types";
+import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
 
 type MedsTableClientProps = {
   items: InventoryItem[];
@@ -33,6 +34,118 @@ const collator = new Intl.Collator("uk-UA", {
   sensitivity: "base",
 });
 
+const medicineTableColumns: InventoryTableColumn<InventoryItem>[] =
+  MEDICINE_TABLE_COLUMNS.map((column) => ({
+    key: column.key,
+    label: column.label,
+    sortable: column.sortable,
+    render: (item) => {
+      const needsRefill = item.needsRefill;
+
+      switch (column.key) {
+        case "name":
+          return (
+            <div className="max-w-[240px] min-w-0">
+              <p
+                className={`font-medium leading-5 ${
+                  needsRefill ? "text-red-700" : "text-slate-900"
+                }`}
+              >
+                {item.name}
+              </p>
+
+              {item.description && (
+                <p
+                  className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
+                    needsRefill ? "text-red-400" : "text-slate-400"
+                  }`}
+                >
+                  {item.description}
+                </p>
+              )}
+            </div>
+          );
+
+        case "dosage":
+          return (
+            <span
+              className={`text-[13px] ${
+                needsRefill ? "text-red-700" : "text-slate-600"
+              }`}
+            >
+              {item.dosage ?? "-"}
+            </span>
+          );
+
+        case "active_ingredient":
+          return (
+            <span
+              className={`text-[13px] font-medium ${
+                needsRefill ? "text-red-700" : "text-slate-800"
+              }`}
+            >
+              {item.active_ingredient ?? "-"}
+            </span>
+          );
+
+        case "medicine_form":
+          return item.medicine_form ? (
+            <StatusBadge
+              kind="form"
+              variant={needsRefill ? "warning" : "info"}
+              title={item.medicine_form.name}
+            />
+          ) : (
+            <span className="text-slate-400">-</span>
+          );
+
+        case "volume":
+          return (
+            <span
+              className={`text-[13px] ${
+                needsRefill ? "text-red-700" : "text-slate-600"
+              }`}
+            >
+              {item.volume ?? "-"}
+            </span>
+          );
+
+        case "quantity":
+          return (
+            <span
+              className={`whitespace-nowrap text-[13px] font-medium ${
+                needsRefill ? "text-red-700" : "text-slate-800"
+              }`}
+            >
+              {item.quantity} ({item.unit})
+            </span>
+          );
+
+        case "nearestExpiry":
+          return (
+            <span
+              className={`whitespace-nowrap text-[13px] ${
+                needsRefill ? "text-red-700" : "text-slate-600"
+              }`}
+            >
+              {item.nearestExpiry ?? "-"}
+            </span>
+          );
+
+        case "status":
+          return (
+            <StatusBadge
+              variant={needsRefill ? "warning" : "success"}
+              title={needsRefill ? "Потребує поповнення" : "Достатньо"}
+            />
+          );
+
+        default:
+          return null;
+      }
+    },
+  }));
+
 const MedsTableClient = ({
   items,
   role,
@@ -42,17 +155,11 @@ const MedsTableClient = ({
   const router = useRouter();
 
   const [needsRefillOnly, setNeedsRefillOnly] = useState(false);
-
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
-
   const [sortKey, setSortKey] = useState<MedicineSortKey>("name");
-
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-
   const [isDeleting, startDeleting] = useTransition();
-
   const [selectedForm, setSelectedForm] = useState<string | null>(null);
 
   const handleRowClick = (item: InventoryItem) => {
@@ -74,7 +181,6 @@ const MedsTableClient = ({
   const handleSortChange = (key: MedicineSortKey) => {
     if (key === sortKey) {
       setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
-
       return;
     }
 
@@ -235,144 +341,25 @@ const MedsTableClient = ({
         </div>
 
         <div className="hidden lg:block">
-          <table className="inventory-table w-full border-separate border-spacing-0">
-            <thead className="sticky top-0 z-10">
-              <tr className="bg-slate-50">
-                {MEDICINE_TABLE_COLUMNS.map((column) => {
-                  const isActiveSort = column.key === sortKey;
-
-                  return (
-                    <th
-                      key={column.key}
-                      className="border-b border-slate-200 px-4 py-3 text-left text-xs font-semibold text-slate-500 first:pl-5 last:pr-5"
-                    >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleSortChange(column.key as MedicineSortKey)
-                        }
-                        className="flex cursor-pointer items-center gap-1.5 transition hover:text-slate-900"
-                      >
-                        <span>{column.label}</span>
-
-                        {isActiveSort && (
-                          <span className="text-[10px] text-slate-400">
-                            {sortDirection === "asc" ? "↑" : "↓"}
-                          </span>
-                        )}
-                      </button>
-                    </th>
-                  );
-                })}
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredItems.map((item) => {
-                const needsRefill = item.needsRefill;
-
-                return (
-                  <tr
-                    key={item.id}
-                    onClick={() => handleRowClick(item)}
-                    className={`cursor-pointer transition ${
-                      needsRefill
-                        ? "bg-red-50 hover:bg-red-100/70"
-                        : "bg-white hover:bg-slate-50"
-                    }`}
-                  >
-                    <td
-                      className={`border-b border-slate-100 px-4 py-4 first:pl-5 ${
-                        needsRefill ? "text-red-700" : "text-slate-900"
-                      }`}
-                    >
-                      <div className="max-w-[240px] min-w-0">
-                        <p className="font-medium leading-5">{item.name}</p>
-
-                        {item.description && (
-                          <p
-                            className={`mt-1 line-clamp-2 max-w-[220px] text-xs italic leading-4 ${
-                              needsRefill ? "text-red-400" : "text-slate-400"
-                            }`}
-                          >
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-
-                    <td
-                      className={`border-b border-slate-100 px-4 py-4 text-[13px] ${
-                        needsRefill ? "text-red-700" : "text-slate-600"
-                      }`}
-                    >
-                      {item.dosage ?? "-"}
-                    </td>
-
-                    <td
-                      className={`border-b border-slate-100 px-4 py-4 text-[13px] font-medium ${
-                        needsRefill ? "text-red-700" : "text-slate-800"
-                      }`}
-                    >
-                      {item.active_ingredient ?? "-"}
-                    </td>
-
-                    <td className="border-b border-slate-100 px-4 py-4">
-                      {item.medicine_form ? (
-                        <StatusBadge
-                          kind="form"
-                          variant={needsRefill ? "warning" : "info"}
-                          title={item.medicine_form.name}
-                        />
-                      ) : (
-                        <span className="text-slate-400">-</span>
-                      )}
-                    </td>
-
-                    <td
-                      className={`border-b border-slate-100 px-4 py-4 text-[13px] ${
-                        needsRefill ? "text-red-700" : "text-slate-600"
-                      }`}
-                    >
-                      {item.volume ?? "-"}
-                    </td>
-
-                    <td
-                      className={`whitespace-nowrap border-b border-slate-100 px-4 py-4 text-[13px] font-medium ${
-                        needsRefill ? "text-red-700" : "text-slate-800"
-                      }`}
-                    >
-                      {item.quantity} ({item.unit})
-                    </td>
-
-                    <td
-                      className={`whitespace-nowrap border-b border-slate-100 px-4 py-4 text-[13px] ${
-                        needsRefill ? "text-red-700" : "text-slate-600"
-                      }`}
-                    >
-                      {item.nearestExpiry ?? "-"}
-                    </td>
-
-                    <td className="border-b border-slate-100 px-4 py-4 last:pr-5">
-                      <StatusBadge
-                        variant={needsRefill ? "warning" : "success"}
-                        title={
-                          needsRefill ? "Потребує поповнення" : "Достатньо"
-                        }
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {filteredItems.length === 0 && (
-                <InventoryEmptyState
-                  colSpan={MEDICINE_TABLE_COLUMNS.length}
-                  message="Препаратів немає"
-                />
-              )}
-            </tbody>
-          </table>
+          <InventoryTable
+            items={filteredItems}
+            columns={medicineTableColumns}
+            getRowKey={(item) => item.id}
+            getRowClassName={(item) =>
+              item.needsRefill
+                ? "bg-red-50 hover:bg-red-100/70"
+                : "bg-white hover:bg-slate-50"
+            }
+            onRowClick={handleRowClick}
+            sortKey={sortKey}
+            sortDirection={sortDirection}
+            onSort={(key) => handleSortChange(key as MedicineSortKey)}
+            emptyMessage={
+              needsRefillOnly
+                ? "Препаратів, що потребують поповнення, немає"
+                : "Препаратів немає"
+            }
+          />
         </div>
       </div>
 
