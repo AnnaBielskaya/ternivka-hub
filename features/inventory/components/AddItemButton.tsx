@@ -15,10 +15,10 @@ const ADD_ITEM_CONFIG = {
     title: "Додати препарат",
   },
   medicalsupplies: {
-    title: "Додати медичний розхідник",
+    title: "Додати розхідник",
   },
   equipment: {
-    title: "Додати медичне обладнання",
+    title: "Додати обладнання",
   },
 } as const;
 

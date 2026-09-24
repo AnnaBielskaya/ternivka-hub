@@ -19,6 +19,7 @@ import MedicineDetailsModal from "./MedicineDetailsModal";
 import EditMedicineModal from "./EditMedicineModal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { UserRole } from "@/features/users/types";
+import InventoryEmptyState from "@/components/ui/table/InventoryEmptyState";
 
 type MedsTableClientProps = {
   items: InventoryItem[];
@@ -448,16 +449,10 @@ const MedsTableClient = ({
               })}
 
               {filteredItems.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={MEDICINE_TABLE_COLUMNS.length}
-                    className="bg-white px-5 py-12 text-center text-[13px] text-slate-500"
-                  >
-                    {needsRefillOnly
-                      ? "Препаратів, що потребують поповнення, немає"
-                      : "Препаратів немає"}
-                  </td>
-                </tr>
+                <InventoryEmptyState
+                  colSpan={MEDICINE_TABLE_COLUMNS.length}
+                  message="Препаратів немає"
+                />
               )}
             </tbody>
           </table>
