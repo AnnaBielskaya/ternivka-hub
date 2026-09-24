@@ -16,7 +16,7 @@ import type {
   MedicinePurposeRow,
 } from "@/features/inventory/types";
 
-import { useMedicineForm } from "@/features/inventory/hooks/useMedicineForm";
+import { useMedicineForm } from "@/features/inventory/medicine/hooks/useMedicineForm";
 
 type MedicineFormProps = {
   medicineForms: MedicineFormRow[];

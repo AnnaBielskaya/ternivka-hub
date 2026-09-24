@@ -12,7 +12,7 @@ import type {
 } from "@/features/inventory/types";
 
 import { MEDICINE_TABLE_COLUMNS } from "../constants";
-import { deleteMedicine } from "../actions/delete-medicine";
+import { deleteMedicine } from "../medicine/actions/delete-medicine";
 
 import MedsToolbar from "./MedsToolbar";
 import MedicineDetailsModal from "./MedicineDetailsModal";

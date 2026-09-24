@@ -13,7 +13,7 @@ import {
   MEDICINE_UNITS_BY_FORM,
 } from "@/features/inventory/constants";
 
-import { updateMedicine } from "@/features/inventory/actions/update-medicine";
+import { updateMedicine } from "@/features/inventory/medicine/actions/update-medicine";
 
 type UseEditMedicineFormProps = {
   item: InventoryItem;

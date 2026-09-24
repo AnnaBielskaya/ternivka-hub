@@ -15,7 +15,7 @@ import {
   MONTHS,
 } from "@/features/inventory/constants";
 
-import { createMedicine } from "@/features/inventory/actions/create-medicine";
+import { createMedicine } from "@/features/inventory/medicine/actions/create-medicine";
 
 const initialMedicineCreateState: MedicineCreateState = {
   status: "idle",

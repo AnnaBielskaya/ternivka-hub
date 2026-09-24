@@ -1,5 +1,5 @@
 import Header from "@/components/ui/Header";
-import AddItemButton from "@/features/inventory/components/AddItemButton";
+import AddItemButton from "@/components/ui/AddItemButton";
 
 const Equipment = () => {
   return (

@@ -16,7 +16,7 @@ import type {
 
 import { INPUT_CLASS_NAME } from "@/features/inventory/constants";
 
-import { useEditMedicineForm } from "@/features/inventory/hooks/useEditMedicineForm";
+import { useEditMedicineForm } from "@/features/inventory/medicine/hooks/useEditMedicineForm";
 
 type EditMedicineModalProps = {
   item: InventoryItem;

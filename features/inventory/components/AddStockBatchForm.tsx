@@ -8,7 +8,7 @@ import DropdownSelect from "@/components/ui/DropdownSelect";
 import { MONTHS } from "@/features/inventory/constants";
 import type { StockRow } from "@/features/inventory/types";
 
-import { createStockBatch } from "@/features/inventory/actions/create-stock-batch";
+import { createStockBatch } from "@/features/inventory/medicine/actions/create-stock-batch";
 
 type AddStockBatchFormProps = {
   itemId: string;
