@@ -18,8 +18,9 @@ import MedsToolbar from "./MedsToolbar";
 import MedicineDetailsModal from "./MedicineDetailsModal";
 import EditMedicineModal from "./EditMedicineModal";
 import StatusBadge from "@/components/ui/StatusBadge";
-import { UserRole } from "@/features/users/types";
+import InventoryCard from "@/components/ui/table/InventoryCard";
 import InventoryEmptyState from "@/components/ui/table/InventoryEmptyState";
+import { UserRole } from "@/features/users/types";
 
 type MedsTableClientProps = {
   items: InventoryItem[];
@@ -182,129 +183,45 @@ const MedsTableClient = ({
                 const needsRefill = item.needsRefill;
 
                 return (
-                  <button
+                  <InventoryCard
                     key={item.id}
-                    type="button"
-                    onClick={() => handleRowClick(item)}
-                    disabled={isDeleting}
-                    className={`w-full cursor-pointer rounded-xl p-4 text-left transition ${
-                      needsRefill
-                        ? "bg-red-50/60 hover:bg-red-50/80"
-                        : "bg-slate-50/80 hover:bg-slate-100/80"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3
-                          className={`text-sm font-semibold leading-5 ${
-                            needsRefill ? "text-red-700" : "text-slate-900"
-                          }`}
-                        >
-                          {item.name}
-                        </h3>
-
-                        {item.description && (
-                          <p
-                            className={`mt-1 line-clamp-2 text-xs leading-4 ${
-                              needsRefill ? "text-red-400" : "text-slate-400"
-                            }`}
-                          >
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-
+                    title={item.name}
+                    description={item.description}
+                    badge={
                       <StatusBadge
                         kind="form"
                         variant={needsRefill ? "warning" : "info"}
                         title={item.medicine_form?.name ?? "—"}
                       />
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
-                      <div className="min-w-0">
-                        <span className="block text-[11px] text-slate-400">
-                          Діюча речовина
-                        </span>
-
-                        <span
-                          className={`mt-0.5 block truncate text-xs font-medium ${
-                            needsRefill ? "text-red-700" : "text-slate-800"
-                          }`}
-                        >
-                          {item.active_ingredient ?? "—"}
-                        </span>
-                      </div>
-
-                      <div className="min-w-0">
-                        <span className="block text-[11px] text-slate-400">
-                          Дозування
-                        </span>
-
-                        <span
-                          className={`mt-0.5 block truncate text-xs font-medium ${
-                            needsRefill ? "text-red-700" : "text-slate-800"
-                          }`}
-                        >
-                          {item.dosage ?? "—"}
-                        </span>
-                      </div>
-
-                      <div className="min-w-0">
-                        <span className="block text-[11px] text-slate-400">
-                          Обʼєм
-                        </span>
-
-                        <span
-                          className={`mt-0.5 block truncate text-xs font-medium ${
-                            needsRefill ? "text-red-700" : "text-slate-800"
-                          }`}
-                        >
-                          {item.volume ?? "—"}
-                        </span>
-                      </div>
-
-                      <div className="min-w-0">
-                        <span className="block text-[11px] text-slate-400">
-                          Термін придатності
-                        </span>
-
-                        <span
-                          className={`mt-0.5 block truncate text-xs font-medium ${
-                            needsRefill ? "text-red-700" : "text-slate-800"
-                          }`}
-                        >
-                          {item.nearestExpiry ?? "—"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 flex items-end justify-between gap-3 border-t border-slate-200/60 pt-3">
-                      <div>
-                        <span className="block text-[11px] text-slate-400">
-                          Кількість
-                        </span>
-
-                        <span
-                          className={`mt-0.5 block text-sm font-semibold ${
-                            needsRefill ? "text-red-700" : "text-slate-900"
-                          }`}
-                        >
-                          {item.quantity}{" "}
-                          <span className="text-xs font-medium">
-                            {item.unit}
-                          </span>
-                        </span>
-                      </div>
-
-                      <StatusBadge
-                        title={
-                          needsRefill ? "Потребує поповнення" : "Достатньо"
-                        }
-                        variant={needsRefill ? "warning" : "success"}
-                      />
-                    </div>
-                  </button>
+                    }
+                    fields={[
+                      {
+                        label: "Діюча речовина",
+                        value: item.active_ingredient ?? "—",
+                      },
+                      {
+                        label: "Дозування",
+                        value: item.dosage ?? "—",
+                      },
+                      {
+                        label: "Обʼєм",
+                        value: item.volume ?? "—",
+                      },
+                      {
+                        label: "Термін придатності",
+                        value: item.nearestExpiry ?? "—",
+                      },
+                    ]}
+                    quantity={item.quantity}
+                    quantityUnit={item.unit}
+                    status={{
+                      title: needsRefill ? "Потребує поповнення" : "Достатньо",
+                      variant: needsRefill ? "warning" : "success",
+                    }}
+                    highlighted={needsRefill}
+                    disabled={isDeleting}
+                    onClick={() => handleRowClick(item)}
+                  />
                 );
               })}
             </div>
