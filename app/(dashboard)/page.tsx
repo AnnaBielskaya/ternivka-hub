@@ -3,9 +3,9 @@ import { getCurrentUser } from "@/features/auth/actions/get-current-user";
 import Header from "@/components/ui/Header";
 
 import AddItemButton from "@/components/ui/AddItemButton";
-import MedsTableClient from "@/features/inventory/components/MedsTableClient";
+import MedsTableClient from "@/features/inventory/medicine/components/MedsTableClient";
 
-import { mapInventoryItem } from "@/features/inventory/utils/map-inventory-item";
+import { mapInventoryItem } from "@/features/inventory/medicine/utils/map-inventory-item";
 import { getMedicalItems } from "@/features/inventory/medicine/queries/item.queries";
 import { getMedicineForms } from "@/features/inventory/medicine/queries/medicine-form.queries";
 import { getMedicinePurposes } from "@/features/inventory/medicine/queries/medicine-purpose.queries";
