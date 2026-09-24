@@ -206,6 +206,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
                   title: EQUIPMENT_STATUS_LABELS[item.status],
                   variant: getStatusVariant(item.status),
                 }}
+                onClick={() => {}}
               />
             ))}
           </div>
