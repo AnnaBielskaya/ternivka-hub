@@ -22,6 +22,7 @@ import InventoryCard from "@/components/ui/table/InventoryCard";
 import InventoryTable from "@/components/ui/table/InventoryTable";
 import { UserRole } from "@/features/users/types";
 import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
+import InfoMessage from "@/components/ui/InfoMessage";
 
 type MedsTableClientProps = {
   items: InventoryItem[];
@@ -392,13 +393,7 @@ const MedsTableClient = ({
         />
       )}
 
-      {isDeleting && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/20">
-          <div className="rounded-lg bg-white px-4 py-3 text-sm font-medium text-slate-700">
-            Видалення препарату...
-          </div>
-        </div>
-      )}
+      {isDeleting && <InfoMessage message="Видалення препарату..." />}
     </div>
   );
 };
