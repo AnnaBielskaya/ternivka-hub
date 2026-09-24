@@ -190,15 +190,11 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
                 description={item.comment}
                 badge={
                   <StatusBadge
-                    variant={getStatusVariant(item.status)}
-                    title={EQUIPMENT_STATUS_LABELS[item.status]}
+                    variant={getPowerVariant(item.power_source)}
+                    title={EQUIPMENT_POWER_LABELS[item.power_source]}
                   />
                 }
                 fields={[
-                  {
-                    label: "Живлення",
-                    value: EQUIPMENT_POWER_LABELS[item.power_source],
-                  },
                   {
                     label: "Додав",
                     value: item.creator?.name ?? "—",
