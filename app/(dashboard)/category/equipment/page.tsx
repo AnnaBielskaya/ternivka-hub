@@ -1,14 +1,26 @@
+import { getCurrentUser } from "@/features/auth/actions/get-current-user";
+
 import Header from "@/components/ui/Header";
 import AddItemButton from "@/components/ui/AddItemButton";
 
-const Equipment = () => {
+import EquipmentTableClient from "@/features/inventory/equipment/components/EquipmentTableClient";
+import { getEquipmentItems } from "@/features/inventory/equipment/queries/equipment.queries";
+
+const Equipment = async () => {
+  const [items, user] = await Promise.all([
+    getEquipmentItems(),
+    getCurrentUser(),
+  ]);
+
   return (
     <>
-      <div className="flex items-center gap-1 justify-between">
+      <div className="flex items-center justify-between gap-1">
         <Header variant="equipment" />
 
         <AddItemButton variant="equipment" />
       </div>
+
+      <EquipmentTableClient items={items} />
     </>
   );
 };

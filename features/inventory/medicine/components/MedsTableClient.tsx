@@ -11,8 +11,8 @@ import type {
   SortDirection,
 } from "@/features/inventory/types";
 
-import { MEDICINE_TABLE_COLUMNS } from "../constants";
-import { deleteMedicine } from "../medicine/actions/delete-medicine";
+import { MEDICINE_TABLE_COLUMNS } from "../../constants";
+import { deleteMedicine } from "../actions/delete-medicine";
 
 import MedsToolbar from "./MedsToolbar";
 import MedicineDetailsModal from "./MedicineDetailsModal";
@@ -297,7 +297,7 @@ const MedsTableClient = ({
                     badge={
                       <StatusBadge
                         kind="form"
-                        variant={needsRefill ? "warning" : "info"}
+                        variant="info"
                         title={item.medicine_form?.name ?? "—"}
                       />
                     }
@@ -325,7 +325,6 @@ const MedsTableClient = ({
                       title: needsRefill ? "Потребує поповнення" : "Достатньо",
                       variant: needsRefill ? "warning" : "success",
                     }}
-                    highlighted={needsRefill}
                     disabled={isDeleting}
                     onClick={() => handleRowClick(item)}
                   />

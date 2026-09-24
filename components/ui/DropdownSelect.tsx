@@ -10,7 +10,7 @@ export type DropdownSelectOption = {
 
 type DropdownSelectProps = {
   value: string | null;
-  options: DropdownSelectOption[];
+  options: readonly DropdownSelectOption[];
   placeholder?: string;
   variant?: "filled" | "outline";
   onChange: (value: string | null) => void;

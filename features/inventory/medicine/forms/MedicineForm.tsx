@@ -9,7 +9,7 @@ import DropdownSelect from "@/components/ui/DropdownSelect";
 import FormField from "@/components/ui/FormField";
 import FormSection from "@/components/ui/FormSection";
 
-import MedicineNameAutocomplete from "@/features/inventory/components/MedicineNameAutocomplete";
+import MedicineNameAutocomplete from "@/features/inventory/medicine/components/MedicineNameAutocomplete";
 
 import type {
   MedicineFormRow,
