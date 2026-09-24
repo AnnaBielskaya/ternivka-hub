@@ -16,3 +16,8 @@ export type EquipmentItem = {
     name: string;
   } | null;
 };
+
+export type EquipmentCreateState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
