@@ -29,7 +29,7 @@ const ROLE_OPTIONS: {
 ];
 
 const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+380");
   const [name, setName] = useState("");
   const [role, setRole] = useState<UserRole>("editor");
   const [activationUrl, setActivationUrl] = useState("");
@@ -41,7 +41,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
       return;
     }
 
-    setPhone("");
+    setPhone("+380");
     setName("");
     setRole("editor");
     setActivationUrl("");
@@ -115,7 +115,16 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
               type="tel"
               required
               value={phone}
-              onChange={(event) => setPhone(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+
+                if (!value.startsWith("+380")) {
+                  setPhone("+380");
+                  return;
+                }
+
+                setPhone(value);
+              }}
               placeholder="+380..."
               className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
             />
