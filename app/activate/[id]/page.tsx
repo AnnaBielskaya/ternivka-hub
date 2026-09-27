@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import CustomButton from "@/components/ui/CustomButton";
+import PasswordInput from "@/components/ui/PasswordInput";
 import { activateUser } from "@/features/users/actions/activate-user";
 
 const ActivatePage = () => {
@@ -62,15 +63,13 @@ const ActivatePage = () => {
                 Пароль
               </label>
 
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="new-password"
                 minLength={6}
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               />
             </div>
 
@@ -82,9 +81,8 @@ const ActivatePage = () => {
                 Повторіть пароль
               </label>
 
-              <input
+              <PasswordInput
                 id="password-confirmation"
-                type="password"
                 autoComplete="new-password"
                 minLength={6}
                 required
@@ -92,7 +90,6 @@ const ActivatePage = () => {
                 onChange={(event) =>
                   setPasswordConfirmation(event.target.value)
                 }
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
               />
             </div>
 

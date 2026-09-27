@@ -39,6 +39,6 @@ export const getEquipmentItems = async (): Promise<EquipmentItem[]> => {
     created_by: item.created_by,
     created_at: item.created_at,
     updated_at: item.updated_at,
-    creator: item.creator?.[0] ?? null,
+    creator: item.creator?.name ?? null,
   }));
 };

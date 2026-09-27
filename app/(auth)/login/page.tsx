@@ -4,10 +4,12 @@ import { FormEvent, useState } from "react";
 
 import CustomButton from "@/components/ui/CustomButton";
 import { loginWithPhone } from "@/features/auth/actions/login-with-phone";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -66,13 +68,11 @@ export default function LoginPage() {
                 Пароль
               </label>
 
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
                 required
               />
             </div>

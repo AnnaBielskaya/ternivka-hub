@@ -1,5 +1,3 @@
-import { getCurrentUser } from "@/features/auth/actions/get-current-user";
-
 import Header from "@/components/ui/Header";
 import AddItemButton from "@/components/ui/AddItemButton";
 
@@ -7,10 +5,7 @@ import EquipmentTableClient from "@/features/inventory/equipment/components/Equi
 import { getEquipmentItems } from "@/features/inventory/equipment/queries/equipment.queries";
 
 const Equipment = async () => {
-  const [items, user] = await Promise.all([
-    getEquipmentItems(),
-    getCurrentUser(),
-  ]);
+  const [items] = await Promise.all([getEquipmentItems()]);
 
   return (
     <>

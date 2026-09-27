@@ -1,10 +1,10 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request,
-  })
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,52 +12,53 @@ export async function proxy(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
 
         setAll(cookiesToSet) {
           for (const { name, value, options } of cookiesToSet) {
-            request.cookies.set(name, value)
+            request.cookies.set(name, value);
           }
 
           response = NextResponse.next({
             request,
-          })
+          });
 
           for (const { name, value, options } of cookiesToSet) {
-            response.cookies.set(name, value, options)
+            response.cookies.set(name, value, options);
           }
         },
       },
     }
-  )
+  );
 
-  const { data } = await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims();
 
-  const isAuthenticated = Boolean(data?.claims)
-  const pathname = request.nextUrl.pathname
+  const isAuthenticated = Boolean(data?.claims);
+  const pathname = request.nextUrl.pathname;
 
-  const isLoginPage = pathname === '/login'
+  const isLoginPage = pathname === "/login";
+  const isActivatePage = pathname.startsWith("/activate/");
 
-  if (!isAuthenticated && !isLoginPage) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
+  if (!isAuthenticated && !isLoginPage && !isActivatePage) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
 
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(url);
   }
 
   if (isAuthenticated && isLoginPage) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
 
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(url);
   }
 
-  return response
+  return response;
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};

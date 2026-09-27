@@ -18,6 +18,7 @@ import InventoryCard from "@/components/ui/table/InventoryCard";
 import InventoryTable from "@/components/ui/table/InventoryTable";
 import StatusBadge from "@/components/ui/StatusBadge";
 import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
+import EquipmentDetailsModal from "./EquipmentDetailsModal";
 
 type EquipmentSortKey =
   | "name"
@@ -64,69 +65,69 @@ const getPowerVariant = (
   }
 };
 
-const equipmentTableColumns: InventoryTableColumn<EquipmentItem>[] =
-  EQUIPMENT_TABLE_COLUMNS.map((column) => ({
-    key: column.key,
-    label: column.label,
-    sortable: column.sortable,
-    render: (item) => {
-      switch (column.key) {
-        case "name":
-          return (
-            <div className="max-w-[240px] min-w-0">
-              <p className="font-medium leading-5 text-slate-900">
-                {item.name}
-              </p>
-            </div>
-          );
-
-        case "status":
-          return (
-            <StatusBadge
-              variant={getStatusVariant(item.status)}
-              title={EQUIPMENT_STATUS_LABELS[item.status]}
-            />
-          );
-
-        case "power_source":
-          return (
-            <StatusBadge
-              variant={getPowerVariant(item.power_source)}
-              title={EQUIPMENT_POWER_LABELS[item.power_source]}
-            />
-          );
-
-        case "quantity":
-          return (
-            <span className="whitespace-nowrap text-[13px] font-medium text-slate-800">
-              {item.quantity} шт.
-            </span>
-          );
-
-        case "comment":
-          return (
-            <span className="text-[13px] text-slate-600">
-              {item.comment ?? "-"}
-            </span>
-          );
-
-        case "created_by":
-          return (
-            <span className="text-[13px] text-slate-600">
-              {item.creator?.name ?? "-"}
-            </span>
-          );
-
-        default:
-          return null;
-      }
-    },
-  }));
-
 const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
   const [sortKey, setSortKey] = useState<EquipmentSortKey>("name");
-
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [selectedItem, setSelectedItem] = useState<EquipmentItem | null>(null);
+
+  const equipmentTableColumns: InventoryTableColumn<EquipmentItem>[] =
+    EQUIPMENT_TABLE_COLUMNS.map((column) => ({
+      key: column.key,
+      label: column.label,
+      sortable: column.sortable,
+      render: (item) => {
+        switch (column.key) {
+          case "name":
+            return (
+              <div className="max-w-[240px] min-w-0">
+                <p className="font-medium leading-5 text-slate-900">
+                  {item.name}
+                </p>
+              </div>
+            );
+
+          case "status":
+            return (
+              <StatusBadge
+                variant={getStatusVariant(item.status)}
+                title={EQUIPMENT_STATUS_LABELS[item.status]}
+              />
+            );
+
+          case "power_source":
+            return (
+              <StatusBadge
+                variant={getPowerVariant(item.power_source)}
+                title={EQUIPMENT_POWER_LABELS[item.power_source]}
+              />
+            );
+
+          case "quantity":
+            return (
+              <span className="whitespace-nowrap text-[13px] font-medium text-slate-800">
+                {item.quantity} шт.
+              </span>
+            );
+
+          case "comment":
+            return (
+              <span className="text-[13px] text-slate-600">
+                {item.comment ?? "-"}
+              </span>
+            );
+
+          case "created_by":
+            return (
+              <span className="text-[13px] text-slate-600">
+                {item.creator?.name ?? "-"}
+              </span>
+            );
+
+          default:
+            return null;
+        }
+      },
+    }));
 
   const handleSortChange = (key: EquipmentSortKey) => {
     if (key === sortKey) {
@@ -179,56 +180,67 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
   }, [items, sortKey, sortDirection]);
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
-      <div className="lg:hidden">
-        {sortedItems.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {sortedItems.map((item) => (
-              <InventoryCard
-                key={item.id}
-                title={item.name}
-                description={item.comment}
-                badge={
-                  <StatusBadge
-                    variant={getPowerVariant(item.power_source)}
-                    title={EQUIPMENT_POWER_LABELS[item.power_source]}
-                  />
-                }
-                fields={[
-                  {
-                    label: "Додав",
-                    value: item.creator?.name ?? "—",
-                  },
-                ]}
-                quantity={item.quantity}
-                quantityUnit="шт."
-                status={{
-                  title: EQUIPMENT_STATUS_LABELS[item.status],
-                  variant: getStatusVariant(item.status),
-                }}
-                onClick={() => {}}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="px-5 py-12 text-center text-[13px] text-slate-500">
-            Обладнання немає
-          </div>
-        )}
+    <>
+      <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
+        <div className="lg:hidden">
+          {sortedItems.length > 0 ? (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {sortedItems.map((item) => (
+                <InventoryCard
+                  key={item.id}
+                  title={item.name}
+                  description={item.comment}
+                  badge={
+                    <StatusBadge
+                      variant={getPowerVariant(item.power_source)}
+                      title={EQUIPMENT_POWER_LABELS[item.power_source]}
+                    />
+                  }
+                  fields={[
+                    {
+                      label: "Додав",
+                      value: item.creator?.name ?? "—",
+                    },
+                  ]}
+                  quantity={item.quantity}
+                  quantityUnit="шт."
+                  status={{
+                    title: EQUIPMENT_STATUS_LABELS[item.status],
+                    variant: getStatusVariant(item.status),
+                  }}
+                  onClick={() => setSelectedItem(item)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="px-5 py-12 text-center text-[13px] text-slate-500">
+              Обладнання немає
+            </div>
+          )}
+        </div>
+
+        <div className="hidden lg:block">
+          <InventoryTable
+            items={sortedItems}
+            columns={equipmentTableColumns}
+            getRowKey={(item) => item.id}
+            emptyMessage="Обладнання немає"
+            sortKey={sortKey}
+            sortDirection={sortDirection}
+            onSort={(key) => handleSortChange(key as EquipmentSortKey)}
+            onRowClick={setSelectedItem}
+          />
+        </div>
       </div>
 
-      <div className="hidden lg:block">
-        <InventoryTable
-          items={sortedItems}
-          columns={equipmentTableColumns}
-          getRowKey={(item) => item.id}
-          emptyMessage="Обладнання немає"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onSort={(key) => handleSortChange(key as EquipmentSortKey)}
+      {selectedItem && (
+        <EquipmentDetailsModal
+          item={selectedItem}
+          role="admin"
+          onClose={() => setSelectedItem(null)}
         />
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
