@@ -10,7 +10,10 @@ type StockBatchCardProps = {
   unit: string;
   isNearest: boolean;
   isUpdating: boolean;
-  onChangeQuantity: (stock: StockRow, delta: number) => void;
+  isEditing: boolean;
+  onEdit: () => void;
+  onSave: (stock: StockRow, quantity: number) => void;
+  onCancel: () => void;
 };
 
 const formatExpiry = (month: number, year: number) => {
@@ -22,7 +25,10 @@ const StockBatchCard = ({
   unit,
   isNearest,
   isUpdating,
-  onChangeQuantity,
+  isEditing,
+  onEdit,
+  onSave,
+  onCancel,
 }: StockBatchCardProps) => {
   const [quantity, setQuantity] = useState(String(stock.quantity));
 
@@ -34,7 +40,7 @@ const StockBatchCard = ({
     setQuantity(event.target.value);
   };
 
-  const handleQuantityBlur = () => {
+  const handleSave = () => {
     const parsedQuantity = Number(quantity);
 
     if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
@@ -42,20 +48,18 @@ const StockBatchCard = ({
       return;
     }
 
-    const currentQuantity = Number(stock.quantity);
-
-    if (parsedQuantity === currentQuantity) {
-      return;
-    }
-
-    onChangeQuantity(stock, parsedQuantity - currentQuantity);
+    onSave(stock, parsedQuantity);
   };
 
   const handleQuantityKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
-      event.currentTarget.blur();
+      handleSave();
+    }
+
+    if (event.key === "Escape") {
+      onCancel();
     }
   };
 
@@ -78,7 +82,7 @@ const StockBatchCard = ({
           </div>
 
           <div className="min-w-0">
-            <span className="block text-[11px] text-slate-400">
+            <span className="block text-[11px] font-medium text-slate-400">
               Термін придатності
             </span>
 
@@ -92,39 +96,122 @@ const StockBatchCard = ({
           </div>
         </div>
 
-        <div className="flex flex-col items-center">
-          <div className="flex shrink-0 items-center gap-1">
-            <button
-              type="button"
-              disabled={isUpdating || Number(stock.quantity) <= 0}
-              onClick={() => onChangeQuantity(stock, -1)}
-              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              −
-            </button>
+        <div className="flex shrink-0 items-center">
+          {isEditing ? (
+            <div className="flex items-center gap-1">
+              <div
+                className={`flex h-8 items-center rounded-md border bg-white ${
+                  isNearest ? "border-blue-200" : "border-slate-200"
+                }`}
+              >
+                <input
+                  min="0"
+                  type="number"
+                  value={quantity}
+                  disabled={isUpdating}
+                  onChange={handleQuantityChange}
+                  onKeyDown={handleQuantityKeyDown}
+                  autoFocus
+                  className="h-full w-[54px] bg-transparent px-1 text-center text-[13px] font-semibold text-slate-900 outline-none"
+                />
 
-            <div className="min-w-[2px] text-center">
-              <input
-                min="0"
-                value={quantity}
+                <span className="pr-2 text-[10px] font-medium text-slate-400">
+                  {unit}
+                </span>
+              </div>
+
+              <button
+                type="button"
                 disabled={isUpdating}
-                onChange={handleQuantityChange}
-                onBlur={handleQuantityBlur}
-                onKeyDown={handleQuantityKeyDown}
-                className="h-7 w-[60px] cursor-text rounded-md border border-transparent bg-white text-center text-[13px] font-semibold text-slate-900 outline-none transition hover:border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-            <button
-              type="button"
-              disabled={isUpdating}
-              onClick={() => onChangeQuantity(stock, 1)}
-              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              +
-            </button>
-          </div>
+                onClick={handleSave}
+                aria-label="Зберегти"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-blue-200 bg-blue-50 text-blue-600 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 12.5L9.5 17L19 7.5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
 
-          <span className="block text-[10px] text-slate-400">{unit}</span>
+              <button
+                type="button"
+                disabled={isUpdating}
+                onClick={onCancel}
+                aria-label="Скасувати"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 bg-white text-slate-400 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M6 6L18 18M18 6L6 18"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <span className="text-[15px] font-semibold leading-none text-slate-900">
+                {stock.quantity}
+              </span>
+
+              <span className="text-[11px] font-medium text-slate-400">
+                ({unit})
+              </span>
+
+              <button
+                type="button"
+                onClick={onEdit}
+                aria-label="Редагувати кількість"
+                className={`ml-0.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border bg-white transition-colors ${
+                  isNearest
+                    ? "border-blue-100 text-blue-400 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                    : "border-slate-200 text-slate-400 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                }`}
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 20H8L19 9C20.1046 7.89543 20.1046 6.10457 19 5C17.8954 3.89543 15.1046 3.89543 14 5L4 15.9999V20Z"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M13.5 6.5L17.5 10.5"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

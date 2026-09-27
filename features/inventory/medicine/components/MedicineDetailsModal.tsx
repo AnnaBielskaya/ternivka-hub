@@ -51,6 +51,8 @@ const MedicineDetailsModal = ({
 }: MedicineDetailsModalProps) => {
   const [localStock, setLocalStock] = useState<StockRow[]>(stock);
 
+  const [editingStockId, setEditingStockId] = useState<string | null>(null);
+
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
@@ -289,14 +291,23 @@ const MedicineDetailsModal = ({
             <div className={isAddBatchOpen ? "mt-2.5" : ""}>
               {sortedStock.length > 0 ? (
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                  {sortedStock.map((stockItem, index) => (
+                  {sortedStock.map((stockItem) => (
                     <StockBatchCard
                       key={stockItem.id}
                       stock={stockItem}
                       unit={item.unit}
-                      isNearest={index === 0}
-                      isUpdating={isPending && updatingStockId === stockItem.id}
-                      onChangeQuantity={handleChangeQuantity}
+                      isNearest={nearestStock?.id === stockItem.id}
+                      isUpdating={updatingStockId === stockItem.id}
+                      isEditing={editingStockId === stockItem.id}
+                      onEdit={() => setEditingStockId(stockItem.id)}
+                      onCancel={() => setEditingStockId(null)}
+                      onSave={(updatedStock, quantity) => {
+                        handleChangeQuantity(
+                          updatedStock,
+                          quantity - updatedStock.quantity
+                        );
+                        setEditingStockId(null);
+                      }}
                     />
                   ))}
                 </div>
