@@ -169,7 +169,7 @@ const EquipmentDetailsModal = ({
                 value={formatDateTime(item.updated_at)}
               />
 
-              <InfoItem label="Додав" value={item.creator?.name} />
+              <InfoItem label="Додав" value={item.creator} />
             </div>
           </section>
 
