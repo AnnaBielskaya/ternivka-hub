@@ -119,7 +119,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
           case "created_by":
             return (
               <span className="text-[13px] text-slate-600">
-                {item.creator ?? "-"}
+                {item.creator?.name ?? "-"}
               </span>
             );
 
@@ -168,7 +168,10 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
           break;
 
         case "created_by":
-          comparison = collator.compare(a.creator ?? "", b.creator ?? "");
+          comparison = collator.compare(
+            a.creator?.name ?? "",
+            b.creator?.name ?? ""
+          );
           break;
       }
 
@@ -196,7 +199,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
                   fields={[
                     {
                       label: "Додав",
-                      value: item.creator ?? "—",
+                      value: item.creator?.name ?? "—",
                     },
                   ]}
                   quantity={item.quantity}
@@ -225,6 +228,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
             sortKey={sortKey}
             sortDirection={sortDirection}
             onSort={(key) => handleSortChange(key as EquipmentSortKey)}
+            onRowClick={setSelectedItem}
           />
         </div>
       </div>
