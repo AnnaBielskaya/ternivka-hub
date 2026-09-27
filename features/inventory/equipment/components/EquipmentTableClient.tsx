@@ -113,7 +113,7 @@ const equipmentTableColumns: InventoryTableColumn<EquipmentItem>[] =
         case "created_by":
           return (
             <span className="text-[13px] text-slate-600">
-              {item.creator?.name ?? "-"}
+              {item.creator ?? "-"}
             </span>
           );
 
@@ -125,7 +125,6 @@ const equipmentTableColumns: InventoryTableColumn<EquipmentItem>[] =
 
 const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
   const [sortKey, setSortKey] = useState<EquipmentSortKey>("name");
-
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
   const handleSortChange = (key: EquipmentSortKey) => {
@@ -167,10 +166,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
           break;
 
         case "created_by":
-          comparison = collator.compare(
-            a.creator?.name ?? "",
-            b.creator?.name ?? ""
-          );
+          comparison = collator.compare(a.creator ?? "", b.creator ?? "");
           break;
       }
 
@@ -197,7 +193,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
                 fields={[
                   {
                     label: "Додав",
-                    value: item.creator?.name ?? "—",
+                    value: item.creator ?? "—",
                   },
                 ]}
                 quantity={item.quantity}
