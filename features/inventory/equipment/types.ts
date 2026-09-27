@@ -12,9 +12,7 @@ export type EquipmentItem = {
   created_by: string;
   created_at: string;
   updated_at: string;
-  creator: {
-    name: string;
-  } | null;
+  creator: string | null;
 };
 
 export type EquipmentCreateState = {
