@@ -1,4 +1,15 @@
-import { SupplyUnit } from "./constants";
+import type { SupplyUnit } from "./constants";
+
+export type SupplyCategory = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type SupplyCreator = {
+  id: string;
+  name: string;
+};
 
 export type SupplyItem = {
   id: string;
@@ -10,6 +21,14 @@ export type SupplyItem = {
   created_by: string;
   created_at: string;
   updated_at: string;
+  category: SupplyCategory;
+  creator: SupplyCreator | null;
 };
 
-export type SupplySortKey = "name" | "quantity" | "created_by";
+export type SupplySortKey =
+  | "name"
+  | "category"
+  | "unit"
+  | "quantity"
+  | "minimum_quantity"
+  | "created_by";

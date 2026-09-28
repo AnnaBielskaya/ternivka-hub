@@ -1,5 +1,10 @@
 export type SupplyUnit = "piece" | "package";
 
+export const SUPPLY_UNIT_LABELS: Record<SupplyUnit, string> = {
+  piece: "шт.",
+  package: "уп.",
+};
+
 export const SUPPLIES_TABLE_COLUMNS = [
   {
     key: "name",
@@ -12,13 +17,13 @@ export const SUPPLIES_TABLE_COLUMNS = [
     sortable: true,
   },
   {
-    key: "unit",
-    label: "Форма",
+    key: "quantity",
+    label: "Кількість",
     sortable: true,
   },
   {
-    key: "quantity",
-    label: "Кількість",
+    key: "minimum_quantity",
+    label: "Мінімум",
     sortable: true,
   },
   {

@@ -3,21 +3,64 @@
 import { useMemo, useState } from "react";
 
 import InventoryCard from "@/components/ui/table/InventoryCard";
-import StatusBadge from "@/components/ui/StatusBadge";
-import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
-import { SUPPLIES_TABLE_COLUMNS } from "../constants";
-import { SupplyItem, SupplySortKey } from "../types";
 import InventoryTable from "@/components/ui/table/InventoryTable";
-import { SortDirection } from "../../types";
+import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
 
-const SuppliesTableClient = () => {
+import type { SortDirection } from "../../types";
+
+import { SUPPLIES_TABLE_COLUMNS, SUPPLY_UNIT_LABELS } from "../constants";
+
+import type { SupplyItem, SupplySortKey } from "../types";
+
+type SuppliesTableClientProps = {
+  items: SupplyItem[];
+};
+
+const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
   const [sortKey, setSortKey] = useState<SupplySortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-  const [selectedItem, setSelectedItem] = useState<SupplyItem | null>(null);
 
-  const sortedItems = [];
+  const sortedItems = useMemo(() => {
+    return [...items].sort((a, b) => {
+      let comparison = 0;
 
-  const equipmentTableColumns: InventoryTableColumn<SupplyItem>[] =
+      switch (sortKey) {
+        case "name":
+          comparison = a.name.localeCompare(b.name, "uk");
+          break;
+
+        case "category":
+          comparison = a.category.name.localeCompare(b.category.name, "uk");
+          break;
+
+        case "unit":
+          comparison = SUPPLY_UNIT_LABELS[a.unit].localeCompare(
+            SUPPLY_UNIT_LABELS[b.unit],
+            "uk"
+          );
+          break;
+
+        case "quantity":
+          comparison = a.quantity - b.quantity;
+          break;
+
+        case "minimum_quantity":
+          comparison = a.minimum_quantity - b.minimum_quantity;
+          break;
+
+        case "created_by":
+          comparison = (a.creator?.name ?? "").localeCompare(
+            b.creator?.name ?? "",
+            "uk"
+          );
+          break;
+      }
+
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
+  }, [items, sortKey, sortDirection]);
+
+  const suppliesTableColumns: InventoryTableColumn<SupplyItem>[] =
     SUPPLIES_TABLE_COLUMNS.map((column) => ({
       key: column.key,
       label: column.label,
@@ -33,10 +76,31 @@ const SuppliesTableClient = () => {
               </div>
             );
 
+          case "category":
+            return (
+              <span className="text-[13px] text-slate-600">
+                {item.category.name}
+              </span>
+            );
+
+          case "unit":
+            return (
+              <span className="text-[13px] text-slate-600">
+                {item.unit === "piece" ? "Штука" : "Упаковка"}
+              </span>
+            );
+
           case "quantity":
             return (
               <span className="whitespace-nowrap text-[13px] font-medium text-slate-800">
-                {item.quantity} шт.
+                {item.quantity} {SUPPLY_UNIT_LABELS[item.unit]}
+              </span>
+            );
+
+          case "minimum_quantity":
+            return (
+              <span className="whitespace-nowrap text-[13px] text-slate-600">
+                {item.minimum_quantity} {SUPPLY_UNIT_LABELS[item.unit]}
               </span>
             );
 
@@ -44,6 +108,13 @@ const SuppliesTableClient = () => {
             return (
               <span className="text-[13px] text-slate-600">
                 {item.comment ?? "-"}
+              </span>
+            );
+
+          case "created_by":
+            return (
+              <span className="text-[13px] text-slate-600">
+                {item.creator?.name ?? "-"}
               </span>
             );
 
@@ -63,60 +134,70 @@ const SuppliesTableClient = () => {
     setSortKey(key);
     setSortDirection("asc");
   };
+
   return (
-    <>
-      <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
-        <div className="lg:hidden">
-          {sortedItems.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {sortedItems.map((item) => (
+    <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
+      <div className="lg:hidden">
+        {sortedItems.length > 0 ? (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {sortedItems.map((item) => {
+              const isLowStock = item.quantity <= item.minimum_quantity;
+
+              return (
                 <InventoryCard
                   key={item.id}
                   title={item.name}
                   description={item.comment}
-                  badge={
-                    <StatusBadge
-                      variant={getPowerVariant(item.power_source)}
-                      title={EQUIPMENT_POWER_LABELS[item.power_source]}
-                    />
-                  }
                   fields={[
                     {
+                      label: "Категорія",
+                      value: item.category.name,
+                    },
+                    {
+                      label: "Форма",
+                      value: item.unit === "piece" ? "Штука" : "Упаковка",
+                    },
+                    {
+                      label: "Мінімум",
+                      value: `${item.minimum_quantity} ${
+                        SUPPLY_UNIT_LABELS[item.unit]
+                      }`,
+                    },
+                    {
                       label: "Додав",
-                      value: item.creator ?? "—",
+                      value: item.creator?.name ?? "—",
                     },
                   ]}
                   quantity={item.quantity}
-                  quantityUnit="шт."
+                  quantityUnit={SUPPLY_UNIT_LABELS[item.unit]}
                   status={{
-                    title: EQUIPMENT_STATUS_LABELS[item.status],
-                    variant: getStatusVariant(item.status),
+                    title: isLowStock ? "Потрібне поповнення" : "В наявності",
+                    variant: isLowStock ? "warning" : "success",
                   }}
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => {}}
                 />
-              ))}
-            </div>
-          ) : (
-            <div className="px-5 py-12 text-center text-[13px] text-slate-500">
-              Розхідників немає
-            </div>
-          )}
-        </div>
-
-        <div className="hidden lg:block">
-          <InventoryTable
-            items={sortedItems}
-            columns={equipmentTableColumns}
-            getRowKey={(item) => item.id}
-            emptyMessage="Розхідників немає"
-            sortKey={sortKey}
-            sortDirection={sortDirection}
-            onSort={(key) => handleSortChange(key as SupplySortKey)}
-            onRowClick={setSelectedItem}
-          />
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="px-5 py-12 text-center text-[13px] text-slate-500">
+            Розхідників немає
+          </div>
+        )}
       </div>
-    </>
+
+      <div className="hidden lg:block">
+        <InventoryTable
+          items={sortedItems}
+          columns={suppliesTableColumns}
+          getRowKey={(item) => item.id}
+          emptyMessage="Розхідників немає"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onSort={(key) => handleSortChange(key as SupplySortKey)}
+        />
+      </div>
+    </div>
   );
 };
 
