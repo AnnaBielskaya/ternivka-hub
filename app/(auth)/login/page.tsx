@@ -3,13 +3,11 @@
 import { FormEvent, useState } from "react";
 
 import CustomButton from "@/components/ui/CustomButton";
-import { loginWithPhone } from "@/features/auth/actions/login-with-phone";
 import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,10 +17,30 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const result = await loginWithPhone(phone, password);
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          phone,
+          password,
+        }),
+      });
 
-    if (result.status === "error") {
-      setError(result.message);
+      const result = await response.json();
+
+      if (!response.ok || result.status === "error") {
+        setError(result.message ?? "Не вдалося виконати вхід.");
+        setLoading(false);
+        return;
+      }
+
+      window.location.assign("/");
+    } catch {
+      setError("Не вдалося виконати вхід.");
       setLoading(false);
     }
   }
@@ -56,6 +74,7 @@ export default function LoginPage() {
                 onChange={(event) => setPhone(event.target.value)}
                 placeholder="+380..."
                 className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                disabled={loading}
                 required
               />
             </div>
@@ -73,11 +92,12 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                disabled={loading}
                 required
               />
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
             <CustomButton
               type="submit"

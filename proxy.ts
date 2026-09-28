@@ -16,17 +16,17 @@ export async function proxy(request: NextRequest) {
         },
 
         setAll(cookiesToSet) {
-          for (const { name, value, options } of cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value);
-          }
+          });
 
           response = NextResponse.next({
             request,
           });
 
-          for (const { name, value, options } of cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options);
-          }
+          });
         },
       },
     }
@@ -38,9 +38,10 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const isLoginPage = pathname === "/login";
+  const isLoginApi = pathname === "/api/login";
   const isActivatePage = pathname.startsWith("/activate/");
 
-  if (!isAuthenticated && !isLoginPage && !isActivatePage) {
+  if (!isAuthenticated && !isLoginPage && !isLoginApi && !isActivatePage) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
 
