@@ -30,7 +30,7 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
 
   if (variant === "bottom") {
     return (
-      <nav className="grid w-full grid-cols-3 gap-1 rounded-xl bg-slate-50 p-1">
+      <nav className="grid w-full grid-cols-3 gap-1 rounded-xl pb-2">
         {tabs.map((tab) => {
           const isActive = pathname === tab.link;
 
@@ -55,8 +55,8 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
               <span
                 className={`truncate text-[12px] leading-4 ${
                   isActive
-                    ? "font-semibold text-slate-900"
-                    : "font-medium text-slate-400"
+                    ? "font-bold text-slate-900"
+                    : "font-medium text-slate-500"
                 }`}
               >
                 {tab.name}
