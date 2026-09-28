@@ -28,7 +28,6 @@ export type SupplyItem = {
 export type SupplySortKey =
   | "name"
   | "category"
-  | "unit"
   | "quantity"
   | "minimum_quantity"
-  | "created_by";
+  | "status";

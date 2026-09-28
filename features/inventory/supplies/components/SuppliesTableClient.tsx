@@ -25,6 +25,10 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
   const [sortKey, setSortKey] = useState<SupplySortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
+  const getNeedsRefill = (item: SupplyItem) => {
+    return item.quantity <= item.minimum_quantity;
+  };
+
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
       let comparison = 0;
@@ -49,11 +53,8 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
           comparison = a.minimum_quantity - b.minimum_quantity;
           break;
 
-        case "created_by":
-          comparison = collator.compare(
-            a.creator?.name ?? "",
-            b.creator?.name ?? ""
-          );
+        case "status":
+          comparison = Number(getNeedsRefill(a)) - Number(getNeedsRefill(b));
           break;
       }
 
@@ -67,7 +68,7 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
       label: column.label,
       sortable: column.sortable,
       render: (item) => {
-        const needsRefill = item.quantity <= item.minimum_quantity;
+        const needsRefill = getNeedsRefill(item);
 
         switch (column.key) {
           case "name":
@@ -106,15 +107,12 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
             );
 
           case "minimum_quantity":
-            return needsRefill ? (
-              <StatusBadge
-                variant="warning"
-                title={`${item.minimum_quantity} ${
-                  SUPPLY_UNIT_LABELS[item.unit]
+            return (
+              <span
+                className={`whitespace-nowrap text-[13px] ${
+                  needsRefill ? "font-semibold text-red-700" : "text-slate-600"
                 }`}
-              />
-            ) : (
-              <span className="whitespace-nowrap text-[13px] text-slate-600">
+              >
                 {item.minimum_quantity} {SUPPLY_UNIT_LABELS[item.unit]}
               </span>
             );
@@ -130,15 +128,12 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
               </span>
             );
 
-          case "created_by":
+          case "status":
             return (
-              <span
-                className={`text-[13px] ${
-                  needsRefill ? "text-red-700" : "text-slate-600"
-                }`}
-              >
-                {item.creator?.name ?? "-"}
-              </span>
+              <StatusBadge
+                variant={needsRefill ? "warning" : "success"}
+                title={needsRefill ? "Потребує поповнення" : "Достатньо"}
+              />
             );
 
           default:
@@ -164,7 +159,7 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
         {sortedItems.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {sortedItems.map((item) => {
-              const needsRefill = item.quantity <= item.minimum_quantity;
+              const needsRefill = getNeedsRefill(item);
 
               return (
                 <InventoryCard
@@ -173,7 +168,7 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                   description={item.comment}
                   badge={
                     <StatusBadge
-                      kind="form"
+                      kind="category"
                       variant="info"
                       title={item.category?.name ?? "—"}
                     />
@@ -185,15 +180,11 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                         SUPPLY_UNIT_LABELS[item.unit]
                       }`,
                     },
-                    {
-                      label: "Додав",
-                      value: item.creator?.name ?? "—",
-                    },
                   ]}
                   quantity={item.quantity}
                   quantityUnit={SUPPLY_UNIT_LABELS[item.unit]}
                   status={{
-                    title: needsRefill ? "Потрібне поповнення" : "Достатньо",
+                    title: needsRefill ? "Потребує поповнення" : "Достатньо",
                     variant: needsRefill ? "warning" : "success",
                   }}
                   onClick={() => {}}
@@ -214,7 +205,7 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
           columns={suppliesTableColumns}
           getRowKey={(item) => item.id}
           getRowClassName={(item) =>
-            item.quantity <= item.minimum_quantity
+            getNeedsRefill(item)
               ? "bg-red-50 hover:bg-red-100/70"
               : "bg-white hover:bg-slate-50"
           }

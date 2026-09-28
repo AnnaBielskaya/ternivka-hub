@@ -32,8 +32,8 @@ export const SUPPLIES_TABLE_COLUMNS = [
     sortable: false,
   },
   {
-    key: "created_by",
-    label: "Додав",
+    key: "status",
+    label: "Статус",
     sortable: true,
   },
 ] as const;
