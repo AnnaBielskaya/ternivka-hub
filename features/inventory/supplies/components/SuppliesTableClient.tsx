@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import StatusBadge from "@/components/ui/StatusBadge";
 import InventoryCard from "@/components/ui/table/InventoryCard";
@@ -11,22 +12,40 @@ import type { SortDirection } from "../../types";
 
 import { SUPPLIES_TABLE_COLUMNS, SUPPLY_UNIT_LABELS } from "../constants";
 
-import type { SupplyItem, SupplySortKey } from "../types";
+import type { SupplyCategory, SupplyItem, SupplySortKey } from "../types";
 
+import type { UserRole } from "@/features/users/types";
+
+import { deleteSupply } from "../actions/delete-supply";
+
+import EditSupplyModal from "./EditSupplyModal";
 import SupplyDetailsModal from "./SupplyDetailsModal";
 
 type SuppliesTableClientProps = {
   items: SupplyItem[];
+  categories: SupplyCategory[];
+  role: UserRole;
 };
 
 const collator = new Intl.Collator("uk-UA", {
   sensitivity: "base",
 });
 
-const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
+const SuppliesTableClient = ({
+  items,
+  categories,
+  role,
+}: SuppliesTableClientProps) => {
+  const router = useRouter();
+
   const [sortKey, setSortKey] = useState<SupplySortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+
   const [selectedItem, setSelectedItem] = useState<SupplyItem | null>(null);
+
+  const [editingItem, setEditingItem] = useState<SupplyItem | null>(null);
+
+  const [isDeleting, startDeleting] = useTransition();
 
   const getNeedsRefill = (item: SupplyItem) => {
     return item.quantity <= item.minimum_quantity;
@@ -157,8 +176,65 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
   };
 
   const handleRowClick = (item: SupplyItem) => {
+    if (isDeleting) {
+      return;
+    }
+
     setSelectedItem(item);
   };
+
+  const handleCloseDetails = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setSelectedItem(null);
+  };
+
+  const handleEdit = () => {
+    if (!selectedItem || isDeleting) {
+      return;
+    }
+
+    setEditingItem(selectedItem);
+    setSelectedItem(null);
+  };
+
+  const handleDelete = () => {
+    if (!selectedItem || isDeleting) {
+      return;
+    }
+
+    const supplyId = selectedItem.id;
+
+    startDeleting(async () => {
+      const result = await deleteSupply(supplyId);
+
+      if (result.status === "error") {
+        window.alert(result.message);
+        return;
+      }
+
+      setSelectedItem(null);
+      router.refresh();
+    });
+  };
+
+  const handleCloseEdit = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setEditingItem(null);
+  };
+
+  const handleSavedEdit = () => {
+    setEditingItem(null);
+    router.refresh();
+  };
+
+  const canEdit =
+    role === "editor" || role === "admin" || role === "super_admin";
 
   return (
     <>
@@ -229,7 +305,19 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
       {selectedItem ? (
         <SupplyDetailsModal
           item={selectedItem}
-          onClose={() => setSelectedItem(null)}
+          role={role}
+          onClose={handleCloseDetails}
+          onEdit={canEdit ? handleEdit : undefined}
+          onDelete={handleDelete}
+        />
+      ) : null}
+
+      {editingItem ? (
+        <EditSupplyModal
+          item={editingItem}
+          categories={categories}
+          onClose={handleCloseEdit}
+          onSaved={handleSavedEdit}
         />
       ) : null}
     </>

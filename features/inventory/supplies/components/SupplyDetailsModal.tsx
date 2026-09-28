@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
 import Modal from "@/components/ui/Modal";
+import CustomButton from "@/components/ui/CustomButton";
 import SectionDivider from "@/components/ui/SectionDivider";
 import SectionTitle from "@/components/ui/SectionTitle";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -13,122 +16,205 @@ import AvailabilityItem from "@/features/inventory/medicine/components/Availabil
 import { SUPPLY_UNIT_LABELS } from "../constants";
 import type { SupplyItem } from "../types";
 
+import type { UserRole } from "@/features/users/types";
+
 type SupplyDetailsModalProps = {
   item: SupplyItem;
+  role: UserRole;
   onClose: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
-const SupplyDetailsModal = ({ item, onClose }: SupplyDetailsModalProps) => {
+const SupplyDetailsModal = ({
+  item,
+  role,
+  onClose,
+  onEdit,
+  onDelete,
+}: SupplyDetailsModalProps) => {
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
   const needsRefill = item.quantity <= item.minimum_quantity;
   const unit = SUPPLY_UNIT_LABELS[item.unit];
 
+  const canDelete = role === "admin" || role === "super_admin";
+
+  const handleDeleteClick = () => {
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteConfirmOpen(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsDeleteConfirmOpen(false);
+    onDelete?.();
+  };
+
   return (
-    <Modal
-      isOpen={true}
-      title={
-        <div className="min-w-0">
-          <h2 className="min-w-0 text-lg font-semibold leading-tight text-slate-900">
-            {item.name}
-          </h2>
+    <>
+      <Modal
+        isOpen={true}
+        title={
+          <div className="min-w-0">
+            <h2 className="min-w-0 text-lg font-semibold leading-tight text-slate-900">
+              {item.name}
+            </h2>
 
-          <div className="mt-2 flex flex-wrap gap-2">
-            {item.category ? (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {item.category ? (
+                <StatusBadge
+                  kind="category"
+                  variant="info"
+                  title={item.category.name}
+                />
+              ) : null}
+
               <StatusBadge
-                kind="category"
-                variant="info"
-                title={item.category.name}
+                variant={needsRefill ? "warning" : "success"}
+                title={needsRefill ? "Потребує поповнення" : "Достатньо"}
               />
-            ) : null}
-
-            <StatusBadge
-              variant={needsRefill ? "warning" : "success"}
-              title={needsRefill ? "Потребує поповнення" : "Достатньо"}
-            />
+            </div>
           </div>
-        </div>
-      }
-      onClose={onClose}
-      size="lg"
-    >
-      <div className="space-y-5 p-4 sm:p-5">
-        <section>
-          <SectionTitle title="Наявність" />
+        }
+        onClose={onClose}
+        footer={
+          <div className="flex items-center justify-between gap-2">
+            <div className="shrink-0">
+              {canDelete && onDelete ? (
+                <CustomButton
+                  variant="dangerOutline"
+                  onClick={handleDeleteClick}
+                >
+                  Видалити
+                </CustomButton>
+              ) : null}
+            </div>
 
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-            <AvailabilityItem
-              icon={<BoxesIcon />}
-              label="Загальна кількість"
-              value={`${item.quantity} ${unit}`}
-              status={needsRefill ? "Потребує поповнення" : "Достатньо"}
-              statusVariant={needsRefill ? "warning" : "success"}
-            />
-
-            <AvailabilityItem
-              icon={<MinusCircleIcon />}
-              label="Мінімальний залишок"
-              value={`${item.minimum_quantity} ${unit}`}
-            />
-
-            <AvailabilityItem
-              icon={<BoxesIcon />}
-              label="Одиниця обліку"
-              value={unit}
-            />
-          </div>
-        </section>
-
-        <SectionDivider />
-
-        <section>
-          <SectionTitle title="Характеристики" />
-
-          <div className="grid grid-cols-2 gap-x-5 gap-y-4">
-            <InfoItem label="Назва" value={item.name} />
-
-            <InfoItem label="Категорія" value={item.category?.name} />
-
-            <InfoItem label="Одиниця обліку" value={unit} />
-
-            <InfoItem label="Кількість" value={`${item.quantity} ${unit}`} />
-
-            <InfoItem
-              label="Мінімальний залишок"
-              value={`${item.minimum_quantity} ${unit}`}
-            />
-
-            <InfoItem
-              label="Статус"
-              value={needsRefill ? "Потребує поповнення" : "Достатньо"}
-            />
-
-            <InfoItem label="Додано" value={formatDateTime(item.created_at)} />
-
-            <InfoItem
-              label="Оновлено"
-              value={formatDateTime(item.updated_at)}
-            />
-
-            <InfoItem label="Додав" value={item.creator?.name} />
-          </div>
-        </section>
-
-        {item.comment ? (
-          <>
-            <SectionDivider />
-
-            <section>
-              <SectionTitle title="Коментар" />
-
-              <div className="rounded-lg bg-slate-50 px-3.5 py-3">
-                <p className="whitespace-pre-wrap text-xs leading-5 text-slate-600">
-                  {item.comment}
-                </p>
+            {onEdit ? (
+              <div className="shrink-0">
+                <CustomButton onClick={onEdit}>Редагувати</CustomButton>
               </div>
-            </section>
-          </>
-        ) : null}
-      </div>
-    </Modal>
+            ) : null}
+          </div>
+        }
+        size="lg"
+      >
+        <div className="space-y-5 p-4 sm:p-5">
+          <section>
+            <SectionTitle title="Наявність" />
+
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              <AvailabilityItem
+                icon={<BoxesIcon />}
+                label="Загальна кількість"
+                value={`${item.quantity} ${unit}`}
+                status={needsRefill ? "Потребує поповнення" : "Достатньо"}
+                statusVariant={needsRefill ? "warning" : "success"}
+              />
+
+              <AvailabilityItem
+                icon={<MinusCircleIcon />}
+                label="Мінімальний залишок"
+                value={`${item.minimum_quantity} ${unit}`}
+              />
+
+              <AvailabilityItem
+                icon={<BoxesIcon />}
+                label="Одиниця обліку"
+                value={unit}
+              />
+            </div>
+          </section>
+
+          <SectionDivider />
+
+          <section>
+            <SectionTitle title="Характеристики" />
+
+            <div className="grid grid-cols-2 gap-x-5 gap-y-4">
+              <InfoItem label="Назва" value={item.name} />
+
+              <InfoItem label="Категорія" value={item.category?.name} />
+
+              <InfoItem label="Одиниця обліку" value={unit} />
+
+              <InfoItem label="Кількість" value={`${item.quantity} ${unit}`} />
+
+              <InfoItem
+                label="Мінімальний залишок"
+                value={`${item.minimum_quantity} ${unit}`}
+              />
+
+              <InfoItem
+                label="Статус"
+                value={needsRefill ? "Потребує поповнення" : "Достатньо"}
+              />
+
+              <InfoItem
+                label="Додано"
+                value={formatDateTime(item.created_at)}
+              />
+
+              <InfoItem
+                label="Оновлено"
+                value={formatDateTime(item.updated_at)}
+              />
+
+              <InfoItem label="Додав" value={item.creator?.name} />
+            </div>
+          </section>
+
+          {item.comment ? (
+            <>
+              <SectionDivider />
+
+              <section>
+                <SectionTitle title="Коментар" />
+
+                <div className="rounded-lg bg-slate-50 px-3.5 py-3">
+                  <p className="whitespace-pre-wrap text-xs leading-5 text-slate-600">
+                    {item.comment}
+                  </p>
+                </div>
+              </section>
+            </>
+          ) : null}
+        </div>
+      </Modal>
+
+      {isDeleteConfirmOpen ? (
+        <Modal
+          isOpen={true}
+          title="Видалити розхідник?"
+          onClose={handleCancelDelete}
+          size="sm"
+          footer={
+            <div className="flex items-center justify-end gap-2">
+              <CustomButton variant="secondary" onClick={handleCancelDelete}>
+                Скасувати
+              </CustomButton>
+
+              <CustomButton variant="danger" onClick={handleConfirmDelete}>
+                Видалити
+              </CustomButton>
+            </div>
+          }
+        >
+          <div className="p-4 sm:p-5">
+            <p className="text-sm leading-5 text-slate-600">
+              Ви впевнені, що хочете видалити розхідник «{item.name}»?
+            </p>
+
+            <p className="mt-2 text-xs leading-5 text-slate-400">
+              Цю дію неможливо скасувати.
+            </p>
+          </div>
+        </Modal>
+      ) : null}
+    </>
   );
 };
 
