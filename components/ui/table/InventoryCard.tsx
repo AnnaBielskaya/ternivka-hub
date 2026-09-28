@@ -45,7 +45,7 @@ const InventoryCard = ({
       className={`group w-full rounded-xl border p-4 text-left transition active:scale-[0.99] ${
         highlighted
           ? "border-red-100 bg-red-50/40 hover:bg-red-50/70"
-          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+          : "border-indigo-100 bg-indigo-50/30 hover:border-indigo-200 hover:bg-indigo-50/60"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
