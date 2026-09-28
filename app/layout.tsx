@@ -18,8 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uk">
-      <body className={`${nunito.className} bg-[var(--background)]`}>
+    <html lang="uk" className="h-full">
+      <body
+        className={`${nunito.className} h-full overflow-hidden bg-[var(--background)]`}
+      >
         {children}
       </body>
     </html>
