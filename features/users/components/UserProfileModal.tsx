@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import Modal from "@/components/ui/Modal";
@@ -27,38 +27,27 @@ const UserProfileModal = ({
   const router = useRouter();
 
   const [userName, setUserName] = useState(name);
-
   const [currentPassword, setCurrentPassword] = useState("");
-
   const [newPassword, setNewPassword] = useState("");
-
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [error, setError] = useState("");
 
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (!isOpen) {
-      setUserName(name);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setError("");
-    }
-  }, [isOpen, name]);
+  const resetForm = () => {
+    setUserName(name);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setError("");
+  };
 
   const handleClose = () => {
     if (isPending) {
       return;
     }
 
-    setUserName(name);
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setError("");
-
+    resetForm();
     onClose();
   };
 
@@ -74,13 +63,11 @@ const UserProfileModal = ({
     if (hasPasswordInput) {
       if (newPassword !== confirmPassword) {
         setError("Новий пароль і підтвердження не збігаються.");
-
         return;
       }
 
       if (!currentPassword || !newPassword) {
         setError("Для зміни пароля заповніть поточний і новий пароль.");
-
         return;
       }
     }
