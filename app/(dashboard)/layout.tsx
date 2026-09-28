@@ -40,7 +40,7 @@ export default async function DashboardLayout({
         {children}
       </main>
 
-      <footer className="shrink-0 border-t border-slate-200 bg-slate-100 pb-[env(safe-area-inset-bottom)] lg:hidden p-2">
+      <footer className="shrink-0 bg-slate-100 pb-[env(safe-area-inset-bottom)] lg:hidden p-2">
         <div className="w-full">
           <CategoryTabs variant="bottom" />
         </div>
