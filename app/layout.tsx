@@ -17,7 +17,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("RootLayout rendered");
   return (
     <html lang="uk">
       <body className={`${nunito.className} bg-[var(--background)]`}>

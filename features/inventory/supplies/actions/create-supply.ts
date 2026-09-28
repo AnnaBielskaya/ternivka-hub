@@ -4,14 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 
-type SupplyCreateState = {
+export type SupplyCreateState = {
   status: "idle" | "success" | "error";
   message: string;
-};
-
-export const initialSupplyCreateState: SupplyCreateState = {
-  status: "idle",
-  message: "",
 };
 
 export const createSupply = async (
@@ -76,7 +71,7 @@ export const createSupply = async (
 
     return {
       status: "error",
-      message: "Не вдалося додати витратний матеріал.",
+      message: `Помилка Supabase: ${error.message}`,
     };
   }
 
@@ -87,5 +82,3 @@ export const createSupply = async (
     message: "Витратний матеріал успішно додано.",
   };
 };
-
-export type { SupplyCreateState };

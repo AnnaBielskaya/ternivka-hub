@@ -17,7 +17,5 @@ export const getSupplyCategories = async (): Promise<SupplyCategory[]> => {
     return [];
   }
 
-  console.log("Fetched supply categories:", data);
-
   return data ?? [];
 };

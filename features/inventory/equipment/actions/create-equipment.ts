@@ -1,95 +1,73 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 
-import {
-  EQUIPMENT_POWER_OPTIONS,
-  EQUIPMENT_STATUS_OPTIONS,
-} from "@/features/inventory/equipment/constants";
-
-import type {
-  EquipmentCreateState,
-  EquipmentPowerSource,
-  EquipmentStatus,
-} from "../types";
-
 export const createEquipment = async (
-  _previousState: EquipmentCreateState,
+  previousState: {
+    status: "idle" | "success" | "error";
+    message: string;
+  },
   formData: FormData
-): Promise<EquipmentCreateState> => {
+) => {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const name = String(formData.get("name") ?? "").trim();
+  const status = String(formData.get("status") ?? "").trim();
+  const powerSource = String(formData.get("power_source") ?? "").trim();
+  const quantity = Number(formData.get("quantity") ?? 0);
+  const comment = String(formData.get("comment") ?? "").trim();
 
-  if (!user) {
+  if (!name) {
     return {
-      status: "error",
-      message: "Користувач не авторизований",
+      status: "error" as const,
+      message: "Вкажіть назву.",
     };
   }
 
-  const name = formData.get("name");
-  const status = formData.get("status");
-  const powerSource = formData.get("power_source");
-  const quantityValue = formData.get("quantity");
-  const comment = formData.get("comment");
-
-  if (typeof name !== "string" || !name.trim()) {
+  if (!["working", "not_working", "incomplete"].includes(status)) {
     return {
-      status: "error",
-      message: "Вкажіть назву обладнання",
+      status: "error" as const,
+      message: "Оберіть стан обладнання.",
     };
   }
 
-  if (
-    typeof status !== "string" ||
-    !EQUIPMENT_STATUS_OPTIONS.some((option) => option.value === status)
-  ) {
+  if (!["mains", "autonomous", "both"].includes(powerSource)) {
     return {
-      status: "error",
-      message: "Оберіть коректний стан обладнання",
+      status: "error" as const,
+      message: "Оберіть джерело живлення.",
     };
   }
-
-  if (
-    typeof powerSource !== "string" ||
-    !EQUIPMENT_POWER_OPTIONS.some((option) => option.value === powerSource)
-  ) {
-    return {
-      status: "error",
-      message: "Оберіть коректний тип живлення",
-    };
-  }
-
-  const quantity = Number(quantityValue);
 
   if (!Number.isInteger(quantity) || quantity < 1) {
     return {
-      status: "error",
-      message: "Кількість повинна бути цілим числом не менше 1",
+      status: "error" as const,
+      message: "Кількість має бути цілим числом більше 0.",
     };
   }
 
   const { error } = await supabase.from("items_equipment").insert({
-    name: name.trim(),
-    status: status as EquipmentStatus,
-    power_source: powerSource as EquipmentPowerSource,
+    name,
+    status,
+    power_source: powerSource,
     quantity,
-    comment:
-      typeof comment === "string" && comment.trim() ? comment.trim() : null,
+    comment: comment || null,
   });
 
   if (error) {
+    console.error("Failed to create equipment:", error);
+
     return {
-      status: "error",
-      message: error.message,
+      status: "error" as const,
+      message: `Помилка Supabase: ${error.message}`,
     };
   }
 
+  revalidatePath("/category/equipment");
+
   return {
-    status: "success",
-    message: "Обладнання успішно додано",
+    status: "success" as const,
+    message: "Обладнання успішно додано.",
   };
 };

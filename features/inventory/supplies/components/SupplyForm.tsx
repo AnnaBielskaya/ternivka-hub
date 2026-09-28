@@ -9,11 +9,7 @@ import DropdownSelect from "@/components/ui/DropdownSelect";
 import FormField from "@/components/ui/FormField";
 import FormSection from "@/components/ui/FormSection";
 
-import {
-  createSupply,
-  initialSupplyCreateState,
-} from "@/features/inventory/supplies/actions/create-supply";
-
+import { createSupply } from "@/features/inventory/supplies/actions/create-supply";
 import type { SupplyCreateState } from "@/features/inventory/supplies/actions/create-supply";
 import type { SupplyCategory } from "../types";
 
@@ -47,6 +43,11 @@ const SupplyForm = ({ categories, onSaved }: SupplyFormProps) => {
   const router = useRouter();
 
   const [form, setForm] = useState<SupplyFormValues>(EMPTY_FORM);
+
+  const initialSupplyCreateState: SupplyCreateState = {
+    status: "idle",
+    message: "",
+  };
 
   const [state, formAction, isPending] = useActionState<
     SupplyCreateState,
