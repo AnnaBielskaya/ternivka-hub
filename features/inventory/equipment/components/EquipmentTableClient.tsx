@@ -168,10 +168,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
           break;
 
         case "created_by":
-          comparison = collator.compare(
-            a.creator?.name ?? "",
-            b.creator?.name ?? ""
-          );
+          comparison = collator.compare(a.creator ?? "", b.creator ?? "");
           break;
       }
 
@@ -199,7 +196,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
                   fields={[
                     {
                       label: "Додав",
-                      value: item.creator?.name ?? "—",
+                      value: item.creator ?? "—",
                     },
                   ]}
                   quantity={item.quantity}
