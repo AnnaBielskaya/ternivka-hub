@@ -9,6 +9,9 @@ import type {
 
 import MedicineForm from "@/features/inventory/medicine/forms/MedicineForm";
 import EquipmentForm from "@/features/inventory/equipment/components/EquipmentForm";
+import SupplyForm from "@/features/inventory/supplies/components/SupplyForm";
+
+import type { SupplyCategory } from "@/features/inventory/supplies/types";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
@@ -17,14 +20,17 @@ const MODAL_CONFIG = {
   medicine: {
     title: "Додати препарат",
     submitLabel: "Додати препарат",
+    formId: "medicine-form",
   },
   supplies: {
     title: "Додати медичний розхідник",
     submitLabel: "Додати розхідник",
+    formId: "supply-form",
   },
   equipment: {
     title: "Додати медичне обладнання",
     submitLabel: "Додати обладнання",
+    formId: "equipment-form",
   },
 } as const;
 
@@ -34,6 +40,7 @@ type AddItemModalProps = {
   onClose: () => void;
   medicineForms?: MedicineFormRow[];
   medicinePurposes?: MedicinePurposeRow[];
+  supplyCategories?: SupplyCategory[];
 };
 
 const AddItemModal = ({
@@ -42,6 +49,7 @@ const AddItemModal = ({
   onClose,
   medicineForms = [],
   medicinePurposes = [],
+  supplyCategories = [],
 }: AddItemModalProps) => {
   const [formVersion, setFormVersion] = useState(0);
 
@@ -57,20 +65,17 @@ const AddItemModal = ({
 
   const config = MODAL_CONFIG[variant];
 
-  const formId = variant === "medicine" ? "medicine-form" : "equipment-form";
+  const footer = (
+    <div className="flex justify-end gap-3">
+      <CustomButton variant="secondary" onClick={handleClose}>
+        Скасувати
+      </CustomButton>
 
-  const footer =
-    variant === "medicine" || variant === "equipment" ? (
-      <div className="flex justify-end gap-3">
-        <CustomButton variant="secondary" onClick={handleClose}>
-          Скасувати
-        </CustomButton>
-
-        <CustomButton type="submit" form={formId}>
-          {config.submitLabel}
-        </CustomButton>
-      </div>
-    ) : null;
+      <CustomButton type="submit" form={config.formId}>
+        {config.submitLabel}
+      </CustomButton>
+    </div>
+  );
 
   return (
     <Modal
@@ -90,6 +95,14 @@ const AddItemModal = ({
 
       {variant === "equipment" && (
         <EquipmentForm key={formVersion} onSaved={handleSaved} />
+      )}
+
+      {variant === "supplies" && (
+        <SupplyForm
+          key={formVersion}
+          categories={supplyCategories}
+          onSaved={handleSaved}
+        />
       )}
     </Modal>
   );

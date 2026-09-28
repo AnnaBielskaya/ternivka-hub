@@ -7,6 +7,8 @@ import type {
   MedicinePurposeRow,
 } from "@/features/inventory/types";
 
+import type { SupplyCategory } from "@/features/inventory/supplies/types";
+
 import CustomButton from "@/components/ui/CustomButton";
 import AddItemModal from "./AddItemModal";
 
@@ -26,12 +28,14 @@ type AddItemButtonProps = {
   variant: keyof typeof ADD_ITEM_CONFIG;
   medicineForms?: MedicineFormRow[];
   medicinePurposes?: MedicinePurposeRow[];
+  supplyCategories?: SupplyCategory[];
 };
 
 const AddItemButton = ({
   variant,
   medicineForms = [],
   medicinePurposes = [],
+  supplyCategories = [],
 }: AddItemButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -56,6 +60,7 @@ const AddItemButton = ({
         onClose={() => setIsOpen(false)}
         medicineForms={medicineForms}
         medicinePurposes={medicinePurposes}
+        supplyCategories={supplyCategories}
       />
     </>
   );
