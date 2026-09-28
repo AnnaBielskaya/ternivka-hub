@@ -7,14 +7,17 @@ const tabs = [
   {
     name: "Препарати",
     link: "/",
+    icon: "💊",
   },
   {
     name: "Розхідники",
     link: "/category/supplies",
+    icon: "🩹",
   },
   {
     name: "Обладнання",
     link: "/category/equipment",
+    icon: "🩺",
   },
 ];
 
@@ -27,7 +30,7 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
 
   if (variant === "bottom") {
     return (
-      <nav className="grid w-full grid-cols-3 gap-1">
+      <nav className="grid w-full grid-cols-3 gap-1 rounded-xl bg-slate-50 p-1">
         {tabs.map((tab) => {
           const isActive = pathname === tab.link;
 
@@ -35,13 +38,33 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
             <Link
               key={tab.name}
               href={tab.link}
-              className={`flex min-w-0 items-center justify-center rounded-lg px-1 py-2.5 text-center text-[11px] leading-4 transition sm:py-3 sm:text-xs ${
+              className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg px-2 py-2.5 text-center transition ${
                 isActive
-                  ? "bg-slate-100 font-semibold text-slate-900"
-                  : "font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
+                  ? "bg-white text-slate-900"
+                  : "text-slate-400 hover:bg-white/70 hover:text-slate-700"
               }`}
             >
-              <span className="truncate">{tab.name}</span>
+              <span
+                className={`flex h-5 w-5 items-center justify-center text-[18px] leading-none transition ${
+                  isActive ? "opacity-100" : "opacity-60"
+                }`}
+              >
+                {tab.icon}
+              </span>
+
+              <span
+                className={`truncate text-[12px] leading-4 ${
+                  isActive
+                    ? "font-semibold text-slate-900"
+                    : "font-medium text-slate-400"
+                }`}
+              >
+                {tab.name}
+              </span>
+
+              {isActive ? (
+                <span className="absolute bottom-1 h-0.5 w-5 rounded-full bg-slate-800" />
+              ) : null}
             </Link>
           );
         })}
