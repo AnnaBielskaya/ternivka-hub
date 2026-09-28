@@ -33,17 +33,20 @@ const MedicineNameAutocomplete = ({
     const query = value.trim();
 
     if (query.length < 3) {
-      setSuggestions([]);
-      setIsOpen(false);
       return;
     }
+
+    const controller = new AbortController();
 
     const timeout = setTimeout(async () => {
       setIsLoading(true);
 
       try {
         const response = await fetch(
-          `/api/medicines/search?q=${encodeURIComponent(query)}`
+          `/api/medicines/search?q=${encodeURIComponent(query)}`,
+          {
+            signal: controller.signal,
+          }
         );
 
         if (!response.ok) {
@@ -55,17 +58,24 @@ const MedicineNameAutocomplete = ({
         setSuggestions(data);
         setIsOpen(data.length > 0);
       } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+
         console.error(error);
 
         setSuggestions([]);
         setIsOpen(false);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }, 250);
 
     return () => {
       clearTimeout(timeout);
+      controller.abort();
     };
   }, [value]);
 
@@ -86,11 +96,25 @@ const MedicineNameAutocomplete = ({
     };
   }, []);
 
+  const handleChange = (nextValue: string) => {
+    onChange(nextValue);
+
+    if (nextValue.trim().length < 3) {
+      setSuggestions([]);
+      setIsOpen(false);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsOpen(true);
+  };
+
   const handleSelect = (item: MedicalItemRow) => {
     skipNextSearchRef.current = true;
     onSelect(item);
     setSuggestions([]);
     setIsOpen(false);
+    setIsLoading(false);
   };
 
   return (
@@ -106,8 +130,7 @@ const MedicineNameAutocomplete = ({
         placeholder="Наприклад, Парацетамол"
         className="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 disabled:bg-gray-50"
         onChange={(event) => {
-          onChange(event.target.value);
-          setIsOpen(true);
+          handleChange(event.target.value);
         }}
         onFocus={() => {
           if (suggestions.length > 0) {
@@ -116,7 +139,7 @@ const MedicineNameAutocomplete = ({
         }}
       />
 
-      {isLoading && value.trim().length >= 2 && (
+      {isLoading && value.trim().length >= 3 && (
         <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-lg border border-gray-200 bg-white px-4 py-3 text-xs text-gray-400 shadow-lg">
           Пошук...
         </div>
