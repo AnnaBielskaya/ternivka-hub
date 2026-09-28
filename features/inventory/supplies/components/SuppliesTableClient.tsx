@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import StatusBadge from "@/components/ui/StatusBadge";
 import InventoryCard from "@/components/ui/table/InventoryCard";
 import InventoryTable from "@/components/ui/table/InventoryTable";
 import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
@@ -83,13 +84,6 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
               </span>
             );
 
-          case "unit":
-            return (
-              <span className="text-[13px] text-slate-600">
-                {item.unit === "piece" ? "Штука" : "Упаковка"}
-              </span>
-            );
-
           case "quantity":
             return (
               <span className="whitespace-nowrap text-[13px] font-medium text-slate-800">
@@ -97,12 +91,22 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
               </span>
             );
 
-          case "minimum_quantity":
-            return (
+          case "minimum_quantity": {
+            const needsRefill = item.quantity <= item.minimum_quantity;
+
+            return needsRefill ? (
+              <StatusBadge
+                variant="warning"
+                title={`${item.minimum_quantity} ${
+                  SUPPLY_UNIT_LABELS[item.unit]
+                }`}
+              />
+            ) : (
               <span className="whitespace-nowrap text-[13px] text-slate-600">
                 {item.minimum_quantity} {SUPPLY_UNIT_LABELS[item.unit]}
               </span>
             );
+          }
 
           case "comment":
             return (
@@ -141,7 +145,7 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
         {sortedItems.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {sortedItems.map((item) => {
-              const isLowStock = item.quantity <= item.minimum_quantity;
+              const needsRefill = item.quantity <= item.minimum_quantity;
 
               return (
                 <InventoryCard
@@ -159,9 +163,18 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                     },
                     {
                       label: "Мінімум",
-                      value: `${item.minimum_quantity} ${
-                        SUPPLY_UNIT_LABELS[item.unit]
-                      }`,
+                      value: (
+                        <span
+                          className={
+                            needsRefill
+                              ? "font-semibold text-amber-600"
+                              : undefined
+                          }
+                        >
+                          {item.minimum_quantity}{" "}
+                          {SUPPLY_UNIT_LABELS[item.unit]}
+                        </span>
+                      ),
                     },
                     {
                       label: "Додав",
@@ -171,8 +184,8 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                   quantity={item.quantity}
                   quantityUnit={SUPPLY_UNIT_LABELS[item.unit]}
                   status={{
-                    title: isLowStock ? "Потрібне поповнення" : "В наявності",
-                    variant: isLowStock ? "warning" : "success",
+                    title: needsRefill ? "Потрібне поповнення" : "В наявності",
+                    variant: needsRefill ? "warning" : "success",
                   }}
                   onClick={() => {}}
                 />
