@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import type {
   InventoryItem,
@@ -33,13 +33,25 @@ export const useEditMedicineForm = ({
   medicineForms,
   medicinePurposes,
 }: UseEditMedicineFormProps) => {
+  const initialFormId = item.medicine_form?.id ?? "";
+
+  const initialForm = medicineForms.find((form) => form.id === initialFormId);
+
+  const initialAllowedUnits = initialForm
+    ? getAllowedUnits(initialForm.name)
+    : [];
+
+  const initialUnit = initialAllowedUnits.includes(item.unit as never)
+    ? item.unit
+    : initialAllowedUnits[0] ?? "";
+
   const [name, setName] = useState(item.name);
 
   const [activeIngredient, setActiveIngredient] = useState(
     item.active_ingredient ?? ""
   );
 
-  const [formId, setFormId] = useState(item.medicine_form?.id ?? "");
+  const [formId, setFormId] = useState(initialFormId);
 
   const [purposeId, setPurposeId] = useState(item.medicine_purpose?.id ?? "");
 
@@ -47,7 +59,7 @@ export const useEditMedicineForm = ({
 
   const [volume, setVolume] = useState(item.volume ?? "");
 
-  const [unit, setUnit] = useState(item.unit);
+  const [unit, setUnit] = useState(initialUnit);
 
   const [minimumQuantity, setMinimumQuantity] = useState(
     String(item.minimum_quantity)
@@ -87,22 +99,6 @@ export const useEditMedicineForm = ({
     value: inventoryUnit.value,
     label: inventoryUnit.label,
   }));
-
-  useEffect(() => {
-    if (!selectedForm) {
-      if (unit !== "") {
-        setUnit("");
-      }
-
-      return;
-    }
-
-    const allowedUnits = getAllowedUnits(selectedForm.name);
-
-    if (!allowedUnits.includes(unit as never)) {
-      setUnit(allowedUnits[0] ?? "");
-    }
-  }, [selectedForm, unit]);
 
   const handleFormChange = (value: string | null) => {
     const nextFormId = value ?? "";

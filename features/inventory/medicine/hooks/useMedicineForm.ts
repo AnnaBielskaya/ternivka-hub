@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import type {
   MedicalItemRow,
@@ -67,7 +67,6 @@ const getNearestStock = (stock: MedicalItemRow["stock"]) => {
       .filter((item) => Number(item.quantity) > 0)
       .sort((a, b) => {
         const dateA = a.expiry_year * 100 + a.expiry_month;
-
         const dateB = b.expiry_year * 100 + b.expiry_month;
 
         return dateA - dateB;
@@ -100,33 +99,43 @@ export const useMedicineForm = ({
     availableUnitValues.includes(inventoryUnit.value as never)
   );
 
-  useEffect(() => {
-    if (!selectedForm) {
+  const updateField = <K extends keyof MedicineFormValues>(
+    field: K,
+    value: MedicineFormValues[K]
+  ) => {
+    if (field === "form_id") {
+      const formId = value as string;
+
+      const nextForm = medicineForms.find(
+        (medicineForm) => medicineForm.id === formId
+      );
+
+      if (!nextForm) {
+        setForm((current) => ({
+          ...current,
+          form_id: formId,
+          unit: "",
+        }));
+
+        return;
+      }
+
+      const allowedUnits =
+        MEDICINE_UNITS_BY_FORM[
+          nextForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
+        ] ?? [];
+
       setForm((current) => ({
         ...current,
-        unit: "",
+        form_id: formId,
+        unit: allowedUnits.includes(current.unit as never)
+          ? current.unit
+          : allowedUnits[0] ?? "",
       }));
 
       return;
     }
 
-    const allowedUnits =
-      MEDICINE_UNITS_BY_FORM[
-        selectedForm.name as keyof typeof MEDICINE_UNITS_BY_FORM
-      ] ?? [];
-
-    if (!allowedUnits.includes(form.unit as never)) {
-      setForm((current) => ({
-        ...current,
-        unit: allowedUnits[0] ?? "",
-      }));
-    }
-  }, [selectedForm, form.unit]);
-
-  const updateField = <K extends keyof MedicineFormValues>(
-    field: K,
-    value: MedicineFormValues[K]
-  ) => {
     setForm((current) => ({
       ...current,
       [field]: value,
@@ -135,7 +144,6 @@ export const useMedicineForm = ({
 
   const handleSelectMedicine = (medicine: MedicalItemRow) => {
     const quantity = getMedicineQuantity(medicine.stock);
-
     const nearestStock = getNearestStock(medicine.stock);
 
     setForm({

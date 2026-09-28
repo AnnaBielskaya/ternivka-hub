@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import CalendarIcon from "@/components/inventory/icons/CalendarIcon";
 import type { StockRow } from "@/features/inventory/types";
@@ -32,9 +32,10 @@ const StockBatchCard = ({
 }: StockBatchCardProps) => {
   const [quantity, setQuantity] = useState(String(stock.quantity));
 
-  useEffect(() => {
+  const handleEdit = () => {
     setQuantity(String(stock.quantity));
-  }, [stock.quantity]);
+    onEdit();
+  };
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(event.target.value);
@@ -51,6 +52,11 @@ const StockBatchCard = ({
     onSave(stock, parsedQuantity);
   };
 
+  const handleCancel = () => {
+    setQuantity(String(stock.quantity));
+    onCancel();
+  };
+
   const handleQuantityKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -59,7 +65,7 @@ const StockBatchCard = ({
     }
 
     if (event.key === "Escape") {
-      onCancel();
+      handleCancel();
     }
   };
 
@@ -147,7 +153,7 @@ const StockBatchCard = ({
               <button
                 type="button"
                 disabled={isUpdating}
-                onClick={onCancel}
+                onClick={handleCancel}
                 aria-label="Скасувати"
                 className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 bg-white text-slate-400 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -179,7 +185,7 @@ const StockBatchCard = ({
 
               <button
                 type="button"
-                onClick={onEdit}
+                onClick={handleEdit}
                 aria-label="Редагувати кількість"
                 className={`ml-0.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border bg-white transition-colors ${
                   isNearest

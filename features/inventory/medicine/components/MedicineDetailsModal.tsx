@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import Modal from "@/components/ui/Modal";
 import CustomButton from "@/components/ui/CustomButton";
@@ -55,17 +49,15 @@ const MedicineDetailsModal = ({
 
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null);
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [isAddBatchOpen, setIsAddBatchOpen] = useState(false);
 
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
-  const [auditLogs, setAuditLogs] = useState<
-    Awaited<ReturnType<typeof getMedicineAuditLogs>>
-  >([]);
-
-  const [isAuditLoading, setIsAuditLoading] = useState(true);
+  const [auditLogs, setAuditLogs] = useState<Awaited<
+    ReturnType<typeof getMedicineAuditLogs>
+  > | null>(null);
 
   const medicineSubtitle = [item.medicine_form?.name, item.dosage, item.volume]
     .filter(Boolean)
@@ -110,17 +102,30 @@ const MedicineDetailsModal = ({
 
   const needsRefill = totalQuantity < item.minimum_quantity;
 
-  const loadAuditLogs = useCallback(async () => {
-    const logs = await getMedicineAuditLogs(item.id);
+  useEffect(() => {
+    let cancelled = false;
 
-    setAuditLogs(logs);
-    setIsAuditLoading(false);
+    getMedicineAuditLogs(item.id)
+      .then((logs) => {
+        if (!cancelled) {
+          setAuditLogs(logs);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAuditLogs([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [item.id]);
 
-  useEffect(() => {
-    setIsAuditLoading(true);
-    loadAuditLogs();
-  }, [loadAuditLogs]);
+  const refreshAuditLogs = async () => {
+    const logs = await getMedicineAuditLogs(item.id);
+    setAuditLogs(logs);
+  };
 
   const handleChangeQuantity = (stockItem: StockRow, delta: number) => {
     const currentQuantity = Number(stockItem.quantity);
@@ -149,7 +154,7 @@ const MedicineDetailsModal = ({
           );
         }
 
-        await loadAuditLogs();
+        await refreshAuditLogs();
       } else {
         window.alert(result.message);
       }
@@ -173,7 +178,7 @@ const MedicineDetailsModal = ({
       return [...current, updatedStock];
     });
 
-    loadAuditLogs();
+    refreshAuditLogs();
   };
 
   const handleDeleteClick = () => {
@@ -304,7 +309,7 @@ const MedicineDetailsModal = ({
                       onSave={(updatedStock, quantity) => {
                         handleChangeQuantity(
                           updatedStock,
-                          quantity - updatedStock.quantity
+                          quantity - Number(updatedStock.quantity)
                         );
                         setEditingStockId(null);
                       }}
@@ -368,7 +373,7 @@ const MedicineDetailsModal = ({
           <section>
             <SectionTitle title="Історія змін" />
 
-            {isAuditLoading ? (
+            {auditLogs === null ? (
               <div className="rounded-lg bg-slate-50 px-3.5 py-3 text-xs text-slate-400">
                 Завантаження історії...
               </div>
