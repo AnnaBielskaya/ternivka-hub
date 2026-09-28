@@ -7,6 +7,11 @@ export const SUPPLIES_TABLE_COLUMNS = [
     sortable: true,
   },
   {
+    key: "category",
+    label: "Категорія",
+    sortable: true,
+  },
+  {
     key: "unit",
     label: "Форма",
     sortable: true,
@@ -24,11 +29,6 @@ export const SUPPLIES_TABLE_COLUMNS = [
   {
     key: "created_by",
     label: "Додав",
-    sortable: true,
-  },
-  {
-    key: "status",
-    label: "Статус",
     sortable: true,
   },
 ] as const;

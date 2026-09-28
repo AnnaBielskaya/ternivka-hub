@@ -16,10 +16,6 @@ const tabs = [
     name: "Обладнання",
     link: "/category/equipment",
   },
-  {
-    name: "Такмед",
-    link: "/category/tacmed",
-  },
 ];
 
 type CategoryTabsProps = {
