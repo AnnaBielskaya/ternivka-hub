@@ -18,7 +18,7 @@ const MODAL_CONFIG = {
     title: "Додати препарат",
     submitLabel: "Додати препарат",
   },
-  medicalsupplies: {
+  supplies: {
     title: "Додати медичний розхідник",
     submitLabel: "Додати розхідник",
   },

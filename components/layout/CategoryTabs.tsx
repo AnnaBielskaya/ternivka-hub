@@ -10,7 +10,7 @@ const tabs = [
   },
   {
     name: "Розхідники",
-    link: "/category/medicalsupplies",
+    link: "/category/supplies",
   },
   {
     name: "Обладнання",
