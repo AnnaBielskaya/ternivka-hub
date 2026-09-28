@@ -17,6 +17,8 @@ import {
 
 import { createMedicine } from "@/features/inventory/medicine/actions/create-medicine";
 
+const YEARS = Array.from({ length: 11 }, (_, index) => 2026 + index);
+
 const initialMedicineCreateState: MedicineCreateState = {
   status: "idle",
   message: "",
@@ -188,6 +190,11 @@ export const useMedicineForm = ({
     label: String(month).padStart(2, "0"),
   }));
 
+  const yearOptions = YEARS.map((year) => ({
+    value: String(year),
+    label: String(year),
+  }));
+
   return {
     form,
     state,
@@ -201,6 +208,7 @@ export const useMedicineForm = ({
     purposeOptions,
     unitOptions,
     monthOptions,
+    yearOptions,
 
     updateField,
     handleSelectMedicine,

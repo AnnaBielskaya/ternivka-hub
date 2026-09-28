@@ -41,6 +41,7 @@ const MedicineForm = ({
     purposeOptions,
     unitOptions,
     monthOptions,
+    yearOptions,
     updateField,
     handleSelectMedicine,
   } = useMedicineForm({
@@ -209,7 +210,7 @@ const MedicineForm = ({
 
             <div className="md:col-span-2 lg:col-span-3">
               <FormField label="Термін придатності">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
                   <div>
                     <DropdownSelect
                       value={form.expiry_month || null}
@@ -229,20 +230,24 @@ const MedicineForm = ({
                     />
                   </div>
 
-                  <input
-                    id="expiry_year"
-                    name="expiry_year"
-                    type="number"
-                    min="2020"
-                    step="1"
-                    placeholder="Рік"
-                    value={form.expiry_year}
-                    disabled={isPending}
-                    className={INPUT_CLASS_NAME}
-                    onChange={(event) =>
-                      updateField("expiry_year", event.target.value)
-                    }
-                  />
+                  <div>
+                    <DropdownSelect
+                      value={form.expiry_year || null}
+                      options={yearOptions}
+                      placeholder="Рік"
+                      variant="outline"
+                      disabled={isPending}
+                      onChange={(value) =>
+                        updateField("expiry_year", value ?? "")
+                      }
+                    />
+
+                    <input
+                      type="hidden"
+                      name="expiry_month"
+                      value={form.expiry_month}
+                    />
+                  </div>
                 </div>
 
                 <p className="mt-2 text-xs text-gray-400">

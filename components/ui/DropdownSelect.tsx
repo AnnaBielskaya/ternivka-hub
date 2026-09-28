@@ -98,7 +98,7 @@ const DropdownSelect = ({
       </button>
 
       {isOpen && !disabled && (
-        <div className="absolute left-0 top-full z-50 mt-1.5 min-w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-200/40">
+        <div className="absolute left-0 top-full sm:overflow-y-scroll max-h-[120px] z-10000 mt-1.5 min-w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-200/40">
           {options.map((option) => {
             const isActive = option.value === value;
 
