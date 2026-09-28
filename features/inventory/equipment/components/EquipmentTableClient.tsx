@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import type {
   EquipmentItem,
@@ -18,8 +19,14 @@ import InventoryCard from "@/components/ui/table/InventoryCard";
 import InventoryTable from "@/components/ui/table/InventoryTable";
 import StatusBadge from "@/components/ui/StatusBadge";
 import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
+import type { UserRole } from "@/features/users/types";
+
 import EquipmentDetailsModal from "./EquipmentDetailsModal";
+import EditEquipmentModal from "./EditEquipmentModal";
+
 import { SortDirection } from "../../types";
+
+import { deleteEquipment } from "../actions/delete-equipment";
 
 type EquipmentSortKey =
   | "name"
@@ -30,6 +37,7 @@ type EquipmentSortKey =
 
 type EquipmentTableClientProps = {
   items: EquipmentItem[];
+  role: UserRole;
 };
 
 const collator = new Intl.Collator("uk-UA", {
@@ -64,10 +72,17 @@ const getPowerVariant = (
   }
 };
 
-const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
+const EquipmentTableClient = ({ items, role }: EquipmentTableClientProps) => {
+  const router = useRouter();
+
   const [sortKey, setSortKey] = useState<EquipmentSortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+
   const [selectedItem, setSelectedItem] = useState<EquipmentItem | null>(null);
+
+  const [editingItem, setEditingItem] = useState<EquipmentItem | null>(null);
+
+  const [isDeleting, startDeleting] = useTransition();
 
   const equipmentTableColumns: InventoryTableColumn<EquipmentItem>[] =
     EQUIPMENT_TABLE_COLUMNS.map((column) => ({
@@ -175,6 +190,64 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
     });
   }, [items, sortKey, sortDirection]);
 
+  const handleRowClick = (item: EquipmentItem) => {
+    if (isDeleting) {
+      return;
+    }
+
+    setSelectedItem(item);
+  };
+
+  const handleCloseDetails = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setSelectedItem(null);
+  };
+
+  const handleEdit = () => {
+    if (!selectedItem || isDeleting) {
+      return;
+    }
+
+    setEditingItem(selectedItem);
+    setSelectedItem(null);
+  };
+
+  const handleDelete = () => {
+    if (!selectedItem || isDeleting) {
+      return;
+    }
+
+    const equipmentId = selectedItem.id;
+
+    startDeleting(async () => {
+      const result = await deleteEquipment(equipmentId);
+
+      if (result.status === "error") {
+        window.alert(result.message);
+        return;
+      }
+
+      setSelectedItem(null);
+      router.refresh();
+    });
+  };
+
+  const handleCloseEdit = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setEditingItem(null);
+  };
+
+  const handleSaved = () => {
+    setEditingItem(null);
+    router.refresh();
+  };
+
   return (
     <>
       <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
@@ -204,7 +277,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
                     title: EQUIPMENT_STATUS_LABELS[item.status],
                     variant: getStatusVariant(item.status),
                   }}
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => handleRowClick(item)}
                 />
               ))}
             </div>
@@ -224,7 +297,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
             sortKey={sortKey}
             sortDirection={sortDirection}
             onSort={(key) => handleSortChange(key as EquipmentSortKey)}
-            onRowClick={setSelectedItem}
+            onRowClick={handleRowClick}
           />
         </div>
       </div>
@@ -232,8 +305,18 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
       {selectedItem && (
         <EquipmentDetailsModal
           item={selectedItem}
-          role="admin"
-          onClose={() => setSelectedItem(null)}
+          role={role}
+          onClose={handleCloseDetails}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {editingItem && (
+        <EditEquipmentModal
+          item={editingItem}
+          onClose={handleCloseEdit}
+          onSaved={handleSaved}
         />
       )}
     </>

@@ -64,6 +64,8 @@ const EquipmentDetailsModal = ({
 }: EquipmentDetailsModalProps) => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
+  const canDelete = role === "admin" || role === "super_admin";
+
   const handleDeleteClick = () => {
     setIsDeleteConfirmOpen(true);
   };
@@ -104,7 +106,7 @@ const EquipmentDetailsModal = ({
         footer={
           <div className="flex items-center justify-between gap-2">
             <div className="shrink-0">
-              {role === "admin" || role === "super_admin" ? (
+              {canDelete && onDelete ? (
                 <CustomButton
                   variant="dangerOutline"
                   onClick={handleDeleteClick}
@@ -114,11 +116,11 @@ const EquipmentDetailsModal = ({
               ) : null}
             </div>
 
-            {onEdit && (
+            {onEdit ? (
               <div className="shrink-0">
                 <CustomButton onClick={onEdit}>Редагувати</CustomButton>
               </div>
-            )}
+            ) : null}
           </div>
         }
         size="lg"
@@ -171,7 +173,7 @@ const EquipmentDetailsModal = ({
             </div>
           </section>
 
-          {item.comment && (
+          {item.comment ? (
             <>
               <SectionDivider />
 
@@ -185,11 +187,11 @@ const EquipmentDetailsModal = ({
                 </div>
               </section>
             </>
-          )}
+          ) : null}
         </div>
       </Modal>
 
-      {isDeleteConfirmOpen && (
+      {isDeleteConfirmOpen ? (
         <Modal
           isOpen={true}
           title="Видалити обладнання?"
@@ -217,7 +219,7 @@ const EquipmentDetailsModal = ({
             </p>
           </div>
         </Modal>
-      )}
+      ) : null}
     </>
   );
 };

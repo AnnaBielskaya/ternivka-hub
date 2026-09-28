@@ -3,9 +3,13 @@ import AddItemButton from "@/components/ui/AddItemButton";
 
 import EquipmentTableClient from "@/features/inventory/equipment/components/EquipmentTableClient";
 import { getEquipmentItems } from "@/features/inventory/equipment/queries/equipment.queries";
+import { getCurrentUser } from "@/features/auth/actions/get-current-user";
 
 const Equipment = async () => {
-  const [items] = await Promise.all([getEquipmentItems()]);
+  const [items, user] = await Promise.all([
+    getEquipmentItems(),
+    getCurrentUser(),
+  ]);
 
   return (
     <>
@@ -15,7 +19,7 @@ const Equipment = async () => {
         <AddItemButton variant="equipment" />
       </div>
 
-      <EquipmentTableClient items={items} />
+      <EquipmentTableClient items={items} role={user.role} />
     </>
   );
 };
