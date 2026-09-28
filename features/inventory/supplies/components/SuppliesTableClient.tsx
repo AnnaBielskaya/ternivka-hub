@@ -13,6 +13,8 @@ import { SUPPLIES_TABLE_COLUMNS, SUPPLY_UNIT_LABELS } from "../constants";
 
 import type { SupplyItem, SupplySortKey } from "../types";
 
+import SupplyDetailsModal from "./SupplyDetailsModal";
+
 type SuppliesTableClientProps = {
   items: SupplyItem[];
 };
@@ -24,6 +26,7 @@ const collator = new Intl.Collator("uk-UA", {
 const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
   const [sortKey, setSortKey] = useState<SupplySortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [selectedItem, setSelectedItem] = useState<SupplyItem | null>(null);
 
   const getNeedsRefill = (item: SupplyItem) => {
     return item.quantity <= item.minimum_quantity;
@@ -153,69 +156,83 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
     setSortDirection("asc");
   };
 
+  const handleRowClick = (item: SupplyItem) => {
+    setSelectedItem(item);
+  };
+
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
-      <div className="lg:hidden">
-        {sortedItems.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {sortedItems.map((item) => {
-              const needsRefill = getNeedsRefill(item);
+    <>
+      <div className="min-h-0 flex-1 overflow-y-auto bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:rounded-md lg:border lg:border-slate-200">
+        <div className="lg:hidden">
+          {sortedItems.length > 0 ? (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {sortedItems.map((item) => {
+                const needsRefill = getNeedsRefill(item);
 
-              return (
-                <InventoryCard
-                  key={item.id}
-                  title={item.name}
-                  description={item.comment}
-                  badge={
-                    <StatusBadge
-                      kind="category"
-                      variant="info"
-                      title={item.category?.name ?? "—"}
-                    />
-                  }
-                  fields={[
-                    {
-                      label: "Мінімум",
-                      value: `${item.minimum_quantity} ${
-                        SUPPLY_UNIT_LABELS[item.unit]
-                      }`,
-                    },
-                  ]}
-                  quantity={item.quantity}
-                  quantityUnit={SUPPLY_UNIT_LABELS[item.unit]}
-                  status={{
-                    title: needsRefill ? "Потребує поповнення" : "Достатньо",
-                    variant: needsRefill ? "warning" : "success",
-                  }}
-                  onClick={() => {}}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          <div className="px-5 py-12 text-center text-[13px] text-slate-500">
-            Розхідників немає
-          </div>
-        )}
+                return (
+                  <InventoryCard
+                    key={item.id}
+                    title={item.name}
+                    description={item.comment}
+                    badge={
+                      <StatusBadge
+                        kind="category"
+                        variant="info"
+                        title={item.category?.name ?? "—"}
+                      />
+                    }
+                    fields={[
+                      {
+                        label: "Мінімум",
+                        value: `${item.minimum_quantity} ${
+                          SUPPLY_UNIT_LABELS[item.unit]
+                        }`,
+                      },
+                    ]}
+                    quantity={item.quantity}
+                    quantityUnit={SUPPLY_UNIT_LABELS[item.unit]}
+                    status={{
+                      title: needsRefill ? "Потребує поповнення" : "Достатньо",
+                      variant: needsRefill ? "warning" : "success",
+                    }}
+                    onClick={() => handleRowClick(item)}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <div className="px-5 py-12 text-center text-[13px] text-slate-500">
+              Розхідників немає
+            </div>
+          )}
+        </div>
+
+        <div className="hidden lg:block">
+          <InventoryTable
+            items={sortedItems}
+            columns={suppliesTableColumns}
+            getRowKey={(item) => item.id}
+            getRowClassName={(item) =>
+              getNeedsRefill(item)
+                ? "bg-red-50 hover:bg-red-100/70"
+                : "bg-white hover:bg-slate-50"
+            }
+            emptyMessage="Розхідників немає"
+            sortKey={sortKey}
+            sortDirection={sortDirection}
+            onSort={(key) => handleSortChange(key as SupplySortKey)}
+            onRowClick={handleRowClick}
+          />
+        </div>
       </div>
 
-      <div className="hidden lg:block">
-        <InventoryTable
-          items={sortedItems}
-          columns={suppliesTableColumns}
-          getRowKey={(item) => item.id}
-          getRowClassName={(item) =>
-            getNeedsRefill(item)
-              ? "bg-red-50 hover:bg-red-100/70"
-              : "bg-white hover:bg-slate-50"
-          }
-          emptyMessage="Розхідників немає"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onSort={(key) => handleSortChange(key as SupplySortKey)}
+      {selectedItem ? (
+        <SupplyDetailsModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
         />
-      </div>
-    </div>
+      ) : null}
+    </>
   );
 };
 
