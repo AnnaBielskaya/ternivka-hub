@@ -27,7 +27,7 @@ const CategoryTabs = ({ variant = "header" }: CategoryTabsProps) => {
 
   if (variant === "bottom") {
     return (
-      <nav className="grid w-full grid-cols-4 gap-1">
+      <nav className="grid w-full grid-cols-3 gap-1">
         {tabs.map((tab) => {
           const isActive = pathname === tab.link;
 

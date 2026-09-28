@@ -37,8 +37,6 @@ const getStatusVariant = (
       return "success";
 
     case "not_working":
-      return "warning";
-
     case "incomplete":
       return "warning";
   }
@@ -106,7 +104,7 @@ const EquipmentDetailsModal = ({
         footer={
           <div className="flex items-center justify-between gap-2">
             <div className="shrink-0">
-              {role === "super_admin" || (role === "admin" && onDelete) ? (
+              {role === "admin" || role === "super_admin" ? (
                 <CustomButton
                   variant="dangerOutline"
                   onClick={handleDeleteClick}
