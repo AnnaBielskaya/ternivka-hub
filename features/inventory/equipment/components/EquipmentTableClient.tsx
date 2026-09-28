@@ -119,7 +119,7 @@ const EquipmentTableClient = ({ items }: EquipmentTableClientProps) => {
           case "created_by":
             return (
               <span className="text-[13px] text-slate-600">
-                {item.creator?.name ?? "-"}
+                {item.creator ?? "-"}
               </span>
             );
 
