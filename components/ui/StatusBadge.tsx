@@ -1,6 +1,6 @@
 type StatusBadgeVariant = "warning" | "success" | "info";
 
-type StatusBadgeKind = "status" | "form";
+type StatusBadgeKind = "status" | "form" | "category";
 
 type StatusBadgeProps = {
   title: string;
@@ -14,6 +14,12 @@ const VARIANT_STYLES: Record<StatusBadgeVariant, string> = {
   info: "bg-slate-100 text-slate-500",
 };
 
+const CATEGORY_ICONS: Record<string, string> = {
+  Такмед: "🩸",
+  "Перев’язувальні матеріали": "🩹",
+  "Інфузійні матеріали": "💧",
+};
+
 const StatusBadge = ({ title, variant, kind = "status" }: StatusBadgeProps) => {
   return (
     <span
@@ -25,6 +31,12 @@ const StatusBadge = ({ title, variant, kind = "status" }: StatusBadgeProps) => {
 
       {kind === "form" && title === "Таблетки" && (
         <span className="text-[9px] leading-none">💊</span>
+      )}
+
+      {kind === "category" && CATEGORY_ICONS[title] && (
+        <span className="text-[10px] leading-none">
+          {CATEGORY_ICONS[title]}
+        </span>
       )}
 
       {title}

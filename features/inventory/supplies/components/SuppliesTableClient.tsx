@@ -17,6 +17,10 @@ type SuppliesTableClientProps = {
   items: SupplyItem[];
 };
 
+const collator = new Intl.Collator("uk-UA", {
+  sensitivity: "base",
+});
+
 const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
   const [sortKey, setSortKey] = useState<SupplySortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -27,17 +31,13 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
 
       switch (sortKey) {
         case "name":
-          comparison = a.name.localeCompare(b.name, "uk");
+          comparison = collator.compare(a.name, b.name);
           break;
 
         case "category":
-          comparison = a.category.name.localeCompare(b.category.name, "uk");
-          break;
-
-        case "unit":
-          comparison = SUPPLY_UNIT_LABELS[a.unit].localeCompare(
-            SUPPLY_UNIT_LABELS[b.unit],
-            "uk"
+          comparison = collator.compare(
+            a.category?.name ?? "",
+            b.category?.name ?? ""
           );
           break;
 
@@ -50,9 +50,9 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
           break;
 
         case "created_by":
-          comparison = (a.creator?.name ?? "").localeCompare(
-            b.creator?.name ?? "",
-            "uk"
+          comparison = collator.compare(
+            a.creator?.name ?? "",
+            b.creator?.name ?? ""
           );
           break;
       }
@@ -67,33 +67,45 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
       label: column.label,
       sortable: column.sortable,
       render: (item) => {
+        const needsRefill = item.quantity <= item.minimum_quantity;
+
         switch (column.key) {
           case "name":
             return (
               <div className="max-w-[240px] min-w-0">
-                <p className="font-medium leading-5 text-slate-900">
+                <p
+                  className={`font-medium leading-5 ${
+                    needsRefill ? "text-red-700" : "text-slate-900"
+                  }`}
+                >
                   {item.name}
                 </p>
               </div>
             );
 
           case "category":
-            return (
-              <span className="text-[13px] text-slate-600">
-                {item.category.name}
-              </span>
+            return item.category ? (
+              <StatusBadge
+                kind="category"
+                variant="info"
+                title={item.category.name}
+              />
+            ) : (
+              <span className="text-slate-400">-</span>
             );
 
           case "quantity":
             return (
-              <span className="whitespace-nowrap text-[13px] font-medium text-slate-800">
+              <span
+                className={`whitespace-nowrap text-[13px] font-medium ${
+                  needsRefill ? "text-red-700" : "text-slate-800"
+                }`}
+              >
                 {item.quantity} {SUPPLY_UNIT_LABELS[item.unit]}
               </span>
             );
 
-          case "minimum_quantity": {
-            const needsRefill = item.quantity <= item.minimum_quantity;
-
+          case "minimum_quantity":
             return needsRefill ? (
               <StatusBadge
                 variant="warning"
@@ -106,18 +118,25 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                 {item.minimum_quantity} {SUPPLY_UNIT_LABELS[item.unit]}
               </span>
             );
-          }
 
           case "comment":
             return (
-              <span className="text-[13px] text-slate-600">
+              <span
+                className={`text-[13px] ${
+                  needsRefill ? "text-red-700" : "text-slate-600"
+                }`}
+              >
                 {item.comment ?? "-"}
               </span>
             );
 
           case "created_by":
             return (
-              <span className="text-[13px] text-slate-600">
+              <span
+                className={`text-[13px] ${
+                  needsRefill ? "text-red-700" : "text-slate-600"
+                }`}
+              >
                 {item.creator?.name ?? "-"}
               </span>
             );
@@ -152,29 +171,19 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                   key={item.id}
                   title={item.name}
                   description={item.comment}
+                  badge={
+                    <StatusBadge
+                      kind="form"
+                      variant="info"
+                      title={item.category?.name ?? "—"}
+                    />
+                  }
                   fields={[
                     {
-                      label: "Категорія",
-                      value: item.category.name,
-                    },
-                    {
-                      label: "Форма",
-                      value: item.unit === "piece" ? "Штука" : "Упаковка",
-                    },
-                    {
                       label: "Мінімум",
-                      value: (
-                        <span
-                          className={
-                            needsRefill
-                              ? "font-semibold text-amber-600"
-                              : undefined
-                          }
-                        >
-                          {item.minimum_quantity}{" "}
-                          {SUPPLY_UNIT_LABELS[item.unit]}
-                        </span>
-                      ),
+                      value: `${item.minimum_quantity} ${
+                        SUPPLY_UNIT_LABELS[item.unit]
+                      }`,
                     },
                     {
                       label: "Додав",
@@ -184,7 +193,7 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
                   quantity={item.quantity}
                   quantityUnit={SUPPLY_UNIT_LABELS[item.unit]}
                   status={{
-                    title: needsRefill ? "Потрібне поповнення" : "В наявності",
+                    title: needsRefill ? "Потрібне поповнення" : "Достатньо",
                     variant: needsRefill ? "warning" : "success",
                   }}
                   onClick={() => {}}
@@ -204,6 +213,11 @@ const SuppliesTableClient = ({ items }: SuppliesTableClientProps) => {
           items={sortedItems}
           columns={suppliesTableColumns}
           getRowKey={(item) => item.id}
+          getRowClassName={(item) =>
+            item.quantity <= item.minimum_quantity
+              ? "bg-red-50 hover:bg-red-100/70"
+              : "bg-white hover:bg-slate-50"
+          }
           emptyMessage="Розхідників немає"
           sortKey={sortKey}
           sortDirection={sortDirection}
