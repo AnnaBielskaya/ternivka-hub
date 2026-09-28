@@ -1,5 +1,6 @@
 import AddItemButton from "@/components/ui/AddItemButton";
 import Header from "@/components/ui/Header";
+import SuppliesTableClient from "@/features/inventory/supplies/components/SuppliesTableClient";
 
 const MedicalSupplies = () => {
   return (
@@ -9,6 +10,7 @@ const MedicalSupplies = () => {
 
         <AddItemButton variant="supplies" />
       </div>
+      <SuppliesTableClient />
     </>
   );
 };

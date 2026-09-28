@@ -19,6 +19,7 @@ import InventoryTable from "@/components/ui/table/InventoryTable";
 import StatusBadge from "@/components/ui/StatusBadge";
 import type { InventoryTableColumn } from "@/components/ui/table/InventoryTable";
 import EquipmentDetailsModal from "./EquipmentDetailsModal";
+import { SortDirection } from "../../types";
 
 type EquipmentSortKey =
   | "name"
@@ -26,8 +27,6 @@ type EquipmentSortKey =
   | "power_source"
   | "quantity"
   | "created_by";
-
-type SortDirection = "asc" | "desc";
 
 type EquipmentTableClientProps = {
   items: EquipmentItem[];
