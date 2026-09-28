@@ -244,8 +244,8 @@ const MedicineForm = ({
 
                     <input
                       type="hidden"
-                      name="expiry_month"
-                      value={form.expiry_month}
+                      name="expiry_year"
+                      value={form.expiry_year}
                     />
                   </div>
                 </div>
