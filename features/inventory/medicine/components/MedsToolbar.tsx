@@ -66,7 +66,7 @@ const MedsToolbar = ({
               }
               className={`inline-flex h-9 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[13px] transition ${
                 isActive
-                  ? "bg-slate-100 font-semibold text-slate-900"
+                  ? "bg-indigo-50/90 font-semibold text-slate-900"
                   : "font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
